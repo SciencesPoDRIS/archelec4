@@ -1,0 +1,15 @@
+/frontend/node_modules
+/frontend/build
+/frontend/.eslintcache
+
+/backend/src/routes.ts
+/backend/node_modules
+/backend/build
+/backend/*.log
+/backend/*.log.gz
+/backend/application.log
+/backend/*-audit.json
+/backend/coverage
+/backend/.nyc_output
+
+/docker/elasticsearch/data/nodes

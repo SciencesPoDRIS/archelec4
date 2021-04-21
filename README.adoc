@@ -1,0 +1,7 @@
+= Project Archelec
+
+include::./docker/README.adoc[leveloffset=+1]
+
+include::./frontend/README.adoc[leveloffset=+1]
+
+include::./backend/README.adoc[leveloffset=+1]

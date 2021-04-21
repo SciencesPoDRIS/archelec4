@@ -1,0 +1,56 @@
+= Client
+
+== Description
+
+It's a react application created with the helps of _react-scripts_ with typescript support.
+
+== Usage
+
+=== Installation
+
+Just run those commands :
+
+[source,bash]
+----
+$> npm install
+$> npm start
+----
+
+=== Start
+
+To run the project, you juste have to use `npm start`.
+The application will be available on http://localhost:3000
+
+=== Build
+
+To build the project just run `npm build`.
+The build will be located under the `build` directory.
+
+=== Eject
+
+If you aren’t satisfied with the build tool and configuration choices, you can eject at any time by running the following command :
+
+[source,bash]
+----
+npm run eject
+----
+
+IMPORTANT: this is a one-way operation. Once you eject, you can’t go back!
+
+This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc)
+right into your project so you have full control over them.
+All of the commands except eject will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use eject.
+The curated feature set is suitable for small and middle deployments,
+and you shouldn’t feel obligated to use this feature.
+However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+== For developers
+
+=== Sharing types with backend
+
+When the backend is up, you can generate types of the API with the following command : `npm run generate:types`.
+This command will create/override the file `src/types/api.ts`, with API response types located in the `component.schemas`
