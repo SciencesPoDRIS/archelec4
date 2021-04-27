@@ -31,7 +31,7 @@ export interface Configuration {
 
 // Default configuration file
 export const config: Configuration = {
-  port: process.env.PORT ? Number(process.env.BACKEND_PORT) : 4000,
+  port: process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 4000,
   error_with_stack: process.env.ERROR_WITH_STACK ? true : false,
   logs: {
     console_level: process.env.LOG_CONSOLE_LEVEL || "info",
