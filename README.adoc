@@ -1,5 +1,79 @@
 = Project Archelec
 
+== How to install with docker
+
+=== Requirements
+
+To be able to install the application on your server, you will need :
+
+* docker & docker-compose
+* git
+
+On debian like system, you can install them with the following command :
+`apt-get install git docker docker-compose`
+
+=== Process
+
+* Clone the repository in the folder `/opt`
+
+`$>git clone https://github.com/SciencesPoDRIS/archelec4 /opt/archelec4`
+
+* Copy the `/opt/archelec4/docker/.env` to `/opt/archelec4/docker/.env.prod`
+
+* Edit the file `/opt/archelec4/docker/.env.prod`. You must change those values :
+
+** `MODE=prod`
+
+NOTE: You can also change the heap size of Elasticsearch.
+
+* Create a linux user called `archelec`
+
+`$>useradd archelec -d /opt/archelec/ -M -r`
+
+* Add the created user to the group `docker`
+
+`$> usermod -aG docker archelec`
+
+* Change the owner of the folder `/opt/archelec`
+
+`$>chown -R archelec:archelec /opt/archelec`
+
+* Create the system script service :
+
+[source,bash]
+----
+$> cd /etc/systemd/system/
+$> vi archelec.service
+[Unit]
+Description=archelec
+Requires=docker.service
+
+After=docker.service
+[Service]
+Restart=always
+User=archelec
+Group=archelec
+WorkingDirectory=/opt/archelec/docker
+
+# Shutdown container (if running) when unit is started
+ExecStartPre=docker-compose -f docker-compose.yml --env-file .env.prod down
+# Start container when unit is started
+ExecStart=docker-compose -f docker-compose.yml --env-file .env.prod up
+# Stop container when unit is stopped
+ExecStop=docker-compose -f docker-compose.yml --env-file .env.prod down
+
+[Install]
+WantedBy=multi-user.target
+$> sudo systemctl enable archelec.service
+----
+
+* When it's done, you can start the stack by running this command : `systemctl start archelec.service`
+
+TIP: You can check the log of the process with the command `journalctl -u archelec.service`
+
+Wait some minutes (the build of the docker stack can takes ~10min), and open your favorite browser on http://localchost
+(you can replace localhost by the name/ip of your server)
+
 include::./docker/README.adoc[leveloffset=+1]
 
 include::./frontend/README.adoc[leveloffset=+1]

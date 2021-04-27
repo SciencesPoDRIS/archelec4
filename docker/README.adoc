@@ -50,32 +50,3 @@ NOTE: If you have many docker projects, I recommend you to use a prefix for the 
 
 * Edit the `.env` file if you need it
 * Run the command `docker-compose -f docker-compose.yml` inside the project `docker` folder.
-
-You can also create a systemd service :
-
-[source,bash]
-----
-$> cd /etc/systemd/system/
-$> vi archelec.service
-[Unit]
-Description=Archelec
-Requires=docker.service
-
-After=docker.service
-[Service]
-Restart=always
-User=archelec
-Group=archelec
-WorkingDirectory=/opt/archelec/docker
-
-# Shutdown container (if running) when unit is started
-ExecStartPre=docker-compose -f docker-compose.yml down
-# Start container when unit is started
-ExecStart=docker-compose -f docker-compose.yml up
-# Stop container when unit is stopped
-ExecStop=docker-compose -f docker-compose.yml down
-
-[Install]
-WantedBy=multi-user.target
-$> sudo systemctl enable archelec.service
-----
