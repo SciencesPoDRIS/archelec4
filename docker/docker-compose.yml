@@ -8,7 +8,7 @@ services:
       - ${PROJECT_PATH}/docker/elasticsearch/data:/usr/share/elasticsearch/data
       - ${PROJECT_PATH}/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      - ES_JAVA_OPTS=${ES_JAVA_OPTS}
+      - ES_JAVA_OPTS
       - TAKE_FILE_OWNERSHIP=1
 
   # Backend
@@ -21,8 +21,11 @@ services:
       - elasticsearch
     volumes:
       - ${PROJECT_PATH}/backend:/backend
-    env_file:
-      - ${PROJECT_PATH}/docker/.env
+    environment:
+      - LOG_CONSOLE_LEVEL
+      - LOG_FILE_LEVEL
+      - ELASTIC_URL
+      - BACKEND_PORT
 
   # Frontend
   frontend:
@@ -37,5 +40,3 @@ services:
     volumes:
       - ${PROJECT_PATH}/docker/frontend/nginx.${MODE}.conf:/etc/nginx/nginx.conf
       - ${PROJECT_PATH}/frontend:/frontend
-    env_file:
-      - ${PROJECT_PATH}/docker/.env

@@ -31,11 +31,11 @@ export interface Configuration {
 
 // Default configuration file
 export const config: Configuration = {
-  port: process.env.PORT ? Number(process.env.PORT) : 4000,
-  error_with_stack: true,
+  port: process.env.PORT ? Number(process.env.BACKEND_PORT) : 4000,
+  error_with_stack: process.env.ERROR_WITH_STACK ? true : false,
   logs: {
-    console_level: process.env.CONSOLE_LOG_LEVEL || "info",
-    file_level: process.env.CONSOLE_FILE_LEVEL || "error",
+    console_level: process.env.LOG_CONSOLE_LEVEL || "info",
+    file_level: process.env.LOG_FILE_LEVEL || "error",
     file_maxsize: "200m",
     file_retention: "7d",
     file_path: "./",

@@ -13,3 +13,7 @@
 /backend/.nyc_output
 
 /docker/elasticsearch/data/nodes
+/docker/.env.prod
+
+.bash_*
+.bashrc
