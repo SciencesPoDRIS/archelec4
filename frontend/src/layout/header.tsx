@@ -7,7 +7,7 @@ export const Header: React.FC = () => {
       <nav className="navbar navbar-dark bg-primary navbar-expand-lg navbar-fixed">
         <div id="brand">
           <Link className="navbar-brand" to={"/"} title="Archelec">
-            <img src="/logo512.png" alt="Logo" />
+            Archélec
           </Link>
         </div>
       </nav>

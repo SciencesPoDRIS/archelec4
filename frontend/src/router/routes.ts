@@ -1,4 +1,5 @@
-import { App } from "../components/app";
+import { Home } from "../pages/home";
+import { Profession } from "../pages/profession";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -16,8 +17,12 @@ export const routes: RouteDefinition[] = [
     routes: [
       {
         path: "/",
-        component: App
-      }
-    ]
-  }
+        component: Home,
+      },
+      {
+        path: "/profession/:id",
+        component: Profession,
+      },
+    ],
+  },
 ];
