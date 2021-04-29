@@ -52,7 +52,7 @@ export const config: Configuration = {
   port: process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : 4000,
   error_with_stack: process.env.ERROR_WITH_STACK ? true : false,
   logs: {
-    console_level: process.env.LOG_CONSOLE_LEVEL || "info",
+    console_level: process.env.LOG_CONSOLE_LEVEL || "debug",
     file_level: process.env.LOG_FILE_LEVEL || "error",
     file_maxsize: "200m",
     file_retention: "7d",

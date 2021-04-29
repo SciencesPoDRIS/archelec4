@@ -3,8 +3,45 @@ import * as fs from "fs";
 import * as path from "path";
 import { InternetArchive } from "./internet-archive";
 import { ElasticSearch } from "./elasticsearch";
+import { taskInSeries } from "../utils";
 import { getLogger } from "./logger";
 import { config } from "../config";
+
+/**
+ * Options for the import execution.
+ */
+export interface ImportOptions {
+  /**
+   * The date from which we need to retrieve the last modified item
+   */
+  date: Date;
+  /**
+   * (optional) The date to which we need to retrieve the last modified item
+   */
+  to?: Date;
+  /**
+   * (optional) The name of the ES index
+   */
+  index?: string;
+}
+
+/**
+ * Import report
+ */
+export interface ImportReport {
+  /**
+   * Settings used for the import
+   */
+  settings: { from: Date; to: Date; index: string };
+  /**
+   * Duration (in ms) of the import.
+   */
+  took: number;
+  /**
+   * Number of item imported
+   */
+  total: number;
+}
 
 @Singleton
 export class Import {
@@ -36,14 +73,20 @@ export class Import {
    * IMPORTANT: You can override the period & index name of the import, by specifying the paramater <code>opts</code> on this method.
    * It can be usefull to make an import per party (ex: by week slices).
    */
-  public async execution(options?: { date: Date; to?: Date; index: string }): Promise<void> {
+  public async execution(options?: ImportOptions): Promise<ImportReport> {
+    const now = Date.now();
+
     // Init variables
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    const settings: { date: Date; to?: Date; index: string } = { ...this.getLastExecutionData(), ...options };
-    const indexName = settings.index ? settings.index : `${config.import.elasticsearch_alias_name}_${Date.now()}`;
+    const lastImportData = this.getLastExecutionData();
+    const settings: { date?: Date; to?: Date; index?: string } =
+      lastImportData || options ? { ...(lastImportData || {}), ...(options || {}) } : null;
+
+    const indexName =
+      settings && settings.index ? settings.index : `${config.import.elasticsearch_alias_name}_${Date.now()}`;
     const period: { from: Date; to: Date } | null = settings
       ? {
-          from: settings.date,
+          from: settings.date ? settings.date : new Date(),
           to: settings.to ? settings.to : new Date(),
         }
       : null;
@@ -51,13 +94,17 @@ export class Import {
     // Make calls to IA
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     const collectionIds = await this.ia.getCollectionIds(config.import.internet_archive_collection, period);
-    // TODO: add a setTimeout for each query to avoid an overload on IA ???
-    const data = await Promise.all(collectionIds.map((id) => this.ia.getMetadata(id)));
+    const data = await taskInSeries(
+      collectionIds.map((id) => {
+        return () => this.ia.getMetadata(id);
+      }),
+    );
 
     // Saving in ES
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     await this.es.createIndex(indexName);
     await this.es.bulkImport(indexName, data);
+
     const prevIndices = await this.es.createIndexAlias(config.import.elasticsearch_alias_name, indexName);
     if (prevIndices) {
       await Promise.all(prevIndices.map((i) => this.es.deleteIndex(i)));
@@ -66,6 +113,12 @@ export class Import {
     // Saving import data
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     this.saveLastExecution(period.to, indexName);
+
+    return {
+      settings: { ...period, index: indexName },
+      took: Date.now() - now,
+      total: data.length,
+    };
   }
 
   /**

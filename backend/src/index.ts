@@ -6,9 +6,13 @@ import { getLogger, Logger } from "./services/logger";
 import { errorFilter } from "./error-handler";
 import { config } from "./config";
 // project's services & controllers
+import "./controllers/elasticsearch";
+import "./controllers/import";
 import "./controllers/miscellaneous";
 import "./services/logger";
 import "./services/elasticsearch";
+import "./services/import";
+import "./services/internet-archive";
 
 // logger
 const log: Logger = getLogger("Server");
@@ -19,10 +23,7 @@ const app = express()
   .use(bodyParser.json())
   .use((_req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      `Origin, X-Requested-With, Content-Type, Accept, Authorization`
-    );
+    res.header("Access-Control-Allow-Headers", `Origin, X-Requested-With, Content-Type, Accept, Authorization`);
     next();
   });
 
@@ -31,11 +32,7 @@ app
   .use("/api/swagger.json", (req, res) => {
     res.sendFile(__dirname + "/swagger.json");
   })
-  .use(
-    "/api/docs",
-    swaggerUi.serve,
-    swaggerUi.setup(null, { swaggerOptions: { url: "/api/swagger.json" } })
-  );
+  .use("/api/docs", swaggerUi.serve, swaggerUi.setup(null, { swaggerOptions: { url: "/api/swagger.json" } }));
 
 // Register the route of the api
 RegisterRoutes(app);

@@ -9,6 +9,9 @@ interface BulkError {
 }
 type BulkErrorReport = Array<BulkError>;
 
+export type SearchRequest = { body: any; index: string };
+export type SearchResponse = Array<any>;
+
 @Singleton
 export class ElasticSearch {
   /**
@@ -25,6 +28,14 @@ export class ElasticSearch {
    */
   constructor() {
     this.client = new Client(config.elasticsearch);
+  }
+
+  /**
+   * Proxy method to search on ES.
+   */
+  async search<T>(request: SearchRequest): Promise<SearchResponse> {
+    const result = await this.client.search(request);
+    return result.body as SearchResponse;
   }
 
   /**
@@ -102,7 +113,6 @@ export class ElasticSearch {
     if (result.statusCode !== 404) {
       // Check if it's on the same index
       const alias = await this.client.indices.getAlias({ index: "_all", name });
-      console.log(alias.body, index, Object.keys(alias.body), Object.keys(alias.body).includes(index));
       if (Object.keys(alias.body).includes(index)) {
         needToBeCreated = false;
         this.log.debug(`Alias ${name} already exist for index ${index}. Nothing to do.`);
@@ -128,6 +138,10 @@ export class ElasticSearch {
    * @param {Array<object>} the data to import
    */
   async bulkImport(index: string, data: Array<any>): Promise<BulkErrorReport> {
+    if (data.length === 0) {
+      this.log.warn("There is no data to index");
+      return [];
+    }
     this.log.info(`ES Bulk import on index ${index} with ${data.length} documents`);
     const body = data.flatMap((doc) => [{ index: { _index: index, _id: doc.id } }, doc]);
     this.log.info(`Indexing ${data.length} documents in index ${index}`);
