@@ -27,6 +27,24 @@ export interface Configuration {
     // Sniffing interval
     sniffInterval: number;
   };
+  internet_archive: {
+    // Default url for the internat archive (ie. https://archive.org)
+    url: string;
+    // WHen we do a call to the API, how many retry we must do
+    nb_retry: number;
+  };
+  // Configuration for the import
+  import: {
+    // identifier of the IA collection
+    internet_archive_collection: string;
+    // relative to the project path
+    last_import_date_file_path: string;
+    // elastic alias name
+    elasticsearch_alias_name: string;
+  };
+  axios: {
+    timeout: number;
+  };
 }
 
 // Default configuration file
@@ -44,5 +62,17 @@ export const config: Configuration = {
     nodes: [process.env.ELASTIC_URL || "http://localhost:9200"],
     sniffOnStart: false,
     sniffInterval: 60000,
+  },
+  internet_archive: {
+    url: "https://archive.org",
+    nb_retry: 3,
+  },
+  import: {
+    internet_archive_collection: "archiveselectoralesducevipof",
+    last_import_date_file_path: ".last_import.txt",
+    elasticsearch_alias_name: "archiveselectoralesducevipof",
+  },
+  axios: {
+    timeout: 60000,
   },
 };

@@ -11,6 +11,7 @@
 /backend/*-audit.json
 /backend/coverage
 /backend/.nyc_output
+/backend/.last_import.txt
 
 /docker/elasticsearch/data/nodes
 /docker/.env.prod
