@@ -1,10 +1,11 @@
 import { Singleton } from "typescript-ioc";
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosRequestConfig } from "axios";
 import { getLogger } from "./logger";
 import { config } from "../config";
+import { makeHttpCall } from "../utils";
 
 /**
- * The response type for the advance search API of internet archive
+ * The response type for scrapping API of internet archive
  */
 interface IAScrapResponse {
   items: Array<{ identifier: string }>;
@@ -13,6 +14,9 @@ interface IAScrapResponse {
   total: number;
 }
 
+/**
+ * The response type for get metadata API of internet archive
+ */
 interface IAMetadataResponseFile {
   name: string;
   source: string;
@@ -33,6 +37,10 @@ interface IAMetadataResponse {
   metadata: { [key: string]: unknown };
 }
 
+/**
+ * Custom response type for our getMetadata.
+ * We just add the full urlm on each files
+ */
 type GetMetadataResponse = Omit<IAMetadataResponse, "files"> & {
   files: Array<IAMetadataResponseFile & { url: string }>;
 };
@@ -49,7 +57,7 @@ export class InternetArchive {
    */
   public async getMetadata(key: string): Promise<GetMetadataResponse> {
     const url = `${config.internet_archive.url}/metadata/${key}`;
-    const result = await this.makeCall<IAMetadataResponse>(
+    const result = await makeHttpCall<IAMetadataResponse>(
       { url, responseType: "json" },
       config.internet_archive.nb_retry,
     );
@@ -87,7 +95,7 @@ export class InternetArchive {
     let result: Array<string> = [];
     let hasMore = true;
     while (hasMore) {
-      const data = await this.makeCall<IAScrapResponse>(request, config.internet_archive.nb_retry);
+      const data = await makeHttpCall<IAScrapResponse>(request, config.internet_archive.nb_retry);
       result = result.concat(data.items.map((item) => item.identifier));
       this.log.debug(`Scrapping ${result.length} on ${data.total}`);
 
@@ -98,33 +106,5 @@ export class InternetArchive {
       }
     }
     return result;
-  }
-
-  /**
-   * Generic method that perfoms a call to the API and handle errors.
-   *
-   * @param request The Axios request
-   * @param retry How many retry we need to do if a request failed
-   * @returns The API body response as promise
-   */
-  private async makeCall<T>(request: AxiosRequestConfig, retry = 0): Promise<T> {
-    this.log.info(`Make request ${JSON.stringify(request, null, 2)}`);
-    try {
-      const response = await axios({ ...request, timeout: config.axios.timeout });
-      return response.data;
-    } catch (e) {
-      if (retry > 0) {
-        this.log.info(`Retry request ${JSON.stringify(request, null, 2)}`);
-        return this.makeCall(request, retry--);
-      } else {
-        let error = `Failed to retrieve data for ${request.url} : `;
-        if (e.response) error += `response status is ${e.response.status} - ${e.response.data}`;
-        else if (e.request) {
-          error += `no response from the server -> ${e.message}`;
-          console.log(e);
-        } else error += e.message;
-        throw new Error(error);
-      }
-    }
   }
 }
