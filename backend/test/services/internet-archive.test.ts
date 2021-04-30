@@ -13,7 +13,7 @@ describe("Testing Service InternetArchive", function () {
   });
 
   it("getCollectionIds should work", async () => {
-    const data = await service.getCollectionIds(config.import.internet_archive_collection, {
+    const data = await service.getCollectionIds(config.internet_archive_collection, {
       from: new Date(),
       to: new Date(),
     });
