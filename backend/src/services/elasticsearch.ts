@@ -22,7 +22,7 @@ export class ElasticSearch {
   /**
    * Node Elastic client.
    */
-  private client: Client;
+  public client: Client;
 
   /**
    *  ElasticSearch default constructor.
@@ -108,18 +108,18 @@ export class ElasticSearch {
 
     // Search if the alias exist
     this.log.info(`Create index alias ${name}:${index}`);
-    const result = await this.client.indices.existsAlias({ index, name });
+    const result = await this.client.indices.existsAlias({ name });
 
     // if it exist
     if (result.statusCode !== 404) {
       // Check if it's on the same index
-      const alias = await this.client.indices.getAlias({ index: "_all", name });
+      const alias = await this.client.indices.getAlias({ name });
       if (Object.keys(alias.body).includes(index)) {
         needToBeCreated = false;
         this.log.debug(`Alias ${name} already exist for index ${index}. Nothing to do.`);
       } else {
         this.log.debug(`Delete index alias ${name}`);
-        await this.client.indices.deleteAlias({ index, name });
+        await Promise.all(Object.keys(alias.body).map((i) => this.client.indices.deleteAlias({ index: i, name })));
         previousIndex = Object.keys(alias.body);
       }
     }
