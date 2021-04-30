@@ -97,7 +97,7 @@ export class InternetArchive {
     while (hasMore) {
       const data = await makeHttpCall<IAScrapResponse>(request, config.axios.nb_retry);
       result = result.concat(data.items.map((item) => item.identifier));
-      this.log.debug(`Scrapping ${result.length},  ${data.total - result.length} remaining`);
+      this.log.debug(`Scrapping ${result.length}`);
 
       if (data.cursor) {
         request.params["cursor"] = data.cursor;

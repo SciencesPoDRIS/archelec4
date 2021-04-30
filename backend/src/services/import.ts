@@ -180,7 +180,7 @@ export class Import {
     // Only save import data if it was a period import
     // So users are able to import a list of ids without to change the last date import
     // Question : do we need save only if the date is higher than the one stored ??
-    if (!settings.ids) this.saveLastExecution(period.to, indexName);
+    if (!settings.ids) this.saveLastExecution(period ? period.to : new Date(now), indexName);
 
     return {
       settings: { ...period, index: indexName },
