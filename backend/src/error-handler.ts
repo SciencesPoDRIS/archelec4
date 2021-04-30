@@ -32,6 +32,7 @@ function getErrorStatusCode(error: Error): number {
  * a custom error http response.
  */
 function errorFilter(err: Error, _req: express.Request, res: express.Response, next: express.NextFunction): void {
+  console.log(err);
   const code = getErrorStatusCode(err);
   const body = {
     name: err.name,

@@ -42,11 +42,30 @@ export async function makeHttpCall<T>(request: AxiosRequestConfig, retry = 0): P
  */
 export async function taskInSeries<T>(tasks: Array<() => Promise<T>>): Promise<Array<T>> {
   return tasks.reduce((promiseChain, currentTask, index) => {
-    return promiseChain.then((chainResults) =>
-      currentTask().then((currentResult) => {
-        LOG.info(`Task ${index} / ${tasks.length} completed`);
+    return promiseChain.then((chainResults) => {
+      LOG.info(`Task ${index + 1} / ${tasks.length} started`);
+      return currentTask().then((currentResult) => {
+        LOG.info(`Task ${index + 1} / ${tasks.length} completed`);
         return [...chainResults, currentResult];
-      }),
-    );
+      });
+    });
   }, Promise.resolve([] as Array<T>));
+}
+
+/**
+ * Split the `items` array into multiple, smaller arrays of the given `size`.
+ *
+ * @param items The array to split in chuncks
+ * @param size Size of a chunck
+ */
+export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
+  const chunks: Array<Array<T>> = [];
+  // Copy the list to avoid to modify it
+  const list = [...items];
+
+  while (list.length > 0) {
+    chunks.push(list.splice(0, size));
+  }
+
+  return chunks;
 }

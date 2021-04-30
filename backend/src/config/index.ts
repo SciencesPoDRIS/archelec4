@@ -27,23 +27,21 @@ export interface Configuration {
     // Sniffing interval
     sniffInterval: number;
   };
-  internet_archive: {
-    // Default url for the internat archive (ie. https://archive.org)
-    url: string;
-    // WHen we do a call to the API, how many retry we must do
-    nb_retry: number;
-  };
-  // Configuration for the import
-  import: {
-    // identifier of the IA collection
-    internet_archive_collection: string;
-    // relative to the project path
-    last_import_date_file_path: string;
-    // elastic alias name
-    elasticsearch_alias_name: string;
-  };
+  // Default url for the internat archive (ie. https://archive.org)
+  internet_archive_url: string;
+  // identifier of the IA collection
+  internet_archive_collection: string;
+  // Where we save the last import data file (relative to the project path)
+  last_import_date_file_path: string;
+  // elastic alias name
+  elasticsearch_alias_name: string;
+  // batch size for the import
+  import_batch_size: number;
+  // max nb of concurrent request we do to IA
+  import_api_max_concurrency: number;
   axios: {
     timeout: number;
+    nb_retry: number;
   };
 }
 
@@ -63,16 +61,14 @@ export const config: Configuration = {
     sniffOnStart: false,
     sniffInterval: 60000,
   },
-  internet_archive: {
-    url: "https://archive.org",
-    nb_retry: 3,
-  },
-  import: {
-    internet_archive_collection: "archiveselectoralesducevipof",
-    last_import_date_file_path: ".last_import.txt",
-    elasticsearch_alias_name: "archiveselectoralesducevipof",
-  },
+  internet_archive_url: "https://archive.org",
+  internet_archive_collection: "archiveselectoralesducevipof",
+  last_import_date_file_path: ".last_import.txt",
+  elasticsearch_alias_name: "archiveselectoralesducevipof",
+  import_batch_size: 1000,
+  import_api_max_concurrency: 50,
   axios: {
     timeout: 60000,
+    nb_retry: 3,
   },
 };

@@ -3,7 +3,8 @@ import { Client } from "@elastic/elasticsearch";
 import { Logger, getLogger } from "./logger";
 import { config } from "../config";
 
-interface BulkError {
+export interface BulkError {
+  doc: string;
   status: string;
   error: string;
 }
@@ -151,7 +152,7 @@ export class ElasticSearch {
       body,
     });
     this.log.debug(
-      `ES bulk executed in ${response.body.took} ${response.body.errors ? "with errors" : "without error"}`,
+      `ES bulk executed in ${response.body.took}ms ${response.body.errors ? "with errors" : "without error"}`,
     );
 
     if (response.body.errors) {
@@ -166,6 +167,7 @@ export class ElasticSearch {
             // If the status is 429 it means that you can retry the document,
             // otherwise it's very likely a mapping error, and you should
             // fix the document before to try it again.
+            doc: action[operation]._id,
             status: action[operation].status,
             error: JSON.stringify(action[operation].error),
           });

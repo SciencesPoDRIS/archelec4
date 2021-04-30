@@ -18,7 +18,7 @@ export class ElasticSearchController extends Controller {
   @Post("proxy")
   public async proxy(@Body() params: SearchRequest["body"]): Promise<SearchResponse> {
     const request = {
-      index: config.import.elasticsearch_alias_name,
+      index: config.elasticsearch_alias_name,
       body: params,
     };
     return await this.es.search(request);
