@@ -138,9 +138,9 @@ export class Import {
       lastImportData || options ? { ...(lastImportData || {}), ...(options || {}) } : null;
 
     const indexName = settings && settings.index ? settings.index : `${config.elasticsearch_alias_name}_${Date.now()}`;
-    const period: { from: Date; to: Date } | null = settings
+    const period: { from: Date; to: Date } | null = settings.date
       ? {
-          from: settings.date ? settings.date : new Date(),
+          from: settings.date,
           to: settings.to ? settings.to : new Date(),
         }
       : null;
