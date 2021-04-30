@@ -4,6 +4,8 @@ import { config_default } from "./default";
 export interface Configuration {
   api_path: string;
   pagination_size: number;
+  minYear: number;
+  maxYear: number;
 }
 
 const config: Configuration = config_default;
