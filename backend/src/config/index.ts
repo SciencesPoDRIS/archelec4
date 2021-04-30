@@ -31,6 +31,8 @@ export interface Configuration {
   internet_archive_url: string;
   // identifier of the IA collection
   internet_archive_collection: string;
+  // it's a filter by endsWith
+  internet_archive_collection_metadata_filters: Array<string>;
   // Where we save the last import data file (relative to the project path)
   last_import_date_file_path: string;
   // elastic alias name
@@ -61,14 +63,28 @@ export const config: Configuration = {
     sniffOnStart: false,
     sniffInterval: 60000,
   },
+  axios: {
+    timeout: 60000,
+    nb_retry: 3,
+  },
   internet_archive_url: "https://archive.org",
   internet_archive_collection: "archiveselectoralesducevipof",
   last_import_date_file_path: ".last_import.txt",
   elasticsearch_alias_name: "archiveselectoralesducevipof",
   import_batch_size: 1000,
   import_api_max_concurrency: 50,
-  axios: {
-    timeout: 60000,
-    nb_retry: 3,
-  },
+  internet_archive_collection_metadata_filters: [
+    "-titulaire",
+    "-suppleant",
+    "subject",
+    "title",
+    "type",
+    "contexte-election",
+    "contexte-tour",
+    "cote",
+    "date",
+    "departement",
+    "departement-nom",
+    "circonscription",
+  ],
 };

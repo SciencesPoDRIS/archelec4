@@ -4,10 +4,10 @@ import * as path from "path";
 import pLimit from "p-limit";
 import { InternetArchive } from "./internet-archive";
 import { BulkError, ElasticSearch } from "./elasticsearch";
-import { chunck, taskInSeries } from "../utils";
+import { chunck, makeHttpCall, taskInSeries } from "../utils";
 import { getLogger } from "./logger";
 import { config } from "../config";
-import { IAMetadataResponse } from "./internet-archive";
+import { GetMetadataResponse } from "./internet-archive";
 
 /**
  * Error object for import report.
@@ -66,6 +66,40 @@ export interface ImportReport extends Report {
    * Settings used for the import
    */
   settings: { from: Date; to: Date; index: string };
+}
+
+interface ArchiveElectoralCandidat {
+  nom: string;
+  prenom: string;
+  sexe: string;
+  age: string;
+  profession: string;
+  "mandat-en-cours": string;
+  "mandat-passe": string;
+  associations: string;
+  "autres-statuts": string;
+  soutien: string;
+  liste: string;
+  decorations: string;
+}
+
+export interface ArchiveElectoralItem {
+  id: string;
+  candidats: Array<ArchiveElectoralCandidat>;
+  date: Date;
+  subject: string;
+  title: string;
+  type: string;
+  "contexte-election": string;
+  "contexte-tour": string;
+  cote: string;
+  departement: string;
+  "departement-nom": string;
+  circonscription: string;
+  // custom field
+  ocr?: string;
+  images: Array<{ url: string; thumb?: string }>;
+  pdf: string;
 }
 
 @Singleton
@@ -249,7 +283,50 @@ export class Import {
    * @param item The object returned by the metadata API
    * @returns The object that will be indexed by elastic
    */
-  private async postProcessItem(item: IAMetadataResponse): Promise<any> {
-    return item;
+  private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralItem> {
+    const result: any = {
+      id: item.id,
+    };
+
+    const titulaire: any = { type: "titulaire" };
+    const suppleant: any = { type: "suppleant" };
+
+    // Take each metadata and remove the prefix
+    Object.keys(item.metadata).forEach((key: string) => {
+      // Check if the key validate the spec
+      if (config.internet_archive_collection_metadata_filters.find((e) => key.endsWith(e))) {
+        const value: any = key.endsWith("date") ? new Date(item.metadata[key] as any) : item.metadata[key];
+        const newKey = key.replace(/^[a-z]{2}-/, "");
+
+        if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
+        else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
+        else result[newKey] = value;
+      }
+    });
+
+    result.candidats = [];
+    if (Object.keys(titulaire).length > 1) result.candidats.push(titulaire);
+    if (Object.keys(suppleant).length > 1) result.candidats.push(suppleant);
+
+    // PDF Files
+    const pdf = item.files.find((f) => f.format === "Image Container PDF");
+    if (pdf) result.pdf = pdf.url;
+
+    // OCR file
+    const ocr = item.files.find((f) => f.format === "DjVuTXT");
+    if (ocr) result.ocr = await makeHttpCall({ url: ocr.url });
+
+    // JPEG
+    result.images = item.files
+      .filter((f) => f.format === "JPEG")
+      .map((f) => {
+        const thumb = item.files.find((f2) => f2.original === f.name && f2.format === "JPEG Thumb");
+        return {
+          url: f.url,
+          thumb: thumb ? thumb.url : null,
+        };
+      });
+
+    return result as ArchiveElectoralItem;
   }
 }

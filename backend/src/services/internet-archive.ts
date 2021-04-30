@@ -27,8 +27,9 @@ interface IAMetadataResponseFile {
   sha1: string;
   format: string;
   rotation?: string;
+  original?: string;
 }
-export interface IAMetadataResponse {
+interface IAMetadataResponse {
   id: string;
   created: number;
   item_last_updated: number;
@@ -42,7 +43,7 @@ export interface IAMetadataResponse {
  * Custom response type for our getMetadata.
  * We just add the full urlm on each files
  */
-type GetMetadataResponse = Omit<IAMetadataResponse, "files"> & {
+export type GetMetadataResponse = Omit<IAMetadataResponse, "files"> & {
   files: Array<IAMetadataResponseFile & { url: string }>;
 };
 

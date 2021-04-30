@@ -62,10 +62,8 @@ export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
   const chunks: Array<Array<T>> = [];
   // Copy the list to avoid to modify it
   const list = [...items];
-
   while (list.length > 0) {
     chunks.push(list.splice(0, size));
   }
-
   return chunks;
 }
