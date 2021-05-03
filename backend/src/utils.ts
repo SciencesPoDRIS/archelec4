@@ -14,7 +14,7 @@ const LOG = getLogger("Utils");
  * @param retry How many retry we need to do if a request failed
  * @returns The API body response as promise
  */
-export async function makeHttpCall<T>(request: AxiosRequestConfig, retry = 0): Promise<T> {
+export async function makeHttpCall<T>(request: AxiosRequestConfig, retry = config.axios.nb_retry): Promise<T> {
   LOG.info(`Make request ${JSON.stringify(request, null, 2)}`);
   try {
     const response = await axios({ ...request, timeout: config.axios.timeout });
