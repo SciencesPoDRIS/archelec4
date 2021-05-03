@@ -153,7 +153,7 @@ export class Import {
       : this.ia.getCollectionIds(config.internet_archive_collection, period));
 
     // Create the ES index if needed
-    await this.es.createIndex(indexName);
+    await this.es.createIndex(indexName, config.elastic_index_configuration);
 
     // Create chunks
     const chuncks = chunck(collectionIds, config.import_batch_size);
@@ -230,7 +230,7 @@ export class Import {
   }
 
   /**
-   * Do the import process for the given a list of item's id.
+   * Do the import process for the given list of item's id.
    * /!\ Should always returns a resolved promise, errors are in the returned report.
    * @param ids An array of id
    * @param index ES index name where to send the data

@@ -27,6 +27,11 @@ export interface Configuration {
     // Sniffing interval
     sniffInterval: number;
   };
+  // Axios configuration
+  axios: {
+    timeout: number;
+    nb_retry: number;
+  };
   // Default url for the internat archive (ie. https://archive.org)
   internet_archive_url: string;
   // identifier of the IA collection
@@ -37,14 +42,12 @@ export interface Configuration {
   last_import_date_file_path: string;
   // elastic alias name
   elasticsearch_alias_name: string;
+  // Configuration of the es index
+  elastic_index_configuration: any;
   // batch size for the import
   import_batch_size: number;
   // max nb of concurrent request we do to IA
   import_api_max_concurrency: number;
-  axios: {
-    timeout: number;
-    nb_retry: number;
-  };
 }
 
 // Default configuration file
@@ -87,4 +90,72 @@ export const config: Configuration = {
     "departement-nom",
     "circonscription",
   ],
+  elastic_index_configuration: {
+    settings: {
+      analysis: {
+        filter: {
+          french_stop: {
+            type: "stop",
+            stopwords: "_french_",
+          },
+        },
+        analyzer: {
+          IndexAnalyzer: {
+            filter: ["lowercase", "asciifolding", "word_delimiter", "french_stop"],
+            type: "custom",
+            tokenizer: "whitespace",
+          },
+          SearchAnalyzer: {
+            filter: ["lowercase", "asciifolding", "word_delimiter", "french_stop"],
+            type: "custom",
+            tokenizer: "whitespace",
+          },
+        },
+      },
+    },
+    mappings: {
+      properties: {
+        id: {
+          type: "keyword",
+          store: true,
+        },
+        _search: {
+          type: "text",
+          store: false,
+          analyzer: "IndexAnalyzer",
+          search_analyzer: "SearchAnalyzer",
+          fields: {
+            raw: {
+              type: "keyword",
+              ignore_above: 256,
+            },
+          },
+        },
+        _suggest: {
+          type: "completion",
+          analyzer: "IndexAnalyzer",
+          search_analyzer: "SearchAnalyzer",
+          preserve_separators: true,
+          preserve_position_increments: true,
+        },
+      },
+      dynamic_templates: [
+        {
+          strings: {
+            match_mapping_type: "string",
+            mapping: {
+              type: "text",
+              fields: {
+                raw: {
+                  type: "keyword",
+                  ignore_above: 256,
+                },
+              },
+              copy_to: ["_suggest", "_search"],
+            },
+          },
+        },
+      ],
+    },
+  },
 };
