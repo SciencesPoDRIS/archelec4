@@ -3,7 +3,7 @@ import { SearchTypeDefinition } from "../types";
 // Default configuration file
 export const professionSearch: SearchTypeDefinition = {
   queryType: "profession",
-  index: "professions",
+  index: "",
   label: "Profession de foi",
   sorts: [{ label: "Pertinence", expression: { _score: "desc" }, default: true }],
   filtersGroups: [
@@ -12,7 +12,7 @@ export const professionSearch: SearchTypeDefinition = {
       filters: [
         {
           id: "date",
-          type: "dates",
+          type: "terms",
           label: "Date",
         },
         {

@@ -1,32 +1,45 @@
 import { omit, omitBy, isUndefined, isEmpty, toPairs } from "lodash";
+import { config } from "./config";
 import { ESSearchQueryContext, FilterHistogramType, FiltersState, FilterState, PlainObject } from "./types";
 
 function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
-  if (filter.type === "terms") return filter.value.map((v) => ({ terms: { [`${field}.raw`]: [v] } }));
+  if (filter.type === "terms") return filter.value.map((v) => ({ terms: { [`${field}.keyword`]: [v] } }));
   if (filter.type === "dates")
     return {
       range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },
     };
 }
 
-function getESQueryBody(query: string, filters: FiltersState) {
+// TODO : remove query
+function getESQueryBody(
+  query: string,
+  filters: FiltersState,
+  suggestFilter?: { field: string; value: string | undefined },
+) {
+  const contextFilters = suggestFilter ? omit(filters, [suggestFilter.field]) : filters;
   const queries = [
-    {
-      simple_query_string: {
-        query: query,
-        fields: ["_search"],
-        default_operator: "and",
-      },
-    },
-    ...(!isEmpty(filters) ? toPairs(filters).flatMap(([field, filter]) => getESQueryFromFilter(field, filter)) : []),
+    ...(!isEmpty(contextFilters)
+      ? toPairs(contextFilters).flatMap(([field, filter]) => getESQueryFromFilter(field, filter))
+      : []),
   ];
-  return queries.length > 1
-    ? {
-        bool: {
-          must: queries,
+  const esQuery =
+    queries.length > 1
+      ? {
+          bool: {
+            must: queries,
+          },
+        }
+      : queries[0];
+  if (suggestFilter && suggestFilter.value) {
+    return {
+      wildcard: {
+        [suggestFilter.field]: {
+          value: `*${suggestFilter.value}*`,
         },
-      }
-    : queries[0];
+      },
+      filter: esQuery,
+    };
+  } else return esQuery;
 }
 
 export type SchemaFieldDefinition = {
@@ -169,27 +182,25 @@ function getESIncludeRegexp(query: string): string {
 export async function getTerms(
   context: ESSearchQueryContext,
   field: string,
-  prefix?: string,
+  value?: string,
   count?: number,
 ): Promise<{ term: string; count: number }[]> {
   const body: PlainObject = {
     size: 0,
-    query: getESQueryBody(context.query, omit(context.filters, [field])),
+    query: getESQueryBody(context.query, context.filters, { field, value }),
     aggs: {
       termsList: {
         terms: {
-          field: `${field}.raw`,
-          include: prefix ? `.*${getESIncludeRegexp(prefix)}.*` : undefined,
+          field: `${field}.keyword`,
           size: count || 15,
-          order: { _key: "asc" },
+          order: { _key: "desc" },
+          include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
         },
       },
     },
   };
 
-  if (prefix) body.query = { prefix: { [field]: prefix } };
-
-  return await fetch(`/elasticsearch/${context.index}/_search`, {
+  return await fetch(`${config.api_path}/elasticsearch/proxy/${context.index}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -218,14 +229,14 @@ export async function getHistograms(
     aggs: fields.reduce(
       (iter, field) => ({
         ...iter,
-        [CARDINALITY_PREFIX + field]: { cardinality: { field: `${field}.raw` } },
-        [TERMS_PREFIX + field]: { terms: { field: `${field}.raw`, size } },
+        [CARDINALITY_PREFIX + field]: { cardinality: { field: field } },
+        [TERMS_PREFIX + field]: { terms: { field: field, size } },
       }),
       {},
     ),
   };
 
-  return await fetch(`/elasticsearch/${context.index}/_search`, {
+  return await fetch(`${config.api_path}/elasticsearch/proxy/${context.index}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -238,13 +249,13 @@ export async function getHistograms(
         (iter, field) => ({
           ...iter,
           [field]: {
-            total: data.aggregations[CARDINALITY_PREFIX + field].value,
-            values: data.aggregations[TERMS_PREFIX + field].buckets.map(
-              (bucket: { key: string; doc_count: number }) => ({
+            total: data.aggregations && data.aggregations[CARDINALITY_PREFIX + field].value,
+            values:
+              data.aggregations &&
+              data.aggregations[TERMS_PREFIX + field].buckets.map((bucket: { key: string; doc_count: number }) => ({
                 label: bucket.key,
                 count: bucket.doc_count,
-              }),
-            ),
+              })),
           },
         }),
         {},
@@ -259,7 +270,7 @@ export function search(
   size: number,
   histogramField?: string,
 ): Promise<{ list: PlainObject[]; total: number }> {
-  return fetch(`/elasticsearch/${context.index}/_search`, {
+  return fetch(`${config.api_path}/elasticsearch/proxy/${context.index}`, {
     body: JSON.stringify(
       omitBy(
         {

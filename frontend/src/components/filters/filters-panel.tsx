@@ -56,29 +56,8 @@ export const FiltersPanel: FC<{
   };
   const contextFingerprint = JSON.stringify(context);
 
-  const [histograms, setHistograms] = useState<PlainObject<FilterHistogramType>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSticky, setIsSticky] = useState<boolean>(false);
-  const maxCount = Math.max(
-    ...Object.values(histograms).flatMap((histogram) => histogram.values.map((val) => val.count)),
-  );
-
-  // Load histograms when context changes:
-  useEffect(() => {
-    if (!isLoading) {
-      setHistograms({});
-      setIsLoading(true);
-      getHistograms(
-        context,
-        flatten(props.searchTypeDefinition.filtersGroups.map((group) => group.filters.map((f) => f.id))),
-        5,
-      ).then((value) => {
-        setIsLoading(false);
-        setHistograms(value);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contextFingerprint]);
 
   // Listen to scroll to detect when block becomes sticked:
   const root = useRef<HTMLDivElement>(null);
@@ -119,7 +98,7 @@ export const FiltersPanel: FC<{
                         : omit(props.state, filter.id),
                     )
                   }
-                  histogram={histograms[filter.id] && { ...histograms[filter.id], maxCount }}
+                  //histogram={histograms[filter.id] && { ...histograms[filter.id], maxCount }}
                   state={(props.state[filter.id] || { type: "terms", value: [] }) as TermsFilterState}
                   context={context}
                 />

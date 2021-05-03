@@ -55,43 +55,6 @@ export const TermsFilter: FC<{
           <CreatableSelect options={filter.options} value={stringToObjectValue(state.value)} isMulti={filter.isMulti} />
         )}
       </div>
-      {histogram ? (
-        <ul className="list-unstyled">
-          {histogram.values.map(({ label, count }, i) => (
-            <li key={i}>
-              <div
-                className="flex mv-1 filter-bar-container"
-                onClick={(e) => {
-                  valuesDict[label]
-                    ? setState({ type: "terms", value: without(getArrayValue(state.value), label) })
-                    : setState({ type: "terms", value: getArrayValue(state.value).concat([label]) });
-                  e.preventDefault();
-                }}
-              >
-                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                <a href="#">{valuesDict[label] ? <strong>{label}</strong> : label}</a>
-                <span className="sm grey fg ml-1">({count})</span>
-                <button className="btn btn-light inline sm">
-                  <i className={cx("fas mr-1", valuesDict[label] ? "fa-times" : "fa-plus")} />
-                  {valuesDict[label] ? "Retirer" : "Filtrer"}
-                </button>
-              </div>
-              <div className="sub-bar">
-                <div style={{ width: (count / (histogram?.maxCount || 1)) * 100 + "%" }} />
-              </div>
-            </li>
-          ))}
-          {!!remainingCount && (
-            <li className="sm grey">
-              <i>
-                ...et {remainingCount} autre{remainingCount > 1 ? "s" : ""} valeur{remainingCount > 1 ? "s" : ""}
-              </i>
-            </li>
-          )}
-        </ul>
-      ) : (
-        <Loader tag="h6" className="mv-1" />
-      )}
     </div>
   );
 };
