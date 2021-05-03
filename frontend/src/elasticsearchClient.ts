@@ -22,6 +22,16 @@ function getESQueryBody(
       ? toPairs(contextFilters).flatMap(([field, filter]) => getESQueryFromFilter(field, filter))
       : []),
   ];
+
+  if (suggestFilter && suggestFilter.value) {
+    queries.push({
+      wildcard: {
+        [suggestFilter.field]: {
+          value: `*${suggestFilter.value}*`,
+        },
+      },
+    });
+  }
   const esQuery =
     queries.length > 1
       ? {
@@ -30,16 +40,7 @@ function getESQueryBody(
           },
         }
       : queries[0];
-  if (suggestFilter && suggestFilter.value) {
-    return {
-      wildcard: {
-        [suggestFilter.field]: {
-          value: `*${suggestFilter.value}*`,
-        },
-      },
-      filter: esQuery,
-    };
-  } else return esQuery;
+  return esQuery;
 }
 
 export type SchemaFieldDefinition = {
