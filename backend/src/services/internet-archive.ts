@@ -73,21 +73,25 @@ export class InternetArchive {
    * Call the IA api to get the identifier list of a collection.
    *
    * @param collection Identifier of the collection
+   * @param type Filter the collection on type value
    * @param lastUpdatePeriod (optional) if specified, we only ask for items that were updated in the defined period.
    * @returns An array of identifiers as a promise
    */
   public async getCollectionIds(
     collection: string,
+    type: string,
     lastUpdatePeriod?: { from: Date; to: Date } | null,
   ): Promise<Array<string>> {
     const url = `${config.internet_archive_url}/services/search/v1/scrape`;
-    let query = `(collection:"${collection}")`;
+    const queryParts: Array<string> = [`(collection:"${collection}")`, `(type:"${type}")`];
     if (lastUpdatePeriod)
-      query += ` oai_updatedate:[ ${lastUpdatePeriod.from.toISOString()} TO ${lastUpdatePeriod.to.toISOString()} ]`;
+      queryParts.push(
+        ` oai_updatedate:[ ${lastUpdatePeriod.from.toISOString()} TO ${lastUpdatePeriod.to.toISOString()} ]`,
+      );
     const request: AxiosRequestConfig = {
       url: url,
       params: {
-        q: query,
+        q: queryParts.join(" AND "),
       },
       responseType: "json",
     };

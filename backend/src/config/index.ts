@@ -36,6 +36,8 @@ export interface Configuration {
   internet_archive_url: string;
   // identifier of the IA collection
   internet_archive_collection: string;
+  // Filter IA collection by type
+  internet_archive_collection_type: string;
   // it's a filter by endsWith
   internet_archive_collection_metadata_filters: Array<string>;
   // Where we save the last import data file (relative to the project path)
@@ -72,6 +74,7 @@ export const config: Configuration = {
   },
   internet_archive_url: "https://archive.org",
   internet_archive_collection: "archiveselectoralesducevipof",
+  internet_archive_collection_type: "profession de foi",
   last_import_date_file_path: ".last_import.txt",
   elasticsearch_alias_name: "archiveselectoralesducevipof",
   import_batch_size: 1000,

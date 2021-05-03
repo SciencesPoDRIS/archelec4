@@ -151,7 +151,7 @@ export class Import {
     const collectionIds = (
       await (settings.ids
         ? Promise.resolve(settings.ids)
-        : this.ia.getCollectionIds(config.internet_archive_collection, period))
+        : this.ia.getCollectionIds(config.internet_archive_collection, config.internet_archive_collection_type, period))
     ).filter((id) => !id.endsWith("Pdfmasterocr"));
 
     // Create the ES index if needed
@@ -184,12 +184,16 @@ export class Import {
     // Question : do we need save only if the date is higher than the one stored ??
     if (!settings.ids) this.saveLastExecution(period ? period.to : new Date(now), indexName);
 
-    return {
+    const report = {
       settings: { ...period, index: indexName },
       errors: reports.flatMap((r) => r.errors),
       took: Date.now() - now,
       total: collectionIds.length,
     };
+
+    this.log.debug("Import report", report);
+
+    return report;
   }
 
   /**
@@ -300,9 +304,11 @@ export class Import {
         const value: any = key.endsWith("date") ? new Date(item.metadata[key] as any) : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
-        if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
-        else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
-        else result[newKey] = value;
+        if (value !== "NR" && value !== "") {
+          if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
+          else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
+          else result[newKey] = value;
+        }
       }
     });
 
