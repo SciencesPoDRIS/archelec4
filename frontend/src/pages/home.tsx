@@ -71,7 +71,7 @@ export const Home: React.FC<{}> = () => {
   const registeredQuery = queryParams.get(SEARCH_QUERY_KEY) || ("*" as string);
   // const registeredSearchType = queryParams.get(SEARCH_TYPE_KEY) as SearchType;
   // const fullRegisteredSearchType = SEARCH_TYPES_DICT[registeredSearchType || ""];
-  // const shouldSearch = !!registeredQuery && !!fullRegisteredSearchType;
+  const shouldSearch = !!registeredQuery && !!professionSearch;
   const [sort, setSort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
 
   // Top page form state (unplugged to search until form is submitted):
@@ -85,28 +85,25 @@ export const Home: React.FC<{}> = () => {
   useEffect(() => {
     const currentFilterState = getFiltersState(new URLSearchParams(location.search), filtersDict);
     setFiltersState(currentFilterState);
-    // if (shouldSearch) {
-    //   setLoading(true);
-    //   setResults(null);
-    //   setHistogram(null);
-    //   setBooksHistogramsDataByResult({});
-    //   search(
-    //     {
-    //       index: fullRegisteredSearchType.index,
-    //       query: registeredQuery,
-    //       filters: currentFilterState,
-    //       sort: getSortDefinition(registeredSearchType, sort),
-    //     },
-    //     fullRegisteredSearchType.cleanFn,
-    //     0,
-    //     SIZE,
-    //     registeredSearchType === "book" ? "dateEdition.date" : undefined,
-    //   ).then((newResults) => {
-    //     setLoading(false);
-    //     setResults(omit(newResults, "histogram"));
-    //     setHistogram(newResults.histogram || null);
-    //   });
-    // }
+    if (shouldSearch) {
+      setLoading(true);
+      setResults(null);
+      search(
+        {
+          index: professionSearch.index,
+          query: registeredQuery,
+          filters: currentFilterState,
+          sort: getSortDefinition(professionSearch, sort),
+        },
+        identity,
+        0,
+        SIZE,
+        undefined,
+      ).then((newResults) => {
+        setLoading(false);
+        setResults(omit(newResults, "histogram"));
+      });
+    }
   }, [location.search]); // eslint-disable-line
 
   /**
@@ -161,7 +158,7 @@ export const Home: React.FC<{}> = () => {
           />
         </div>
         <div className="col-8">
-          <ProfessionList />
+          <ProfessionList professions={results} />
         </div>
       </div>
     </div>
