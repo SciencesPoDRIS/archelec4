@@ -12,7 +12,7 @@ export const professionSearch: SearchTypeDefinition = {
       filters: [
         {
           id: "date",
-          type: "terms",
+          type: "dates",
           label: "Date",
         },
         {
