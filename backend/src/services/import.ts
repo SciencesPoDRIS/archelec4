@@ -148,9 +148,11 @@ export class Import {
     this.log.debug("Make import with settings", { settings, indexName, period });
 
     // Make calls to IA get collection ids
-    const collectionIds = await (settings.ids
-      ? Promise.resolve(settings.ids)
-      : this.ia.getCollectionIds(config.internet_archive_collection, period));
+    const collectionIds = (
+      await (settings.ids
+        ? Promise.resolve(settings.ids)
+        : this.ia.getCollectionIds(config.internet_archive_collection, period))
+    ).filter((id) => !id.endsWith("Pdfmasterocr"));
 
     // Create the ES index if needed
     await this.es.createIndex(indexName, config.elastic_index_configuration);
@@ -281,7 +283,7 @@ export class Import {
   /**
    * Method that cast an item return by metadata api to our business object.
    * @param item The object returned by the metadata API
-   * @returns The object that will be indexed by elastic
+   * @returns The object that will be indexed by elastic or null
    */
   private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralItem> {
     const result: any = {
