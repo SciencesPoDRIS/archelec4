@@ -4,10 +4,11 @@ import * as path from "path";
 import pLimit from "p-limit";
 import { InternetArchive } from "./internet-archive";
 import { BulkError, ElasticSearch } from "./elasticsearch";
-import { chunck, makeHttpCall, taskInSeries } from "../utils";
+import { chunck, computeAge, makeHttpCall, taskInSeries } from "../utils";
 import { getLogger } from "./logger";
 import { config } from "../config";
 import { GetMetadataResponse } from "./internet-archive";
+import { departments } from "../config/departments";
 
 /**
  * Error object for import report.
@@ -74,6 +75,7 @@ interface ArchiveElectoralCandidat {
   type: string;
   sexe: string;
   age: string;
+  "tranche-age": string;
   profession: string;
   "mandat-en-cours": string;
   "mandat-passe": string;
@@ -88,13 +90,14 @@ export interface ArchiveElectoralItem {
   id: string;
   candidats: Array<ArchiveElectoralCandidat>;
   date: Date;
-  subject: string;
+  subject: Array<string>;
   title: string;
   type: string;
   "contexte-election": string;
   "contexte-tour": string;
   cote: string;
   departement: string;
+  "departement-insee": string;
   "departement-nom": string;
   circonscription: string;
   // custom field
@@ -309,14 +312,24 @@ export class Import {
         if (value !== "NR" && value !== "") {
           if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
           else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
-          else result[newKey] = value;
+          else if (key === "subject") result[newKey] = value.split(";");
+          else if (key === "departement") {
+            result[newKey] = value;
+            result["departement-insee"] = departments[value];
+          } else result[newKey] = value;
         }
       }
     });
 
     result.candidats = [];
-    if (Object.keys(titulaire).length > 1) result.candidats.push(titulaire as ArchiveElectoralCandidat);
-    if (Object.keys(suppleant).length > 1) result.candidats.push(suppleant as ArchiveElectoralCandidat);
+    if (Object.keys(titulaire).length > 1) {
+      titulaire["tranche-age"] = computeAge(result["date"], result["age-titutlaire"]);
+      result.candidats.push(titulaire as ArchiveElectoralCandidat);
+    }
+    if (Object.keys(suppleant).length > 1) {
+      suppleant["tranche-age"] = computeAge(result["date"], result["age-suppleant"]);
+      result.candidats.push(suppleant as ArchiveElectoralCandidat);
+    }
 
     // PDF Files
     const pdf = item.files.find((f) => f.format === "Image Container PDF");

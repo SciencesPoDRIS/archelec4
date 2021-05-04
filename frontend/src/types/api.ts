@@ -35,6 +35,7 @@ export interface components {
       type: string;
       sexe: string;
       age: string;
+      "age-normalise": string;
       profession: string;
       "mandat-en-cours": string;
       "mandat-passe": string;
@@ -48,13 +49,14 @@ export interface components {
       id: string;
       candidats: components["schemas"]["ArchiveElectoralCandidat"][];
       date: string;
-      subject: string;
+      subject: string[];
       title: string;
       type: string;
       "contexte-election": string;
       "contexte-tour": string;
       cote: string;
       departement: string;
+      "departement-insee": string;
       "departement-nom": string;
       circonscription: string;
       images: {

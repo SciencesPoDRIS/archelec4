@@ -67,3 +67,14 @@ export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
   }
   return chunks;
 }
+
+/**
+ * Compute the age from a date and an input age that can be
+ *  - a two digit (the age)
+ *  - a four digit (the birth year)
+ *  - NR
+ *  - Some strings ...
+ */
+export function computeAge(dateElection: Date, age: string): string {
+  return age;
+}
