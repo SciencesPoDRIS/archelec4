@@ -53,6 +53,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.168",
     "@types/react-router-dom": "^5.1.7",
-    "@types/react-select": "^4.0.15"
+    "@types/react-select": "^4.0.15",
+    "openapi-typescript": "^3.2.3"
   }
 }

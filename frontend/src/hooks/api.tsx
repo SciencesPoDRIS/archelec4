@@ -57,3 +57,31 @@ export function useGet<R>(
 
   return { loading, error, data, fetch };
 }
+
+export function useLazyGet<R>(path: string): APIResult<R> & { fetch: (params?: { [key: string]: unknown }) => void } {
+  const [data, setData] = useState<R | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<AxiosError | null>(null);
+
+  async function fetch(params?: { [key: string]: unknown }): Promise<R> {
+    setData(null);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios({
+        method: "GET",
+        params,
+        url: `${config.api_path}${path}`,
+        responseType: "json",
+      });
+      setData(response.data as R);
+      return response.data;
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return { loading, error, data, fetch };
+}
