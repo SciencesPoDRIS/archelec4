@@ -98,7 +98,6 @@ export interface ArchiveElectoralItem {
   "departement-nom": string;
   circonscription: string;
   // custom field
-  ocr?: string;
   images: Array<{ url: string; thumb?: string }>;
   pdf: string;
 }
