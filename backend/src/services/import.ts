@@ -71,6 +71,7 @@ export interface ImportReport extends Report {
 interface ArchiveElectoralCandidat {
   nom: string;
   prenom: string;
+  type: string;
   sexe: string;
   age: string;
   profession: string;
@@ -101,6 +102,8 @@ export interface ArchiveElectoralItem {
   images: Array<{ url: string; thumb?: string }>;
   pdf: string;
 }
+
+type ArchiveElectoralImportItem = ArchiveElectoralItem & { ocr?: string };
 
 @Singleton
 export class Import {
@@ -289,13 +292,13 @@ export class Import {
    * @param item The object returned by the metadata API
    * @returns The object that will be indexed by elastic or null
    */
-  private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralItem> {
-    const result: any = {
+  private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralImportItem> {
+    const result: Partial<ArchiveElectoralImportItem> = {
       id: item.id,
     };
 
-    const titulaire: any = { type: "titulaire" };
-    const suppleant: any = { type: "suppleant" };
+    const titulaire: Partial<ArchiveElectoralCandidat> = { type: "titulaire" };
+    const suppleant: Partial<ArchiveElectoralCandidat> = { type: "suppleant" };
 
     // Take each metadata and remove the prefix
     Object.keys(item.metadata).forEach((key: string) => {
@@ -313,8 +316,8 @@ export class Import {
     });
 
     result.candidats = [];
-    if (Object.keys(titulaire).length > 1) result.candidats.push(titulaire);
-    if (Object.keys(suppleant).length > 1) result.candidats.push(suppleant);
+    if (Object.keys(titulaire).length > 1) result.candidats.push(titulaire as ArchiveElectoralCandidat);
+    if (Object.keys(suppleant).length > 1) result.candidats.push(suppleant as ArchiveElectoralCandidat);
 
     // PDF Files
     const pdf = item.files.find((f) => f.format === "Image Container PDF");
@@ -335,6 +338,6 @@ export class Import {
         };
       });
 
-    return result as ArchiveElectoralItem;
+    return result as ArchiveElectoralImportItem;
   }
 }

@@ -122,6 +122,12 @@ export const config: Configuration = {
           type: "keyword",
           store: true,
         },
+        ocr: {
+          type: "text",
+          store: false,
+          analyzer: "IndexAnalyzer",
+          search_analyzer: "SearchAnalyzer",
+        },
         _search: {
           type: "text",
           store: false,

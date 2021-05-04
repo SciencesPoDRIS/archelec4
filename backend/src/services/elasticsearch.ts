@@ -1,5 +1,6 @@
 import { Singleton } from "typescript-ioc";
 import { Client } from "@elastic/elasticsearch";
+import { Transform, Readable } from "stream";
 import { Logger, getLogger } from "./logger";
 import { config } from "../config";
 
@@ -10,15 +11,31 @@ export interface BulkError {
 }
 type BulkErrorReport = Array<BulkError>;
 
-export type SearchRequest = { body: any; index: string };
-export type SearchResponse = Array<any>;
+export type SearchRequest = { body: any; index: string; scroll?: string };
+export type SearchResponse<T> = {
+  _scroll_id?: string;
+  hits: {
+    total: {
+      value: number;
+      relation: string;
+    };
+    max_score: number;
+    hits: Array<{
+      _index: string;
+      _type: string;
+      _id: string;
+      _score: number;
+      _source: T;
+    }>;
+  };
+};
 
 @Singleton
 export class ElasticSearch {
   /**
    * Logger.
    */
-  private log = getLogger("ElasticSearch");
+  public log = getLogger("ElasticSearch");
   /**
    * Node Elastic client.
    */
@@ -32,11 +49,30 @@ export class ElasticSearch {
   }
 
   /**
-   * Proxy method to search on ES.
+   * Method to get an element in an index.
    */
-  async search<T>(request: SearchRequest): Promise<SearchResponse> {
-    const result = await this.client.search(request);
-    return result.body as SearchResponse;
+  async get<T>(index: string, id: string): Promise<T> {
+    const result = await this.client.get({ index, id });
+    return result.body._source as T;
+  }
+
+  /**
+   * Method to search on ES.
+   */
+  async search<T>(request: SearchRequest): Promise<SearchResponse<T>> {
+    const { body } = await this.client.search(request);
+    return body as SearchResponse<T>;
+  }
+
+  /**
+   * Search documents and send them as a stream
+   */
+  fullSearchAsStream<T>(
+    request: SearchRequest,
+    transform: (i: T) => string,
+    stream_opts: { batchSize: number } = { batchSize: 500 },
+  ): ElasticSearchReadable<T> {
+    return new ElasticSearchReadable(this, request, transform, stream_opts);
   }
 
   /**
@@ -175,5 +211,61 @@ export class ElasticSearch {
       });
       return erroredDocuments;
     }
+  }
+}
+
+class ElasticSearchReadable<T> extends Readable {
+  service: ElasticSearch;
+  request: SearchRequest;
+  transform: (e: T) => string;
+  options: { batchSize: number };
+  nbParsedDocument = 0;
+  scroll_id = "";
+
+  constructor(
+    service: ElasticSearch,
+    request: SearchRequest,
+    transform: (e: T) => string,
+    options: { batchSize: number },
+  ) {
+    super();
+    this.service = service;
+    this.request = request;
+    this.transform = transform;
+    this.options = options;
+  }
+  _read(size: number) {
+    this.service.log.debug(`Streaming from ${this.nbParsedDocument}`);
+
+    if (this.nbParsedDocument > 0) {
+      this.service.client
+        .scroll({ scrollId: this.scroll_id, scroll: "30s" } as any)
+        .then((r) => this._parseEsResponse(r.body as SearchResponse<T>))
+        .catch((e) => {
+          this.service.log.error(`Fail to compute chunk for stream`, e);
+          this.destroy(e);
+        });
+    } else {
+      const request = this.request;
+      request.body.from = 0;
+      request.body.size = this.options.batchSize;
+      request.scroll = "30s";
+      this.service
+        .search<T>(request)
+        .then((r) => this._parseEsResponse(r))
+        .catch((e) => {
+          this.service.log.error(`Fail to compute chunk for stream`, e);
+          this.destroy(e);
+        });
+    }
+  }
+
+  _parseEsResponse(result: SearchResponse<T>): void {
+    const items = result.hits.hits || [];
+    this.nbParsedDocument += items.length;
+    this.scroll_id = result._scroll_id;
+    // if result is empty, so we reach the end
+    if (items.length === 0) this.push(null);
+    else this.push(items.map((i) => this.transform(i._source) + "\n").join(""));
   }
 }

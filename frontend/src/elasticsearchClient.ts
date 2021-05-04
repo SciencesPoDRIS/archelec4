@@ -3,7 +3,7 @@ import { config } from "./config";
 import { ESSearchQueryContext, FilterHistogramType, FiltersState, FilterState, PlainObject } from "./types";
 
 function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
-  if (filter.type === "terms") return filter.value.map((v) => ({ terms: { [`${field}.keyword`]: [v] } }));
+  if (filter.type === "terms") return filter.value.map(v => ({ terms: { [`${field}.raw`]: [v] } }));
   if (filter.type === "dates")
     return {
       range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },
@@ -177,7 +177,7 @@ const NDJSON = (queries: Query[]): string => {
  * ******************
  */
 function getESIncludeRegexp(query: string): string {
-  return ".*" + [...query.toLowerCase()].map((char) => `[${char}${char.toUpperCase()}]`).join("") + ".*";
+  return ".*" + [...query.toLowerCase()].map(char => `[${char}${char.toUpperCase()}]`).join("") + ".*";
 }
 
 export async function getTerms(
@@ -192,7 +192,7 @@ export async function getTerms(
     aggs: {
       termsList: {
         terms: {
-          field: `${field}.keyword`,
+          field: `${field}.raw`,
           size: count || 15,
           order: { _key: "desc" },
           include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
@@ -201,15 +201,15 @@ export async function getTerms(
     },
   };
 
-  return await fetch(`${config.api_path}/elasticsearch/proxy/${context.index}`, {
+  return await fetch(`${config.api_path}/elasticsearch/proxy_search/${context.index}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
   })
-    .then((res) => res.json())
-    .then((data) =>
+    .then(res => res.json())
+    .then(data =>
       data.aggregations.termsList.buckets.map((bucket: { key: string; doc_count: number }) => ({
         term: bucket.key,
         count: bucket.doc_count,
@@ -237,15 +237,15 @@ export async function getHistograms(
     ),
   };
 
-  return await fetch(`${config.api_path}/elasticsearch/proxy/${context.index}`, {
+  return await fetch(`${config.api_path}/elasticsearch/proxy_search/${context.index}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
   })
-    .then((res) => res.json())
-    .then((data) =>
+    .then(res => res.json())
+    .then(data =>
       fields.reduce(
         (iter, field) => ({
           ...iter,
@@ -271,7 +271,7 @@ export function search(
   size: number,
   histogramField?: string,
 ): Promise<{ list: PlainObject[]; total: number }> {
-  return fetch(`${config.api_path}/elasticsearch/proxy/${context.index}`, {
+  return fetch(`${config.api_path}/elasticsearch/proxy_search/${context.index}`, {
     body: JSON.stringify(
       omitBy(
         {
@@ -299,8 +299,8 @@ export function search(
     },
     method: "POST",
   })
-    .then((r) => r.json())
-    .then((data) => ({
+    .then(r => r.json())
+    .then(data => ({
       list: data.hits.hits.map((d: any) => cleanFn({ ...d._source, books: [] })),
       total: data.hits.total.value,
       histogram: histogramField
