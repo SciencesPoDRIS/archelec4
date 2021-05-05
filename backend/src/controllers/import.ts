@@ -14,6 +14,19 @@ export class ImportController extends Controller {
   @Inject
   private proc: Import;
 
+  /**
+   * Execute the import.
+   *
+   * Errors don't block the import process. So the process should never fails,
+   * instead it returns the list of errors that the processus has encountered.
+   * If you have errors, you should have the list of IDS in the report, and you can retry to import those items
+   * by calling this method.
+   *
+   * NOTE: To trigger a full reindex, just delete the file <code>last_import_date_file_path</code> on the FS
+   *
+   * IMPORTANT: You can override the period & index name of the import, by specifying the paramater <code>options</code>
+   * on this method. It can be usefull to make an import per party (ex: by week slices).
+   */
   @Post()
   @Response("500", "Internal Error")
   public async import(@Body() options?: ImportOptions): Promise<ImportReport> {
