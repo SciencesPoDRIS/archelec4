@@ -75,6 +75,51 @@ export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
  *  - NR
  *  - Some strings ...
  */
-export function computeAge(dateElection: Date, age: string): string {
-  return age;
+export function computeAge(dateElection: Date, age: string): { age: string; range: string } | null {
+  let result = { age: "imprécis", range: "indéterminé" };
+  if (age === "NR") {
+    result = null;
+  } else if (/[0-9]{2}/.test(age)) {
+    result.age = age;
+    result.range = computeAgeRange(Number.parseInt(age));
+  } else if (/[0-9]{4}/.test(age)) {
+    const computedAge = dateElection.getFullYear() - Number.parseInt(age);
+    result.age = `${computedAge}`;
+    result.range = computeAgeRange(computedAge);
+  } else if (age === "192X") {
+    // nothing to do (default value)
+  } else if (age === "23 et demi") {
+    result.range = "20-29";
+  } else if (age === "29 ou 28") {
+    result.range = "20-29";
+  } else if (age === "30 ou 29") {
+    result.range = "30-39";
+  } else if (age === "33 ou 30") {
+    result.range = "30-39";
+  } else if (age === "37 ou 36") {
+    result.range = "30-39";
+  } else if (age === "38 ou 37") {
+    result.range = "30-39";
+  } else if (age === "40 ou 39") {
+    result.range = "40-49";
+  } else if (age === "41 ou 40") {
+    result.range = "40-49";
+  } else if (age === "60 au moins") {
+    result.range = "60-69";
+  } else if (age === "doyen") {
+    // nothing to do (default value)
+  } else if (age === "moins de 30") {
+    result.range = "20-29";
+  } else if (age === "moins de 40") {
+    result.range = "30-39";
+  } else if (age === "quarantaine") {
+    result.range = "40-49";
+  }
+
+  return result;
+}
+
+export function computeAgeRange(age: number): string {
+  const decade = Math.trunc(age / 10) * 10;
+  return `${decade}-${decade + 9}`;
 }

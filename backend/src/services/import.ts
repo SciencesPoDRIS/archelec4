@@ -74,8 +74,9 @@ interface ArchiveElectoralCandidat {
   prenom: string;
   type: string;
   sexe: string;
-  age: string;
-  "tranche-age": string;
+  age?: string;
+  "age-calcule"?: string;
+  "age-tranche"?: string;
   profession: string;
   "mandat-en-cours": string;
   "mandat-passe": string;
@@ -323,11 +324,20 @@ export class Import {
 
     result.candidats = [];
     if (Object.keys(titulaire).length > 1) {
-      titulaire["tranche-age"] = computeAge(result["date"], result["age-titutlaire"]);
+      const ageObject = computeAge(result["date"], titulaire["age"]);
+      console.log(ageObject);
+      if (ageObject) {
+        titulaire["age-calcule"] = ageObject.age;
+        titulaire["age-tranche"] = ageObject.range;
+      }
       result.candidats.push(titulaire as ArchiveElectoralCandidat);
     }
     if (Object.keys(suppleant).length > 1) {
-      suppleant["tranche-age"] = computeAge(result["date"], result["age-suppleant"]);
+      const ageObject = computeAge(result["date"], result["age"]);
+      if (ageObject) {
+        suppleant["age-calcule"] = ageObject.age;
+        suppleant["age-tranche"] = ageObject.range;
+      }
       result.candidats.push(suppleant as ArchiveElectoralCandidat);
     }
 
