@@ -20,7 +20,12 @@ export class ProfessionDeFoiController extends Controller {
   @Inject
   private es: ElasticSearch;
 
+  /**
+   * Returns the corresponding "ArchiveElectoralItem" object.
+   * It's just a do a GET /archiveselectoralesducevipof/id on ElasticSearch and returns the underlying source object.
+   */
   @Get("/{id}")
+  @Response("200", "Success")
   @Response("404", "Not found")
   @Response("500", "Internal Error")
   public async proxy(@Path("id") id: string): Promise<ArchiveElectoralItem> {
@@ -33,16 +38,25 @@ export class ProfessionDeFoiController extends Controller {
     }
   }
 
+  /**
+   * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
+   * The body will be passed to elasticsearch.
+   */
   @Post("search")
+  @Response("200", "Success")
   @Response("500", "Internal Error")
-  public async searchAsStream(@Body() params: SearchRequest["body"]): Promise<SearchResponse<ArchiveElectoralItem>> {
+  public async search(@Body() params: SearchRequest["body"]): Promise<SearchResponse<ArchiveElectoralItem>> {
     return await this.es.search<ArchiveElectoralItem>({
       index: config.elasticsearch_alias_name,
       body: params,
     });
   }
 
+  /**
+   * Given an ES search query, this method will create a CSV file in a stream way of the entire result.
+   */
   @Post("search/csv")
+  @Response("200", "Success")
   @Response("500", "Internal Error")
   public async searchAsCsv(@Body() params: SearchRequest["body"], @Query() filename: string): Promise<Readable> {
     this.setStatus(200);
