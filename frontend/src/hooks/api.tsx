@@ -75,9 +75,10 @@ export function useLazyGet<R>(path: string): APIResult<R> & { fetch: (params?: {
         responseType: "json",
       });
       setData(response.data as R);
-      return response.data;
+      return response.data as R;
     } catch (e) {
       setError(e);
+      throw e;
     } finally {
       setLoading(false);
     }
