@@ -51,6 +51,10 @@ $> npm run generate:types
 $> npm run start
 ----
 
+== API Documentation
+
+The API is self-documented thanks to TSOA and the OpenAPI specification and is accessible at http://localhost/api/docs
+
 == How to import data
 
 To import data, you just need to run this command :
@@ -63,5 +67,8 @@ curl -X 'POST' 'http://localhost/api/v1/import'
 The first time you run this command, it will do a full import.
 The other times, it will do a delta-import, based on the last import date that is stored in the the file `.last_import.txt`
 
-IMPORTANT: if you want to reset the index, just delete the file `.last_import.txt` and run the command `curl -X 'POST' 'http://localhost/api/v1/import'`.
+NOTE: The API always returns a HTTP code 2XX, even if the import has errors. In this case the HTTP code is a **206**.
+To know the detail of the process, this endpoint returns a report. Please check the documentation at http://localhost/api/docs/#/Import/Import
+
+IMPORTANT: If you want to reset the index, just delete the file `.last_import.txt` and run the command `curl -X 'POST' 'http://localhost/api/v1/import'`.
 The behind ES index will be replaced by the new one at the end of the process, so it doesn't impact the application.

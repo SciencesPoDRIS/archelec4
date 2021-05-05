@@ -29,8 +29,13 @@ export class ImportController extends Controller {
    */
   @Post()
   @Response("500", "Internal Error")
+  @Response("206", "Partial import")
+  @Response("200", "OK")
   public async import(@Body() options?: ImportOptions): Promise<ImportReport> {
     const result = await this.proc.execution(options);
+    if (result.errors && result.errors.length > 0) {
+      this.setStatus(206);
+    }
     return result;
   }
 }
