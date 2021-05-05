@@ -69,7 +69,7 @@ export interface ImportReport extends Report {
   settings: { from: Date; to: Date; index: string };
 }
 
-interface ArchiveElectoralCandidat {
+export interface ArchiveElectoralCandidat {
   nom: string;
   prenom: string;
   type: string;
@@ -262,7 +262,7 @@ export class Import {
           return limit(async () => {
             try {
               const item = await this.ia.getMetadata(id);
-              return this.postProcessItem(item);
+              return await this.postProcessItem(item);
             } catch (e) {
               errors.push({ name: `Failed to build object ${id}`, items: [id], message: e.message });
               return null;
@@ -313,8 +313,9 @@ export class Import {
         if (value !== "NR" && value !== "") {
           if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
           else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
-          else if (key === "subject") result[newKey] = value.split(";");
-          else if (key === "departement") {
+          else if (key === "subject") {
+            result[newKey] = typeof value === "string" ? value.split(";") : value;
+          } else if (key === "departement") {
             result[newKey] = value;
             result["departement-insee"] = departments[value];
           } else result[newKey] = value;
@@ -325,7 +326,6 @@ export class Import {
     result.candidats = [];
     if (Object.keys(titulaire).length > 1) {
       const ageObject = computeAge(result["date"], titulaire["age"]);
-      console.log(ageObject);
       if (ageObject) {
         titulaire["age-calcule"] = ageObject.age;
         titulaire["age-tranche"] = ageObject.range;

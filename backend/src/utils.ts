@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getLogger } from "./services/logger";
+import { ArchiveElectoralItem, ArchiveElectoralCandidat } from "./services/import";
 import { config } from "./config";
 
 /**
@@ -69,11 +70,25 @@ export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
 }
 
 /**
+ * Givern a age number, it return the range decade.
+ * Ex : 29 -> 20-29
+ * @param age The age on which we compute the range
+ * @returns The computed range
+ */
+function computeAgeRange(age: number): string {
+  const decade = Math.trunc(age / 10) * 10;
+  return `${decade}-${decade + 9}`;
+}
+
+/**
  * Compute the age from a date and an input age that can be
  *  - a two digit (the age)
  *  - a four digit (the birth year)
  *  - NR
  *  - Some strings ...
+ * @param dateElection The date of the election so we can compute the age if we have a year
+ * @param age The age input
+ * @returns An object with the computed age and range
  */
 export function computeAge(dateElection: Date, age: string): { age: string; range: string } | null {
   let result = { age: "imprécis", range: "indéterminé" };
@@ -119,7 +134,93 @@ export function computeAge(dateElection: Date, age: string): { age: string; rang
   return result;
 }
 
-export function computeAgeRange(age: number): string {
-  const decade = Math.trunc(age / 10) * 10;
-  return `${decade}-${decade + 9}`;
+export function archiveElectoralCandidatToArrayFields(candidat: Partial<ArchiveElectoralCandidat>): Array<string> {
+  return [
+    candidat.nom,
+    candidat.prenom,
+    candidat.sexe,
+    candidat.age,
+    candidat["age-calcule"],
+    candidat["age-tranche"],
+    candidat.profession,
+    candidat["mandat-en-cours"],
+    candidat["mandat-passe"],
+    candidat.associations,
+    candidat["autres-statuts"],
+    candidat.soutien,
+    candidat.liste,
+    candidat.decorations,
+  ];
 }
+
+export function archiveElectoralItemToCsvLine(item: ArchiveElectoralItem): string {
+  const electionValue = [
+    item.id,
+    item.date
+      .toLocaleString("fr-FR", { year: "numeric", month: "numeric", day: "numeric" })
+      .replace("T00:00:00.000Z", ""),
+    item.subject.join(";"),
+    item.title,
+    item["contexte-election"],
+    item["contexte-tour"],
+    item.cote,
+    item.departement,
+    item["departement-nom"],
+    item["departement-insee"],
+    item.circonscription,
+    item.images.map((i) => i.url).join(";"),
+    item.pdf,
+  ];
+
+  const titulaire: Partial<ArchiveElectoralItem> = item.candidats.find((c) => c.type === "titulaire") || {};
+  const suppleant: Partial<ArchiveElectoralItem> = item.candidats.find((c) => c.type === "suppleant") || {};
+
+  const columnsValue = electionValue
+    .concat(archiveElectoralCandidatToArrayFields(titulaire))
+    .concat(archiveElectoralCandidatToArrayFields(suppleant));
+  return columnsValue.map((e) => (e ? `"${e.replace(/"/, '""')}"` : "")).join(",");
+}
+
+export const ArchiveElectoralItemCsvHeader = [
+  "id",
+  "date",
+  "subject",
+  "title",
+  "contexte-election",
+  "contexte-tour",
+  "cote",
+  "departement",
+  "departement-nom",
+  "departement-insee",
+  "circonscription",
+  "images",
+  "pdf",
+  "titulaire-nom",
+  "titulaire-prenom",
+  "titulaire-sexe",
+  "titulaire-age",
+  "titulaire-age-calcule",
+  "titulaire-age-tranche",
+  "titulaire-profession",
+  "titulaire-mandat-en-cours",
+  "titulaire-mandat-passe",
+  "titulaire-associations",
+  "titulaire-autres-statuts",
+  "titulaire-soutien",
+  "titulaire-liste",
+  "titulaire-decorations",
+  "suppleant-nom",
+  "suppleant-prenom",
+  "suppleant-sexe",
+  "suppleant-age",
+  "suppleant-age-calcule",
+  "suppleant-age-tranche",
+  "suppleant-profession",
+  "suppleant-mandat-en-cours",
+  "suppleant-mandat-passe",
+  "suppleant-associations",
+  "suppleant-autres-statuts",
+  "suppleant-soutien",
+  "suppleant-liste",
+  "suppleant-decorations",
+];

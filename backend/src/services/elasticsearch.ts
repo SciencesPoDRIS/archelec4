@@ -70,8 +70,9 @@ export class ElasticSearch {
   fullSearchAsStream<T>(
     request: SearchRequest,
     transform: (i: T) => string,
-    stream_opts: { batchSize: number } = { batchSize: 500 },
+    stream_opts: { batchSize: number; prefix?: string } = { batchSize: 500 },
   ): ElasticSearchReadable<T> {
+    console.log(stream_opts);
     return new ElasticSearchReadable(this, request, transform, stream_opts);
   }
 
@@ -218,7 +219,7 @@ class ElasticSearchReadable<T> extends Readable {
   service: ElasticSearch;
   request: SearchRequest;
   transform: (e: T) => string;
-  options: { batchSize: number };
+  options: { batchSize: number; prefix?: string };
   nbParsedDocument = 0;
   scroll_id = "";
 
@@ -226,13 +227,14 @@ class ElasticSearchReadable<T> extends Readable {
     service: ElasticSearch,
     request: SearchRequest,
     transform: (e: T) => string,
-    options: { batchSize: number },
+    options: { batchSize: number; prefix?: string },
   ) {
     super();
     this.service = service;
     this.request = request;
     this.transform = transform;
     this.options = options;
+    console.log(options);
   }
   _read(size: number) {
     this.service.log.debug(`Streaming from ${this.nbParsedDocument}`);
@@ -252,7 +254,7 @@ class ElasticSearchReadable<T> extends Readable {
       request.scroll = "30s";
       this.service
         .search<T>(request)
-        .then((r) => this._parseEsResponse(r))
+        .then((r) => this._parseEsResponse(r, this.options.prefix))
         .catch((e) => {
           this.service.log.error(`Fail to compute chunk for stream`, e);
           this.destroy(e);
@@ -260,12 +262,12 @@ class ElasticSearchReadable<T> extends Readable {
     }
   }
 
-  _parseEsResponse(result: SearchResponse<T>): void {
+  _parseEsResponse(result: SearchResponse<T>, prefix?: string): void {
     const items = result.hits.hits || [];
     this.nbParsedDocument += items.length;
     this.scroll_id = result._scroll_id;
     // if result is empty, so we reach the end
     if (items.length === 0) this.push(null);
-    else this.push(items.map((i) => this.transform(i._source) + "\n").join(""));
+    else this.push((prefix ? prefix + "\n" : "") + items.map((i) => this.transform(i._source) + "\n").join(""));
   }
 }

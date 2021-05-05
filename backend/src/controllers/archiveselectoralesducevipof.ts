@@ -7,6 +7,7 @@ import { getLogger, Logger } from "../services/logger";
 import { ElasticSearch, SearchRequest, SearchResponse } from "../services/elasticsearch";
 import { ArchiveElectoralItem } from "../services/import";
 import { config } from "../config";
+import { archiveElectoralItemToCsvLine, ArchiveElectoralItemCsvHeader } from "../utils";
 
 @Tags("Profession de foi")
 @Route("archiveselectoralesducevipof")
@@ -52,8 +53,8 @@ export class ProfessionDeFoiController extends Controller {
         index: config.elasticsearch_alias_name,
         body: params,
       },
-      //TODO: implement transfo function
-      (e: ArchiveElectoralItem) => `${e.id},${e.subject},${e.title}`,
+      archiveElectoralItemToCsvLine,
+      { batchSize: 500, prefix: ArchiveElectoralItemCsvHeader.join(",") },
     );
   }
 }
