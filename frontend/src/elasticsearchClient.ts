@@ -3,7 +3,8 @@ import { config } from "./config";
 import { ESSearchQueryContext, FilterHistogramType, FiltersState, FilterState, PlainObject } from "./types";
 
 function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
-  if (filter.type === "terms") return filter.value.map(v => ({ terms: { [`${field}.raw`]: [v] } }));
+  if (filter.type === "terms")
+    return { bool: { should: filter.value.map((v) => ({ terms: { [`${field}.raw`]: [v] } })) } };
   if (filter.type === "dates")
     return {
       range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },
@@ -177,7 +178,7 @@ const NDJSON = (queries: Query[]): string => {
  * ******************
  */
 function getESIncludeRegexp(query: string): string {
-  return ".*" + [...query.toLowerCase()].map(char => `[${char}${char.toUpperCase()}]`).join("") + ".*";
+  return ".*" + [...query.toLowerCase()].map((char) => `[${char}${char.toUpperCase()}]`).join("") + ".*";
 }
 
 export async function getTerms(
@@ -208,8 +209,8 @@ export async function getTerms(
     },
     body: JSON.stringify(body),
   })
-    .then(res => res.json())
-    .then(data =>
+    .then((res) => res.json())
+    .then((data) =>
       data.aggregations.termsList.buckets.map((bucket: { key: string; doc_count: number }) => ({
         term: bucket.key,
         count: bucket.doc_count,
@@ -244,8 +245,8 @@ export async function getHistograms(
     },
     body: JSON.stringify(body),
   })
-    .then(res => res.json())
-    .then(data =>
+    .then((res) => res.json())
+    .then((data) =>
       fields.reduce(
         (iter, field) => ({
           ...iter,
@@ -299,8 +300,8 @@ export function search(
     },
     method: "POST",
   })
-    .then(r => r.json())
-    .then(data => ({
+    .then((r) => r.json())
+    .then((data) => ({
       list: data.hits.hits.map((d: any) => cleanFn({ ...d._source, books: [] })),
       total: data.hits.total.value,
       histogram: histogramField
