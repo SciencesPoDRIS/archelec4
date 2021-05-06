@@ -91,6 +91,7 @@ export interface ArchiveElectoralProfessionDeFoi {
   id: string;
   candidats: Array<ArchiveElectoralCandidat>;
   date: Date;
+  annee: string;
   subject: Array<string>;
   title: string;
   type: string;
@@ -318,6 +319,10 @@ export class Import {
           } else if (key === "departement") {
             result[newKey] = value;
             result["departement-insee"] = departments[value];
+          } else if (key === "date") {
+            result[newKey] = value;
+            // compute year of election for search facet
+            result["annee"] = new Date(value).getFullYear() + "";
           } else result[newKey] = value;
         }
       }
