@@ -84,7 +84,7 @@ export const FiltersPanel: FC<{
 
       {props.searchTypeDefinition.filtersGroups.map((group, gi) => (
         <>
-          <div key={gi}>{group.label}</div>
+          <h4 key={gi}>{group.label}</h4>
           {group.filters.map((filter, i) => {
             if (filter.type === "terms")
               return (
