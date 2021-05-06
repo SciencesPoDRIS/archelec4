@@ -4,25 +4,56 @@
  */
 
 export interface paths {
-  "/archiveselectoralesducevipof/{id}": {
+  "/professiondefoi/{id}": {
+    /**
+     * Returns the corresponding "ArchiveElectoralProfessionDeFoi" object.
+     * It's just a do a GET /archiveselectoralesducevipof/id on ElasticSearch and returns the underlying source object.
+     */
     get: operations["Proxy"];
   };
-  "/archiveselectoralesducevipof/search": {
-    post: operations["SearchAsStream"];
+  "/professiondefoi/search": {
+    /**
+     * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
+     * The body will be passed to elasticsearch.
+     */
+    post: operations["Search"];
   };
-  "/archiveselectoralesducevipof/search/csv": {
+  "/professiondefoi/search/csv": {
+    /** Given an ES search query, this method will create a CSV file in a stream way of the entire result. */
     post: operations["SearchAsCsv"];
   };
   "/elasticsearch/proxy_search": {
+    /**
+     * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof' per default, but you can specify it.
+     * The body will be passed to elasticsearch.
+     */
     post: operations["Proxy"];
   };
   "/import": {
+    /**
+     * Execute the import.
+     *
+     * Errors don't block the import process. So the process should never fails,
+     * instead it returns the list of errors that the processus has encountered.
+     * If you have errors, you should have the list of IDS in the report, and you can retry to import those items
+     * by calling this method.
+     *
+     * NOTE: To trigger a full reindex, just delete the file <code>last_import_date_file_path</code> on the FS
+     *
+     * IMPORTANT: You can override the period & index name of the import, by specifying the paramater <code>options</code>
+     * on this method. It can be usefull to make an import per party (ex: by week slices).
+     */
     post: operations["Import"];
   };
   "/misc/ping": {
+    /** Just a ping endpoint that respond "pong" to see if the service is alive. */
     get: operations["Ping"];
   };
   "/misc/echo": {
+    /**
+     * This echo endpoint respond to you what you give it.
+     * It can be usefull to see if the service is alive.
+     */
     post: operations["Echo"];
   };
 }
@@ -34,8 +65,9 @@ export interface components {
       prenom: string;
       type: string;
       sexe: string;
-      age: string;
-      "age-normalise": string;
+      age?: string;
+      "age-calcule"?: string;
+      "age-tranche"?: string;
       profession: string;
       "mandat-en-cours": string;
       "mandat-passe": string;
@@ -45,7 +77,7 @@ export interface components {
       liste: string;
       decorations: string;
     } & { [key: string]: any };
-    ArchiveElectoralItem: {
+    ArchiveElectoralProfessionDeFoi: {
       id: string;
       candidats: components["schemas"]["ArchiveElectoralCandidat"][];
       date: string;
@@ -65,10 +97,10 @@ export interface components {
       }[];
       pdf: string;
     } & { [key: string]: any };
-    SearchResponse_ArchiveElectoralItem_: {
+    SearchResponse_ArchiveElectoralProfessionDeFoi_: {
       hits: {
         hits: {
-          _source: components["schemas"]["ArchiveElectoralItem"];
+          _source: components["schemas"]["ArchiveElectoralProfessionDeFoi"];
           _score: number;
           _id: string;
           _type: string;
@@ -139,8 +171,16 @@ export interface components {
 }
 
 export interface operations {
+  /**
+   * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof' per default, but you can specify it.
+   * The body will be passed to elasticsearch.
+   */
   Proxy: {
-    parameters: {};
+    parameters: {
+      query: {
+        index?: string;
+      };
+    };
     responses: {
       /** Ok */
       200: {
@@ -157,13 +197,17 @@ export interface operations {
       };
     };
   };
-  SearchAsStream: {
+  /**
+   * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
+   * The body will be passed to elasticsearch.
+   */
+  Search: {
     parameters: {};
     responses: {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["SearchResponse_ArchiveElectoralItem_"];
+          "application/json": components["schemas"]["SearchResponse_ArchiveElectoralProfessionDeFoi_"];
         };
       };
       /** Internal Error */
@@ -175,6 +219,7 @@ export interface operations {
       };
     };
   };
+  /** Given an ES search query, this method will create a CSV file in a stream way of the entire result. */
   SearchAsCsv: {
     parameters: {
       query: {
@@ -197,6 +242,19 @@ export interface operations {
       };
     };
   };
+  /**
+   * Execute the import.
+   *
+   * Errors don't block the import process. So the process should never fails,
+   * instead it returns the list of errors that the processus has encountered.
+   * If you have errors, you should have the list of IDS in the report, and you can retry to import those items
+   * by calling this method.
+   *
+   * NOTE: To trigger a full reindex, just delete the file <code>last_import_date_file_path</code> on the FS
+   *
+   * IMPORTANT: You can override the period & index name of the import, by specifying the paramater <code>options</code>
+   * on this method. It can be usefull to make an import per party (ex: by week slices).
+   */
   Import: {
     parameters: {};
     responses: {
@@ -206,6 +264,8 @@ export interface operations {
           "application/json": components["schemas"]["ImportReport"];
         };
       };
+      /** Partial import */
+      206: unknown;
       /** Internal Error */
       500: unknown;
     };
@@ -215,6 +275,7 @@ export interface operations {
       };
     };
   };
+  /** Just a ping endpoint that respond "pong" to see if the service is alive. */
   Ping: {
     parameters: {};
     responses: {
@@ -226,6 +287,10 @@ export interface operations {
       };
     };
   };
+  /**
+   * This echo endpoint respond to you what you give it.
+   * It can be usefull to see if the service is alive.
+   */
   Echo: {
     parameters: {};
     responses: {

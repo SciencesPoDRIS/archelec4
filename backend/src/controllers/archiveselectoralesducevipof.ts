@@ -5,12 +5,12 @@ import * as express from "express";
 import { Transform, Readable } from "stream";
 import { getLogger, Logger } from "../services/logger";
 import { ElasticSearch, SearchRequest, SearchResponse } from "../services/elasticsearch";
-import { ArchiveElectoralItem } from "../services/import";
+import { ArchiveElectoralProfessionDeFoi } from "../services/import";
 import { config } from "../config";
-import { archiveElectoralItemToCsvLine, ArchiveElectoralItemCsvHeader } from "../utils";
+import { archiveElectoralProfessionDeFoiToCsvLine, ArchiveElectoralProfessionDeFoiCsvHeader } from "../utils";
 
 @Tags("Profession de foi")
-@Route("archiveselectoralesducevipof")
+@Route("professiondefoi")
 export class ProfessionDeFoiController extends Controller {
   /**
    * Logger
@@ -21,16 +21,16 @@ export class ProfessionDeFoiController extends Controller {
   private es: ElasticSearch;
 
   /**
-   * Returns the corresponding "ArchiveElectoralItem" object.
+   * Returns the corresponding "ArchiveElectoralProfessionDeFoi" object.
    * It's just a do a GET /archiveselectoralesducevipof/id on ElasticSearch and returns the underlying source object.
    */
   @Get("/{id}")
   @Response("200", "Success")
   @Response("404", "Not found")
   @Response("500", "Internal Error")
-  public async proxy(@Path("id") id: string): Promise<ArchiveElectoralItem> {
+  public async proxy(@Path("id") id: string): Promise<ArchiveElectoralProfessionDeFoi> {
     try {
-      const item = await this.es.get<ArchiveElectoralItem>(config.elasticsearch_alias_name, id);
+      const item = await this.es.get<ArchiveElectoralProfessionDeFoi>(config.elasticsearch_alias_name, id);
       return item;
     } catch (e) {
       if (e.meta.statusCode === 404) throw Boom.notFound(`Document ${id} not found`);
@@ -45,8 +45,8 @@ export class ProfessionDeFoiController extends Controller {
   @Post("search")
   @Response("200", "Success")
   @Response("500", "Internal Error")
-  public async search(@Body() params: SearchRequest["body"]): Promise<SearchResponse<ArchiveElectoralItem>> {
-    return await this.es.search<ArchiveElectoralItem>({
+  public async search(@Body() params: SearchRequest["body"]): Promise<SearchResponse<ArchiveElectoralProfessionDeFoi>> {
+    return await this.es.search<ArchiveElectoralProfessionDeFoi>({
       index: config.elasticsearch_alias_name,
       body: params,
     });
@@ -62,13 +62,13 @@ export class ProfessionDeFoiController extends Controller {
     this.setStatus(200);
     this.setHeader("Content-Type", "application/csv");
     this.setHeader("Content-Disposition", `attachment; filename=${filename}`);
-    return this.es.fullSearchAsStream<ArchiveElectoralItem>(
+    return this.es.fullSearchAsStream<ArchiveElectoralProfessionDeFoi>(
       {
         index: config.elasticsearch_alias_name,
         body: params,
       },
-      archiveElectoralItemToCsvLine,
-      { batchSize: 500, prefix: ArchiveElectoralItemCsvHeader.join(",") },
+      archiveElectoralProfessionDeFoiToCsvLine,
+      { batchSize: 500, prefix: ArchiveElectoralProfessionDeFoiCsvHeader.join(",") },
     );
   }
 }

@@ -87,7 +87,7 @@ export interface ArchiveElectoralCandidat {
   decorations: string;
 }
 
-export interface ArchiveElectoralItem {
+export interface ArchiveElectoralProfessionDeFoi {
   id: string;
   candidats: Array<ArchiveElectoralCandidat>;
   date: Date;
@@ -106,7 +106,7 @@ export interface ArchiveElectoralItem {
   pdf: string;
 }
 
-type ArchiveElectoralImportItem = ArchiveElectoralItem & { ocr?: string };
+type ArchiveElectoralImportProfessionDeFoi = ArchiveElectoralProfessionDeFoi & { ocr?: string };
 
 @Singleton
 export class Import {
@@ -295,8 +295,8 @@ export class Import {
    * @param item The object returned by the metadata API
    * @returns The object that will be indexed by elastic or null
    */
-  private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralImportItem> {
-    const result: Partial<ArchiveElectoralImportItem> = {
+  private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralImportProfessionDeFoi> {
+    const result: Partial<ArchiveElectoralImportProfessionDeFoi> = {
       id: item.id,
     };
 
@@ -360,6 +360,6 @@ export class Import {
         };
       });
 
-    return result as ArchiveElectoralImportItem;
+    return result as ArchiveElectoralImportProfessionDeFoi;
   }
 }

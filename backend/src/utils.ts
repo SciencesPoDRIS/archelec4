@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getLogger } from "./services/logger";
-import { ArchiveElectoralItem, ArchiveElectoralCandidat } from "./services/import";
+import { ArchiveElectoralProfessionDeFoi, ArchiveElectoralCandidat } from "./services/import";
 import { config } from "./config";
 
 /**
@@ -153,7 +153,7 @@ export function archiveElectoralCandidatToArrayFields(candidat: Partial<ArchiveE
   ];
 }
 
-export function archiveElectoralItemToCsvLine(item: ArchiveElectoralItem): string {
+export function archiveElectoralProfessionDeFoiToCsvLine(item: ArchiveElectoralProfessionDeFoi): string {
   const electionValue = [
     item.id,
     item.date
@@ -172,8 +172,8 @@ export function archiveElectoralItemToCsvLine(item: ArchiveElectoralItem): strin
     item.pdf,
   ];
 
-  const titulaire: Partial<ArchiveElectoralItem> = item.candidats.find((c) => c.type === "titulaire") || {};
-  const suppleant: Partial<ArchiveElectoralItem> = item.candidats.find((c) => c.type === "suppleant") || {};
+  const titulaire: Partial<ArchiveElectoralProfessionDeFoi> = item.candidats.find((c) => c.type === "titulaire") || {};
+  const suppleant: Partial<ArchiveElectoralProfessionDeFoi> = item.candidats.find((c) => c.type === "suppleant") || {};
 
   const columnsValue = electionValue
     .concat(archiveElectoralCandidatToArrayFields(titulaire))
@@ -181,7 +181,7 @@ export function archiveElectoralItemToCsvLine(item: ArchiveElectoralItem): strin
   return columnsValue.map((e) => (e ? `"${e.replace(/"/, '""')}"` : "")).join(",");
 }
 
-export const ArchiveElectoralItemCsvHeader = [
+export const ArchiveElectoralProfessionDeFoiCsvHeader = [
   "id",
   "date",
   "subject",

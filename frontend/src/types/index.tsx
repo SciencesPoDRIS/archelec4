@@ -1,4 +1,4 @@
 import { components } from "./api";
 
-export type ArchiveElectoralCandidat = components["schemas"]["ArchiveElectoralCandidat"];
-export type ArchiveElectoralItem = components["schemas"]["ArchiveElectoralItem"];
+export type Candidat = components["schemas"]["ArchiveElectoralCandidat"];
+export type ProfessionDeFoi = components["schemas"]["ArchiveElectoralProfessionDeFoi"];
