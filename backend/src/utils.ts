@@ -94,10 +94,10 @@ export function computeAge(dateElection: Date, age: string): { age: string; rang
   let result = { age: "imprécis", range: "indéterminé" };
   if (age === "NR") {
     result = null;
-  } else if (/[0-9]{2}/.test(age)) {
+  } else if (/^[0-9]{2}$/.test(age)) {
     result.age = age;
     result.range = computeAgeRange(Number.parseInt(age));
-  } else if (/[0-9]{4}/.test(age)) {
+  } else if (/^[0-9]{4}$/.test(age)) {
     const computedAge = dateElection.getFullYear() - Number.parseInt(age);
     result.age = `${computedAge}`;
     result.range = computeAgeRange(computedAge);
