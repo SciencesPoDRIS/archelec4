@@ -78,12 +78,13 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
           <div className="metadata-group">
             <div>
               {professionDeFoi["contexte-tour"] === "1" ? "Premier" : "Second"} tour, le{" "}
-              {new Intl.DateTimeFormat("fr-FR", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }).format(new Date(professionDeFoi.date))}
+              {professionDeFoi.date &&
+                new Intl.DateTimeFormat("fr-FR", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }).format(new Date(professionDeFoi.date))}
             </div>
           </div>
         </div>
