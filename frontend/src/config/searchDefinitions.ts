@@ -39,15 +39,15 @@ export const professionSearch: SearchTypeDefinition = {
       label: "Circonscription",
       filters: [
         {
-          id: "circonscription",
+          id: "departement-insee",
           type: "terms",
-          label: "Numéro",
+          label: "Département",
           isMulti: true,
         },
         {
-          id: "departement",
+          id: "circonscription",
           type: "terms",
-          label: "Département",
+          label: "Numéro",
           isMulti: true,
         },
       ],
