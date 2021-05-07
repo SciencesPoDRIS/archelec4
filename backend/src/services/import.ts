@@ -77,13 +77,13 @@ export interface ArchiveElectoralCandidat {
   age?: string;
   "age-calcule"?: string;
   "age-tranche"?: string;
-  profession: string;
-  "mandat-en-cours": string;
-  "mandat-passe": string;
-  associations: string;
-  "autres-statuts": string;
-  soutien: string;
-  liste: string;
+  profession: string[];
+  "mandat-en-cours": string[];
+  "mandat-passe": string[];
+  associations: string[];
+  "autres-statuts": string[];
+  soutien: string[];
+  liste: string[];
   decorations: string;
 }
 
@@ -296,6 +296,17 @@ export class Import {
    * @param item The object returned by the metadata API
    * @returns The object that will be indexed by elastic or null
    */
+
+  private processMultivaluedFieldInCandidate(candidate: ArchiveElectoralCandidat): ArchiveElectoralCandidat {
+    const modifiedCandidate = { ...candidate };
+    ["profession", "mandat-en-cours", "mandat-passe", "associations", "autres-statuts", "soutien", "liste"].forEach(
+      (f) => {
+        if (modifiedCandidate[f]) modifiedCandidate[f] = modifiedCandidate[f].split(" / ");
+      },
+    );
+    return modifiedCandidate;
+  }
+
   private async postProcessItem(item: GetMetadataResponse): Promise<ArchiveElectoralImportProfessionDeFoi> {
     const result: Partial<ArchiveElectoralImportProfessionDeFoi> = {
       id: item.id,
@@ -335,7 +346,8 @@ export class Import {
         titulaire["age-calcule"] = ageObject.age;
         titulaire["age-tranche"] = ageObject.range;
       }
-      result.candidats.push(titulaire as ArchiveElectoralCandidat);
+
+      result.candidats.push(this.processMultivaluedFieldInCandidate(titulaire as ArchiveElectoralCandidat));
     }
     if (Object.keys(suppleant).length > 1) {
       const ageObject = computeAge(result["date"], result["age"]);
@@ -343,7 +355,7 @@ export class Import {
         suppleant["age-calcule"] = ageObject.age;
         suppleant["age-tranche"] = ageObject.range;
       }
-      result.candidats.push(suppleant as ArchiveElectoralCandidat);
+      result.candidats.push(this.processMultivaluedFieldInCandidate(suppleant as ArchiveElectoralCandidat));
     }
 
     // PDF Files
