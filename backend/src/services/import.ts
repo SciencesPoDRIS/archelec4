@@ -350,7 +350,7 @@ export class Import {
       result.candidats.push(this.processMultivaluedFieldInCandidate(titulaire as ArchiveElectoralCandidat));
     }
     if (Object.keys(suppleant).length > 1) {
-      const ageObject = computeAge(result["date"], result["age"]);
+      const ageObject = computeAge(result["date"], suppleant["age"]);
       if (ageObject) {
         suppleant["age-calcule"] = ageObject.age;
         suppleant["age-tranche"] = ageObject.range;
