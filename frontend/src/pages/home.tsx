@@ -13,6 +13,7 @@ import {
   FiltersState,
   FilterType,
   PlainObject,
+  ProfessionDeFoi,
   SearchType,
   SearchTypeDefinition,
   SortType,
@@ -80,7 +81,7 @@ export const Home: React.FC<{}> = () => {
   const [isNotOnTop, setIsNotOnTop] = useState<boolean>(false);
   const [filtersState, setFiltersState] = useState<FiltersState>(getFiltersState(queryParams, filtersDict));
 
-  const [results, setResults] = useState<{ list: PlainObject[]; total: number } | null>(null);
+  const [results, setResults] = useState<{ list: ProfessionDeFoi[]; total: number } | null>(null);
 
   useEffect(() => {
     const currentFilterState = getFiltersState(new URLSearchParams(location.search), filtersDict);
@@ -88,20 +89,19 @@ export const Home: React.FC<{}> = () => {
     if (shouldSearch) {
       setLoading(true);
       setResults(null);
-      search(
+      search<ProfessionDeFoi>(
         {
           index: professionSearch.index,
-          query: registeredQuery,
           filters: currentFilterState,
           sort: getSortDefinition(professionSearch, sort),
         },
-        identity,
+        (result: PlainObject): ProfessionDeFoi => result as ProfessionDeFoi,
         0,
         SIZE,
         undefined,
       ).then((newResults) => {
         setLoading(false);
-        setResults(omit(newResults, "histogram"));
+        setResults(newResults);
       });
     }
   }, [location.search]); // eslint-disable-line
@@ -119,14 +119,13 @@ export const Home: React.FC<{}> = () => {
 
     if (isNearBottom && !loading && results && results.list.length < results.total) {
       setLoading(true);
-      search(
+      search<ProfessionDeFoi>(
         {
           index: professionSearch.index,
-          query: registeredQuery,
           filters: filtersState,
           sort: getSortDefinition(professionSearch, sort),
         },
-        identity,
+        (result: PlainObject): ProfessionDeFoi => result as ProfessionDeFoi,
         results.list.length,
         SIZE,
       ).then((newResults) => {

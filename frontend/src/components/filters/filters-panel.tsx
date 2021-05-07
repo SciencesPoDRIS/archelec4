@@ -49,7 +49,6 @@ export const FiltersPanel: FC<{
   searchTypeDefinition: SearchTypeDefinition;
 }> = (props) => {
   const context: ESSearchQueryContext = {
-    query: props.query,
     filters: props.state,
     index: props.searchTypeDefinition.index,
     sort: null,
@@ -63,8 +62,8 @@ export const FiltersPanel: FC<{
   const root = useRef<HTMLDivElement>(null);
   function checkScroll() {
     const top = root.current?.offsetTop;
-    const newIsSticky = typeof top === "number" && top !== 0;
 
+    const newIsSticky = typeof top === "number" && top !== 0;
     if (newIsSticky !== isSticky) setIsSticky(newIsSticky);
   }
   useEffect(() => {

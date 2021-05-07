@@ -58,7 +58,6 @@ export type FiltersState = { [key: string]: FilterState };
 
 export type ESSearchQueryContext = {
   index: string;
-  query: string;
   filters: FiltersState;
   sort: SortType | null;
 };

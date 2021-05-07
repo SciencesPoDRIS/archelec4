@@ -11,12 +11,7 @@ function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
     };
 }
 
-// TODO : remove query
-function getESQueryBody(
-  query: string,
-  filters: FiltersState,
-  suggestFilter?: { field: string; value: string | undefined },
-) {
+function getESQueryBody(filters: FiltersState, suggestFilter?: { field: string; value: string | undefined }) {
   const contextFilters = suggestFilter ? omit(filters, [suggestFilter.field]) : filters;
   const queries = [
     ...(!isEmpty(contextFilters)
@@ -189,7 +184,7 @@ export async function getTerms(
 ): Promise<{ term: string; count: number }[]> {
   const body: PlainObject = {
     size: 0,
-    query: getESQueryBody(context.query, context.filters, { field, value }),
+    query: getESQueryBody(context.filters, { field, value }),
     aggs: {
       termsList: {
         terms: {
@@ -227,7 +222,7 @@ export async function getHistograms(
 
   const body: PlainObject = {
     size: 0,
-    query: getESQueryBody(context.query, context.filters),
+    query: getESQueryBody(context.filters),
     aggs: fields.reduce(
       (iter, field) => ({
         ...iter,
@@ -265,32 +260,22 @@ export async function getHistograms(
     );
 }
 
-export function search(
+export function search<ResultType>(
   context: ESSearchQueryContext,
-  cleanFn: (rawData: any) => any,
+  cleanFn: (rawData: PlainObject) => ResultType,
   from: number,
   size: number,
   histogramField?: string,
-): Promise<{ list: PlainObject[]; total: number }> {
-  return fetch(`${config.api_path}/elasticsearch/proxy_search/${context.index}`, {
+): Promise<{ list: ResultType[]; total: number }> {
+  return fetch(`${config.api_path}/professionDeFoi/search`, {
     body: JSON.stringify(
       omitBy(
         {
           size,
           from,
-          query: getESQueryBody(context.query, context.filters),
+          query: getESQueryBody(context.filters),
           sort: context.sort ? context.sort.expression : undefined,
-          aggs: histogramField
-            ? {
-                histogram: {
-                  date_histogram: {
-                    field: histogramField,
-                    calendar_interval: "year",
-                    format: "yyyy",
-                  },
-                },
-              }
-            : undefined,
+          track_total_hits: true,
         },
         isUndefined,
       ),
@@ -302,7 +287,7 @@ export function search(
   })
     .then((r) => r.json())
     .then((data) => ({
-      list: data.hits.hits.map((d: any) => cleanFn({ ...d._source, books: [] })),
+      list: data.hits.hits.map((d: any): ResultType => cleanFn({ ...d._source })),
       total: data.hits.total.value,
       histogram: histogramField
         ? data.aggregations.histogram.buckets.map((bucket: PlainObject) => ({
