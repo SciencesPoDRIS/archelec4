@@ -144,9 +144,9 @@ export const Home: React.FC<{}> = () => {
   });
 
   return (
-    <div className="container-fluid">
+    <div className="home container-fluid">
       <div className="row">
-        <div className="col-4">
+        <div className="col-3">
           <FiltersPanel
             state={filtersState}
             setState={(newFiltersState) => {
@@ -156,8 +156,16 @@ export const Home: React.FC<{}> = () => {
             searchTypeDefinition={professionSearch}
           />
         </div>
-        <div className="col-8">
+        <div className="col-9">
           <ProfessionList professions={results} />
+        </div>
+        <div
+          className={cx("scroll-to-top", isNotOnTop && "show")}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <i className="fas fa-arrow-up" />
+          <br />
+          Retour au début de la liste
         </div>
       </div>
     </div>

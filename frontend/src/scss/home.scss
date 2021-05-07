@@ -1,0 +1,68 @@
+.home {
+  // .side-bar {
+  //   flex-shrink: 0;
+  //   padding: 0;
+  //   padding-right: 2em;
+  //   width: 30%;
+
+  //   position: sticky;
+  //   top: 0;
+  //   align-self: flex-start;
+
+  //   &.sticky {
+  //     overflow-y: auto;
+  //     max-height: 100vh;
+  //   }
+
+  //   & > div {
+  //     margin-bottom: 2em;
+  //   }
+  // }
+  .result-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .result-list-header {
+    position: sticky;
+  }
+  .result-card {
+    width: 350px;
+    margin: 0.5em;
+    a {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    .infobox {
+      margin-left: 0.3em;
+      display: flex;
+      flex-direction: column;
+      > div {
+        margin-bottom: 0.7em;
+      }
+      .candidat {
+        font-size: 1.2em;
+      }
+    }
+  }
+  .scroll-to-top {
+    position: fixed;
+    text-align: center;
+    width: 100px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1em;
+    cursor: pointer;
+
+    &:hover {
+      color: $primary;
+    }
+
+    opacity: 0;
+    right: 2em;
+    bottom: 1.6em;
+    transition: all 0.4s;
+    &.show {
+      opacity: 1;
+      bottom: 2em;
+    }
+  }
+}
