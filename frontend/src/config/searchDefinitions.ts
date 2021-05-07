@@ -7,7 +7,7 @@ export const professionSearch: SearchTypeDefinition = {
   label: "Profession de foi",
   sorts: [
     {
-      label: "Pertinence",
+      label: "Chronologique",
       expression: [
         "date",
         { "departement.raw": "asc" },
@@ -25,7 +25,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "annee",
           type: "terms",
-          label: "Date",
+          label: "Année",
           isMulti: true,
         },
         {
