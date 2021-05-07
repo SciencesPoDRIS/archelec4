@@ -16,25 +16,23 @@ export const Profession: React.FC<Props> = (props: Props) => {
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-4">
+        <div className="col-3">
           {loading && <Loader />}
           {professionDeFoi && <MetadataPanel professionDeFoi={professionDeFoi as ProfessionDeFoi} />}
         </div>
-        <div className="col-8">
+        <div className="col-9" style={{ height: "100vh" }}>
           {loading && <Loader />}
-          <h1>{professionDeFoi && professionDeFoi.title}</h1>
-          <div>
-            {id && (
-              <iframe
-                title={"profession.title"}
-                src={`https://archive.org/embed/${id}`}
-                width="560"
-                height="384"
-                frameBorder="0"
-                allowFullScreen
-              ></iframe>
-            )}
-          </div>
+
+          {id && (
+            <iframe
+              title={"profession.title"}
+              src={`https://archive.org/embed/${id}`}
+              width="100%"
+              frameBorder="0"
+              allowFullScreen
+              style={{ height: "90vh" }}
+            ></iframe>
+          )}
         </div>
       </div>
     </div>
