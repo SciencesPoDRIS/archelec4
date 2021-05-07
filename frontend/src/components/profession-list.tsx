@@ -1,10 +1,10 @@
 import React from "react";
-import { PlainObject } from "../types";
+import { ProfessionDeFoi } from "../types";
 import { Loader } from "./loader";
 import { ProfessionCard } from "./profession-card";
 
 interface Props {
-  professions: { list: PlainObject[]; total: number } | null;
+  professions: { list: ProfessionDeFoi[]; total: number } | null;
 }
 
 export const ProfessionList: React.FC<Props> = (props: Props) => {
@@ -12,12 +12,14 @@ export const ProfessionList: React.FC<Props> = (props: Props) => {
   return (
     <>
       {professions !== null ? (
-        <div>
-          <div>{professions.total} professions</div>
-          {professions.list.slice(0, 20).map((p) => (
-            <ProfessionCard key={p.id} profession={p} />
-          ))}
-        </div>
+        <>
+          <div className="result-list-header">{professions.total} professions</div>
+          <div className="result-list">
+            {professions.list.map((p) => (
+              <ProfessionCard key={p.id} profession={p} />
+            ))}
+          </div>
+        </>
       ) : (
         <Loader />
       )}

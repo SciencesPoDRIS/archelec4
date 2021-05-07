@@ -5,7 +5,19 @@ export const professionSearch: SearchTypeDefinition = {
   queryType: "profession",
   index: "",
   label: "Profession de foi",
-  sorts: [{ label: "Pertinence", expression: { _score: "desc" }, default: true }],
+  sorts: [
+    {
+      label: "Pertinence",
+      expression: [
+        "date",
+        { "departement.raw": "asc" },
+        { "circonscription.raw": "asc" },
+        "candidats.nom.raw",
+        "contexte-tour.raw",
+      ],
+      default: true,
+    },
+  ],
   filtersGroups: [
     {
       label: "Élection",
