@@ -13,7 +13,11 @@ export const ProfessionList: React.FC<Props> = (props: Props) => {
     <>
       {professions !== null ? (
         <>
-          <div className="result-list-header">{professions.total} professions</div>
+          <div className="result-list-header">
+            <h3>
+              {professions.total} professions <i className="fas fa-file-csv"></i>
+            </h3>
+          </div>
           <div className="result-list">
             {professions.list.map((p) => (
               <ProfessionCard key={p.id} profession={p} />
