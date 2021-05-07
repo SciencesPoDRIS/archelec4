@@ -68,19 +68,20 @@ export interface components {
       age?: string;
       "age-calcule"?: string;
       "age-tranche"?: string;
-      profession: string;
-      "mandat-en-cours": string;
-      "mandat-passe": string;
-      associations: string;
-      "autres-statuts": string;
-      soutien: string;
-      liste: string;
+      profession: string[];
+      "mandat-en-cours": string[];
+      "mandat-passe": string[];
+      associations: string[];
+      "autres-statuts": string[];
+      soutien: string[];
+      liste: string[];
       decorations: string;
     } & { [key: string]: any };
     ArchiveElectoralProfessionDeFoi: {
       id: string;
       candidats: components["schemas"]["ArchiveElectoralCandidat"][];
       date: string;
+      annee: string;
       subject: string[];
       title: string;
       type: string;
