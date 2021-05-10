@@ -15,6 +15,7 @@ echo " ~ Install dependencies"
 echo " ~"
 echo
 npm install
+npm rebuild node-sass
 
 if [ "$MODE" = "dev" ]; then
   echo
