@@ -20,7 +20,7 @@ export const Profession: React.FC<Props> = (props: Props) => {
           {loading && <Loader />}
           {professionDeFoi && <MetadataPanel professionDeFoi={professionDeFoi as ProfessionDeFoi} />}
         </div>
-        <div className="col-9" style={{ height: "100vh" }}>
+        <div className="col-9">
           {loading && <Loader />}
 
           {id && (
@@ -30,7 +30,7 @@ export const Profession: React.FC<Props> = (props: Props) => {
               width="100%"
               frameBorder="0"
               allowFullScreen
-              style={{ height: "90vh" }}
+              className="full-height"
             ></iframe>
           )}
         </div>

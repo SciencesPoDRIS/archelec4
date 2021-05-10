@@ -1,29 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiltersPanel } from "../components/filters/filters-panel";
 import { ProfessionList } from "../components/profession-list";
 import { professionSearch } from "../config/searchDefinitions";
 
-import { identity, omit } from "lodash";
 import { useLocation } from "react-router";
 import { useHistory } from "react-router-dom";
 import cx from "classnames";
 
-import {
-  DatesFilterState,
-  FiltersState,
-  FilterType,
-  PlainObject,
-  ProfessionDeFoi,
-  SearchType,
-  SearchTypeDefinition,
-  SortType,
-} from "../types";
+import { DatesFilterState, FiltersState, FilterType, PlainObject, ProfessionDeFoi } from "../types";
 import { search } from "../elasticsearchClient";
 import { useStateUrl } from "../hooks/state-url";
 
 import { getSearchURL, SEARCH_QUERY_KEY, SEARCH_TYPE_KEY, SEPARATOR, SIZE } from "../components/filters/utils";
-import { StickyWrapper } from "../components/sticky-wrapper";
-import { SearchSort } from "../components/search-sort";
+
+// TODO: enable SORT ? import { SearchSort } from "../components/search-sort";
 import { filtersDictFromGroups, getSortDefinition } from "../components/filters/utils";
 
 function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<FilterType>): FiltersState {
@@ -66,6 +56,7 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
 export const Home: React.FC<{}> = () => {
   const location = useLocation();
   const history = useHistory();
+  const list = useRef<HTMLDivElement>(null);
   const queryParams = new URLSearchParams(location.search);
 
   // State from URL, determines whether or not data should be loaded:
@@ -73,6 +64,7 @@ export const Home: React.FC<{}> = () => {
   // const registeredSearchType = queryParams.get(SEARCH_TYPE_KEY) as SearchType;
   // const fullRegisteredSearchType = SEARCH_TYPES_DICT[registeredSearchType || ""];
   const shouldSearch = !!registeredQuery && !!professionSearch;
+  // TODO : enable changiing sort ?
   const [sort, setSort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
 
   // Top page form state (unplugged to search until form is submitted):
@@ -113,55 +105,64 @@ export const Home: React.FC<{}> = () => {
    */
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function checkScroll() {
-    const isNearBottom = window.scrollY + window.innerHeight > document.body.offsetHeight - 500;
-
-    setIsNotOnTop(window.scrollY > window.innerHeight);
-
-    if (isNearBottom && !loading && results && results.list.length < results.total) {
-      setLoading(true);
-      search<ProfessionDeFoi>(
-        {
-          index: professionSearch.index,
-          filters: filtersState,
-          sort: getSortDefinition(professionSearch, sort),
-        },
-        (result: PlainObject): ProfessionDeFoi => result as ProfessionDeFoi,
-        results.list.length,
-        SIZE,
-      ).then((newResults) => {
-        setLoading(false);
-        setResults({ total: newResults.total, list: results.list.concat(newResults.list) });
-      });
+    const main = document.getElementById("main");
+    if (main) {
+      const isNearBottom = main.scrollTop >= main.scrollHeight - main.offsetHeight - 500;
+      setIsNotOnTop(main.scrollTop > main.offsetHeight);
+      if (isNearBottom && !loading && results && results.list.length < results.total) {
+        setLoading(true);
+        search<ProfessionDeFoi>(
+          {
+            index: professionSearch.index,
+            filters: filtersState,
+            sort: getSortDefinition(professionSearch, sort),
+          },
+          (result: PlainObject): ProfessionDeFoi => result as ProfessionDeFoi,
+          results.list.length,
+          SIZE,
+        ).then((newResults) => {
+          setLoading(false);
+          setResults({ total: newResults.total, list: results.list.concat(newResults.list) });
+        });
+      }
     }
   }
 
   // Check scroll on window scroll:
   useEffect(() => {
-    window.addEventListener("scroll", checkScroll);
+    const main = document.getElementById("main");
+    if (main) {
+      main.addEventListener("scroll", checkScroll);
+    }
     return function cleanup() {
-      window.removeEventListener("scroll", checkScroll);
+      if (main) main.removeEventListener("scroll", checkScroll);
     };
   });
 
   return (
-    <div className="home container-fluid">
+    <div className="home container-fluid" ref={list}>
       <div className="row">
         <div className="col-3">
-          <FiltersPanel
-            state={filtersState}
-            setState={(newFiltersState) => {
-              history.push(getSearchURL(registeredQuery, newFiltersState));
-            }}
-            query={registeredQuery}
-            searchTypeDefinition={professionSearch}
-          />
+          <div className="side-bar">
+            <FiltersPanel
+              state={filtersState}
+              setState={(newFiltersState) => {
+                history.push(getSearchURL(registeredQuery, newFiltersState));
+              }}
+              query={registeredQuery}
+              searchTypeDefinition={professionSearch}
+            />
+          </div>
         </div>
         <div className="col-9">
           <ProfessionList professions={results} />
         </div>
         <div
           className={cx("scroll-to-top", isNotOnTop && "show")}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          onClick={() => {
+            const main = document.getElementById("main");
+            if (main) main.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         >
           <i className="fas fa-arrow-up" />
           <br />

@@ -1,8 +1,25 @@
 footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  // position: absolute;
+  // bottom: 0;
+  width: 100vw;
   height: 40px;
   line-height: 40px;
   background-color: #f5f5f5;
+}
+header .navbar {
+  height: 60px;
+}
+#app-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+main {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.full-height {
+  // TODO: 100px should be a calculate from header + footer variables ?
+  // TODO: remove - 6 px when debugged profession iframe height
+  height: calc(100vh - 100px - 6px);
 }
