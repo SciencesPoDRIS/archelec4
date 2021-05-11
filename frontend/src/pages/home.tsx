@@ -7,7 +7,7 @@ import { useLocation } from "react-router";
 import { useHistory } from "react-router-dom";
 import cx from "classnames";
 
-import { DatesFilterState, FiltersState, FilterType, PlainObject, ProfessionDeFoi } from "../types";
+import { DatesFilterState, FiltersState, FilterType, PageProps, PlainObject, ProfessionDeFoi } from "../types";
 import { search } from "../elasticsearchClient";
 import { useStateUrl } from "../hooks/state-url";
 
@@ -53,7 +53,8 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
   return state;
 }
 
-export const Home: React.FC<{}> = () => {
+export const Home: React.FC<PageProps> = (props: PageProps) => {
+  const { isNearBottom, isNotOnTop, scrollTo } = props;
   const location = useLocation();
   const history = useHistory();
   const list = useRef<HTMLDivElement>(null);
@@ -70,11 +71,12 @@ export const Home: React.FC<{}> = () => {
   // Top page form state (unplugged to search until form is submitted):
   const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isNotOnTop, setIsNotOnTop] = useState<boolean>(false);
+
   const [filtersState, setFiltersState] = useState<FiltersState>(getFiltersState(queryParams, filtersDict));
 
   const [results, setResults] = useState<{ list: ProfessionDeFoi[]; total: number } | null>(null);
 
+  //TODO: refacto the two useEffects into one ?
   useEffect(() => {
     const currentFilterState = getFiltersState(new URLSearchParams(location.search), filtersDict);
     setFiltersState(currentFilterState);
@@ -104,40 +106,24 @@ export const Home: React.FC<{}> = () => {
    * fetch, it will load the next N results.
    */
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  function checkScroll() {
-    const main = document.getElementById("main");
-    if (main) {
-      const isNearBottom = main.scrollTop >= main.scrollHeight - main.offsetHeight - 500;
-      setIsNotOnTop(main.scrollTop > main.offsetHeight);
-      if (isNearBottom && !loading && results && results.list.length < results.total) {
-        setLoading(true);
-        search<ProfessionDeFoi>(
-          {
-            index: professionSearch.index,
-            filters: filtersState,
-            sort: getSortDefinition(professionSearch, sort),
-          },
-          (result: PlainObject): ProfessionDeFoi => result as ProfessionDeFoi,
-          results.list.length,
-          SIZE,
-        ).then((newResults) => {
-          setLoading(false);
-          setResults({ total: newResults.total, list: results.list.concat(newResults.list) });
-        });
-      }
-    }
-  }
-
-  // Check scroll on window scroll:
   useEffect(() => {
-    const main = document.getElementById("main");
-    if (main) {
-      main.addEventListener("scroll", checkScroll);
+    if (isNearBottom && !loading && results && results.list.length < results.total) {
+      setLoading(true);
+      search<ProfessionDeFoi>(
+        {
+          index: professionSearch.index,
+          filters: filtersState,
+          sort: getSortDefinition(professionSearch, sort),
+        },
+        (result: PlainObject): ProfessionDeFoi => result as ProfessionDeFoi,
+        results.list.length,
+        SIZE,
+      ).then((newResults) => {
+        setLoading(false);
+        setResults({ total: newResults.total, list: results.list.concat(newResults.list) });
+      });
     }
-    return function cleanup() {
-      if (main) main.removeEventListener("scroll", checkScroll);
-    };
-  });
+  }, [isNearBottom, loading, results]);
 
   return (
     <div className="home container-fluid" ref={list}>
@@ -160,8 +146,7 @@ export const Home: React.FC<{}> = () => {
         <div
           className={cx("scroll-to-top", isNotOnTop && "show")}
           onClick={() => {
-            const main = document.getElementById("main");
-            if (main) main.scrollTo({ top: 0, behavior: "smooth" });
+            if (scrollTo) scrollTo({ top: 0, behavior: "smooth" });
           }}
         >
           <i className="fas fa-arrow-up" />

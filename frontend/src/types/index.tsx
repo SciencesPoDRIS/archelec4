@@ -81,3 +81,5 @@ export type DatesFilterType = {
 export type FilterType = TermsFilterType | DatesFilterType;
 
 export type FilterHistogramType = { values: { label: string; count: number }[]; total: number; maxCount?: number };
+
+export type PageProps = { isNearBottom?: boolean; isNotOnTop?: boolean; scrollTo?: (props: PlainObject) => void };
