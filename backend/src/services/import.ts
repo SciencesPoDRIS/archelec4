@@ -297,8 +297,18 @@ export class Import {
    * @returns The object that will be indexed by elastic or null
    */
 
-  private processMultivaluedFieldInCandidate(candidate: ArchiveElectoralCandidat): ArchiveElectoralCandidat {
+  private processFieldsInCandidate(candidate: ArchiveElectoralCandidat, electionDate: Date): ArchiveElectoralCandidat {
     const modifiedCandidate = { ...candidate };
+    const ageObject = computeAge(electionDate, candidate["age"]);
+    if (ageObject) {
+      modifiedCandidate["age-calcule"] = ageObject.age;
+      modifiedCandidate["age-tranche"] = ageObject.range;
+    }
+    if (candidate["sexe"]) {
+      modifiedCandidate["sexe"] =
+        candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : "Indéterminé";
+    }
+    //multivalued fields
     ["profession", "mandat-en-cours", "mandat-passe", "associations", "autres-statuts", "soutien", "liste"].forEach(
       (f) => {
         if (modifiedCandidate[f]) modifiedCandidate[f] = modifiedCandidate[f].split(" / ");
@@ -341,21 +351,10 @@ export class Import {
 
     result.candidats = [];
     if (Object.keys(titulaire).length > 1) {
-      const ageObject = computeAge(result["date"], titulaire["age"]);
-      if (ageObject) {
-        titulaire["age-calcule"] = ageObject.age;
-        titulaire["age-tranche"] = ageObject.range;
-      }
-
-      result.candidats.push(this.processMultivaluedFieldInCandidate(titulaire as ArchiveElectoralCandidat));
+      result.candidats.push(this.processFieldsInCandidate(titulaire as ArchiveElectoralCandidat, result["date"]));
     }
     if (Object.keys(suppleant).length > 1) {
-      const ageObject = computeAge(result["date"], suppleant["age"]);
-      if (ageObject) {
-        suppleant["age-calcule"] = ageObject.age;
-        suppleant["age-tranche"] = ageObject.range;
-      }
-      result.candidats.push(this.processMultivaluedFieldInCandidate(suppleant as ArchiveElectoralCandidat));
+      result.candidats.push(this.processFieldsInCandidate(suppleant as ArchiveElectoralCandidat, result["date"]));
     }
 
     // PDF Files
