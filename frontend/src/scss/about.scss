@@ -1,0 +1,14 @@
+.about {
+  display: flex;
+  justify-content: center;
+  background-image: url("../assets/about_background.jpg");
+  background-size: cover;
+  > div {
+    padding: 3em;
+    border-radius: 5px;
+    color: white;
+    background-color: $primary;
+    margin: auto;
+    max-width: 50%;
+  }
+}

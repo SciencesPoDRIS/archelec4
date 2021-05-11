@@ -1,3 +1,4 @@
+import { About } from "../pages/about";
 import { Home } from "../pages/home";
 import { Profession } from "../pages/profession";
 
@@ -17,11 +18,15 @@ export const routes: RouteDefinition[] = [
     routes: [
       {
         path: "/",
-        component: Home,
+        component: About,
       },
       {
         path: "/profession/:id",
         component: Profession,
+      },
+      {
+        path: "/explorer",
+        component: Home,
       },
     ],
   },

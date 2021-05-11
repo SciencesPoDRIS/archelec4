@@ -8,6 +8,16 @@ footer {
 }
 header .navbar {
   height: 60px;
+  border-bottom: 3px solid $primary;
+  .navbar-brand {
+    //text-transform: uppercase;
+    color: $primary;
+    font-size: 2em;
+    font-weight: 500;
+  }
+  .navbar-brand:hover {
+    color: $secondary;
+  }
 }
 #app-wrapper {
   display: flex;
