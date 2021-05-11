@@ -31,7 +31,7 @@ export const SEPARATOR = "|";
 export const SIZE = 50;
 
 export function getSearchURL(query: string, filters?: FiltersState): string {
-  if (!query) return "/";
+  if (!query) return "/explorer";
 
   const filterPairs: string[][] = toPairs(filters || {}).flatMap(([k, v]: [string, FilterState]) => {
     if (v.type === "terms") {
@@ -47,7 +47,7 @@ export function getSearchURL(query: string, filters?: FiltersState): string {
   });
 
   return (
-    "/?" +
+    "/explorer?" +
     [[SEARCH_QUERY_KEY, query], ...filterPairs]
       .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(Array.isArray(v) ? v.join(SEPARATOR) : v)}`)
       .join("&")

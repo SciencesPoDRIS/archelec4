@@ -1,0 +1,82 @@
+.home {
+  .side-bar {
+    flex-shrink: 0;
+    padding: 0;
+    padding-right: 2em;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    overflow-y: auto;
+    border-right: 2px solid $secondary;
+  }
+  .filters {
+    margin-bottom: 2em;
+    .filters-group {
+      padding-bottom: 0.5em;
+      margin-bottom: 0.5em;
+      border-left: 4px solid transparent;
+      .filters-group-label {
+        font-size: 1.75em;
+        padding-left: 5px;
+      }
+
+      .filter-label {
+        font-size: 1.1em;
+      }
+      .filter-block {
+        padding-left: 0.5em;
+        margin-bottom: 0.3em;
+      }
+    }
+    .filters-group:hover {
+      border-left: 4px solid $secondary;
+    }
+  }
+
+  .result-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+  }
+
+  .result-card {
+    width: 350px;
+    margin: 0.5em;
+    a {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    .infobox {
+      margin-left: 0.3em;
+      display: flex;
+      flex-direction: column;
+      > div {
+        margin-bottom: 0.7em;
+      }
+      .candidat {
+        font-size: 1.2em;
+      }
+    }
+  }
+  .scroll-to-top {
+    position: fixed;
+    text-align: center;
+    width: 100px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1em;
+    cursor: pointer;
+
+    &:hover {
+      color: $primary;
+    }
+
+    opacity: 0;
+    right: 2em;
+    bottom: 1.6em;
+    transition: all 0.4s;
+    &.show {
+      opacity: 1;
+      bottom: 2em;
+    }
+  }
+}

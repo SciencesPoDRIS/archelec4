@@ -1,83 +1,24 @@
-.home {
-  .side-bar {
-    flex-shrink: 0;
-    padding: 0;
-    padding-right: 2em;
-    position: sticky;
-    top: 0;
-    align-self: flex-start;
-    max-height: calc(100vh - 100px);
-    overflow-y: auto;
-
-    & > div {
-      margin-bottom: 2em;
+.about {
+  display: flex;
+  justify-content: center;
+  background-image: url("../assets/about_background.jpg");
+  background-size: cover;
+  > div {
+    padding: 3em;
+    border-radius: 5px;
+    color: white;
+    background-color: $primary;
+    margin: auto;
+    max-width: 50%;
+    p {
+      font-size: 1.5em;
     }
-  }
-  .filters-group {
-    margin-bottom: 1em;
-    .filters-group-label {
-      font-size: 1.75em;
-      padding-left: 5px;
-    }
-    .filters-group-label:hover {
-      box-shadow: inset 0px -5px 5px -5px $secondary;
-    }
-    .filter-label {
-      font-size: 1.1em;
-    }
-    .filter-block {
-      margin-bottom: 0.3em;
-    }
-  }
-  .result-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-  }
-  .result-list-header {
-    position: sticky;
-    background-color: white;
-    padding: 0.5em;
-    top: 0;
-  }
-  .result-card {
-    width: 350px;
-    margin: 0.5em;
-    a {
-      display: flex;
-      flex-wrap: nowrap;
-    }
-    .infobox {
-      margin-left: 0.3em;
-      display: flex;
-      flex-direction: column;
-      > div {
-        margin-bottom: 0.7em;
-      }
-      .candidat {
-        font-size: 1.2em;
-      }
-    }
-  }
-  .scroll-to-top {
-    position: fixed;
-    text-align: center;
-    width: 100px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 1em;
-    cursor: pointer;
-
-    &:hover {
+    .btn {
+      background-color: white;
       color: $primary;
-    }
-
-    opacity: 0;
-    right: 2em;
-    bottom: 1.6em;
-    transition: all 0.4s;
-    &.show {
-      opacity: 1;
-      bottom: 2em;
+      border-color: $secondary;
+      font-weight: 600;
+      margin-right: 0.5em;
     }
   }
 }

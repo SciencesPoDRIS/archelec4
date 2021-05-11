@@ -13,10 +13,11 @@ export const ProfessionList: React.FC<Props> = (props: Props) => {
     <>
       {professions !== null ? (
         <>
-          <div className="result-list-header">
-            <h3>
-              {professions.total} professions <i className="fas fa-file-csv"></i>
-            </h3>
+          <div className="panel-header">
+            Explorer <span className="highlight">{professions.total}</span> professions de foi{" "}
+            <button type="button" className="btn btn-link">
+              <i className="fas fa-file-csv"></i>
+            </button>
           </div>
           <div className="result-list">
             {professions.list.map((p) => (
