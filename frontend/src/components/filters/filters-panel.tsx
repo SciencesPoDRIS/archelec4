@@ -1,18 +1,15 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { omit, isEmpty, flatten } from "lodash";
-import cx from "classnames";
+import React, { FC } from "react";
+import { omit, isEmpty } from "lodash";
 
 import { OptionType } from "../custom-select";
 import {
   DatesFilterState,
   ESSearchQueryContext,
-  FilterHistogramType,
   FiltersState,
-  PlainObject,
   SearchTypeDefinition,
   TermsFilterState,
 } from "../../types";
-import { getHistograms, getTerms } from "../../elasticsearchClient";
+import { getTerms } from "../../elasticsearchClient";
 
 import { DatesFilter } from "./dates-filter";
 import { TermsFilter } from "./term-filter";
@@ -53,37 +50,16 @@ export const FiltersPanel: FC<{
     index: props.searchTypeDefinition.index,
     sort: null,
   };
-  const contextFingerprint = JSON.stringify(context);
-
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSticky, setIsSticky] = useState<boolean>(false);
-
-  // Listen to scroll to detect when block becomes sticked:
-  const root = useRef<HTMLDivElement>(null);
-  function checkScroll() {
-    const top = root.current?.offsetTop;
-
-    const newIsSticky = typeof top === "number" && top !== 0;
-    if (newIsSticky !== isSticky) setIsSticky(newIsSticky);
-  }
-  useEffect(() => {
-    window.addEventListener("scroll", checkScroll);
-    return function cleanup() {
-      window.removeEventListener("scroll", checkScroll);
-    };
-  });
 
   return (
-    <div className={cx("filters", isSticky && "sticky")} ref={root}>
-      <h4>
-        <span className="highlight">
-          <i className="fas fa-filter mr1" /> Filtres
-        </span>
-      </h4>
-
+    <div className="filters">
       {props.searchTypeDefinition.filtersGroups.map((group, gi) => (
-        <>
-          <h4 key={gi}>{group.label}</h4>
+        <details
+          className="filters-group"
+          key={gi}
+          open={group.openByDefault || group.filters.some((f) => props.state[f.id])}
+        >
+          <summary className="filters-group-label">{group.label}</summary>
           {group.filters.map((filter, i) => {
             if (filter.type === "terms")
               return (
@@ -120,7 +96,7 @@ export const FiltersPanel: FC<{
               );
             return null;
           })}
-        </>
+        </details>
       ))}
     </div>
   );

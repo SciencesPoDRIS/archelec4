@@ -20,6 +20,7 @@ export type SearchType = "profession"; // | "logo";
 
 export type FiltersGroupType = {
   label: string;
+  openByDefault?: boolean;
   filters: FilterType[];
 };
 

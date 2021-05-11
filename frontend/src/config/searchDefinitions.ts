@@ -21,6 +21,7 @@ export const professionSearch: SearchTypeDefinition = {
   filtersGroups: [
     {
       label: "Élection",
+      openByDefault: true,
       filters: [
         {
           id: "annee",
@@ -49,6 +50,7 @@ export const professionSearch: SearchTypeDefinition = {
     },
     {
       label: "Circonscription",
+      openByDefault: true,
       filters: [
         {
           id: "departement-insee",

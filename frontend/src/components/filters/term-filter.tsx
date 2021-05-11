@@ -34,9 +34,8 @@ export const TermsFilter: FC<{
   // **the current input**, only on previous/upcoming inputs.
   return (
     <div className="filter-block">
-      <h5>
-        <span className="highlight">{filter.label}</span>
-      </h5>
+      <span className="filter-label">{filter.label}</span>
+
       <div>
         {filter.asyncOptions ? (
           <AsyncCreatableSelect
