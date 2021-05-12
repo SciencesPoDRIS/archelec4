@@ -50,17 +50,30 @@ export class ElasticSearch {
 
   /**
    * Method to get an element in an index.
+   *
+   * @param index The name of the index where to find the element
+   * @param id The id of the element to search
+   * @param cast (optional) A function that can be used to cast an ES object to a business object
    */
-  async get<T>(index: string, id: string): Promise<T> {
+  async get<T>(index: string, id: string, cast?: (e: any) => T): Promise<T> {
     const result = await this.client.get({ index, id });
-    return result.body._source as T;
+    return cast ? cast(result.body._source) : (result.body._source as T);
   }
 
   /**
    * Method to search on ES.
+   *
+   * @param request The search request to send to ES
+   * @param cast (optional) A function that can be used to cast an ES object to a business object
    */
-  async search<T>(request: SearchRequest): Promise<SearchResponse<T>> {
+  async search<T>(request: SearchRequest, cast?: (e: any) => T): Promise<SearchResponse<T>> {
     const { body } = await this.client.search(request);
+    if (cast) {
+      body.hits.hits = body.hits.hits.map((hit: any) => {
+        hit._source = cast(hit._source);
+        return hit;
+      });
+    }
     return body as SearchResponse<T>;
   }
 
@@ -72,7 +85,6 @@ export class ElasticSearch {
     transform: (i: T) => string,
     stream_opts: { batchSize: number; prefix?: string } = { batchSize: 500 },
   ): ElasticSearchReadable<T> {
-    console.log(stream_opts);
     return new ElasticSearchReadable(this, request, transform, stream_opts);
   }
 
@@ -268,6 +280,7 @@ class ElasticSearchReadable<T> extends Readable {
     this.scroll_id = result._scroll_id;
     // if result is empty, so we reach the end
     if (items.length === 0) this.push(null);
+    // TODO cast
     else this.push((prefix ? prefix + "\n" : "") + items.map((i) => this.transform(i._source) + "\n").join(""));
   }
 }

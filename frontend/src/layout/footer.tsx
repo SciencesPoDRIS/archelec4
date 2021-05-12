@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import packageJson from "../package.alias.json";
 
 export const Footer: React.FC = () => {
   return (

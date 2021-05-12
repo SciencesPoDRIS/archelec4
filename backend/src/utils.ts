@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { isArray } from "lodash";
 import { getLogger } from "./services/logger";
 import { ArchiveElectoralProfessionDeFoi, ArchiveElectoralCandidat } from "./services/import";
 import { config } from "./config";
@@ -70,7 +71,33 @@ export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
 }
 
 /**
- * Givern a age number, it return the range decade.
+ * Cast an ES object ArchiveElectoralProfessionDeFoi to our custom type.
+ * NB: This method was mainly created to handle arrays, ES has no array type so it returns a string or a string[]
+ *
+ */
+export function esCastArchiveElectoralProfessionDeFoi(item: any): ArchiveElectoralProfessionDeFoi {
+  const result = item as ArchiveElectoralProfessionDeFoi;
+  if (!isArray(item.subject)) result.subject = item.subject ? [item.subject] : [];
+  if (!isArray(item.images)) result.images = item.images ? [item.images] : [];
+  if (!isArray(item.candidats)) result.candidats = item.candidats ? [item.candidats] : [];
+  result.candidats = result.candidats.map((candidat: ArchiveElectoralCandidat) => {
+    if (!isArray(candidat.profession)) candidat.profession = candidat.profession ? [candidat.profession] : [];
+    if (!isArray(candidat["mandat-en-cours"]))
+      candidat["mandat-en-cours"] = candidat["mandat-en-cours"] ? [candidat["mandat-en-cours"]] : [];
+    if (!isArray(candidat["mandat-passe"]))
+      candidat["mandat-passe"] = candidat["mandat-passe"] ? [candidat["mandat-passe"]] : [];
+    if (!isArray(candidat.associations)) candidat.associations = candidat.associations ? [candidat.associations] : [];
+    if (!isArray(candidat["autres-statuts"]))
+      candidat["autres-statuts"] = candidat["autres-statuts"] ? [candidat["autres-statuts"]] : [];
+    if (!isArray(candidat.soutien)) candidat.soutien = candidat.soutien ? [candidat.soutien] : [];
+    if (!isArray(candidat.liste)) candidat.liste = candidat.liste ? [candidat.liste] : [];
+    return candidat;
+  });
+  return result;
+}
+
+/**
+ * Given a age number, it return the range decade.
  * Ex : 29 -> 20-29
  * @param age The age on which we compute the range
  * @returns The computed range
@@ -142,23 +169,26 @@ export function archiveElectoralCandidatToArrayFields(candidat: Partial<ArchiveE
     candidat.age,
     candidat["age-calcule"],
     candidat["age-tranche"],
-    candidat.profession.join(";"),
-    candidat["mandat-en-cours"].join(";"),
-    candidat["mandat-passe"].join(";"),
-    candidat.associations.join(";"),
-    candidat["autres-statuts"].join(";"),
-    candidat.soutien.join(";"),
-    candidat.liste.join(";"),
+    (candidat.profession || []).join(";"),
+    (candidat["mandat-en-cours"] || []).join(";"),
+    (candidat["mandat-passe"] || []).join(";"),
+    (candidat.associations || []).join(";"),
+    (candidat["autres-statuts"] || []).join(";"),
+    (candidat.soutien || []).join(";"),
+    (candidat.liste || []).join(";"),
     candidat.decorations,
   ];
 }
 
-export function archiveElectoralProfessionDeFoiToCsvLine(item: ArchiveElectoralProfessionDeFoi): string {
+export function archiveElectoralProfessionDeFoiToCsvLine(esItem: ArchiveElectoralProfessionDeFoi): string {
+  const item = esCastArchiveElectoralProfessionDeFoi(esItem);
   const electionValue = [
     item.id,
     item.date
-      .toLocaleString("fr-FR", { year: "numeric", month: "numeric", day: "numeric" })
-      .replace("T00:00:00.000Z", ""),
+      ? item.date
+          .toLocaleString("fr-FR", { year: "numeric", month: "numeric", day: "numeric" })
+          .replace("T00:00:00.000Z", "")
+      : "",
     item.subject.join(";"),
     item.title,
     item["contexte-election"],

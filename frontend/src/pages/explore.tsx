@@ -142,7 +142,14 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
           </div>
         </div>
         <div className="col-9">
-          <ProfessionList professions={results} />
+          <ProfessionList
+            esContext={{
+              index: professionSearch.index,
+              filters: filtersState,
+              sort: getSortDefinition(professionSearch, sort),
+            }}
+            professions={results}
+          />
         </div>
         <div
           className={cx("scroll-to-top", isNotOnTop && "show")}

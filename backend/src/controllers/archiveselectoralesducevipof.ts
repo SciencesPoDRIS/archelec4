@@ -7,7 +7,11 @@ import { getLogger, Logger } from "../services/logger";
 import { ElasticSearch, SearchRequest, SearchResponse } from "../services/elasticsearch";
 import { ArchiveElectoralProfessionDeFoi } from "../services/import";
 import { config } from "../config";
-import { archiveElectoralProfessionDeFoiToCsvLine, ArchiveElectoralProfessionDeFoiCsvHeader } from "../utils";
+import {
+  archiveElectoralProfessionDeFoiToCsvLine,
+  esCastArchiveElectoralProfessionDeFoi,
+  ArchiveElectoralProfessionDeFoiCsvHeader,
+} from "../utils";
 
 @Tags("Profession de foi")
 @Route("professiondefoi")
@@ -30,7 +34,11 @@ export class ProfessionDeFoiController extends Controller {
   @Response("500", "Internal Error")
   public async proxy(@Path("id") id: string): Promise<ArchiveElectoralProfessionDeFoi> {
     try {
-      const item = await this.es.get<ArchiveElectoralProfessionDeFoi>(config.elasticsearch_alias_name, id);
+      const item = await this.es.get<ArchiveElectoralProfessionDeFoi>(
+        config.elasticsearch_alias_name,
+        id,
+        esCastArchiveElectoralProfessionDeFoi,
+      );
       return item;
     } catch (e) {
       if (e.meta.statusCode === 404) throw Boom.notFound(`Document ${id} not found`);
@@ -41,19 +49,38 @@ export class ProfessionDeFoiController extends Controller {
   /**
    * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
    * The body will be passed to elasticsearch.
+   * Example : {
+   *   "query": {
+   *     "simple_query_string": {
+   *       "fields": [ "title" ],
+   *       "query": "*"
+   *     }
+   *   }
+   * }
    */
   @Post("search")
   @Response("200", "Success")
   @Response("500", "Internal Error")
   public async search(@Body() params: SearchRequest["body"]): Promise<SearchResponse<ArchiveElectoralProfessionDeFoi>> {
-    return await this.es.search<ArchiveElectoralProfessionDeFoi>({
-      index: config.elasticsearch_alias_name,
-      body: params,
-    });
+    return await this.es.search<ArchiveElectoralProfessionDeFoi>(
+      {
+        index: config.elasticsearch_alias_name,
+        body: params,
+      },
+      esCastArchiveElectoralProfessionDeFoi,
+    );
   }
 
   /**
    * Given an ES search query, this method will create a CSV file in a stream way of the entire result.
+   * Example : {
+   *   "query": {
+   *     "simple_query_string": {
+   *       "fields": [ "title" ],
+   *       "query": "*"
+   *     }
+   *   }
+   * }
    */
   @Post("search/csv")
   @Response("200", "Success")

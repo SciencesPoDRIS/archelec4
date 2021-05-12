@@ -297,3 +297,23 @@ export function search<ResultType>(
         : undefined,
     }));
 }
+
+export function downSearchAsCSV(context: ESSearchQueryContext, filename: string): Promise<void> {
+  return fetch(`${config.api_path}/professionDeFoi/search/csv?filename=${filename}`, {
+    body: JSON.stringify({
+      query: getESQueryBody(context.filters),
+      sort: context.sort ? context.sort.expression : undefined,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  })
+    .then((res) => res.blob())
+    .then((blob) => {
+      const link = document.createElement("a");
+      link.setAttribute("href", window.URL.createObjectURL(blob));
+      link.setAttribute("download", filename);
+      link.click();
+    });
+}
