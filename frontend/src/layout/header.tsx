@@ -8,13 +8,13 @@ export const Header: React.FC = () => {
       <nav className="navbar navbar-expand-lg navbar-fixed">
         <div id="brand">
           <Link className="navbar-brand" to="/" title="Archelec">
-            Archélec
+            ARCHELEC
           </Link>{" "}
           <Link className="navbar-brand" to="/explorer" title="explorer">
-            ⋅ explorer
+            ⋅ Explorer
           </Link>{" "}
           <Link className="navbar-brand" to={"/FAQ"} title="Archelec">
-            ⋅ faq
+            ⋅ FAQ
           </Link>
         </div>
         <Link to="http://www.sciencepo.fr" title="Sciences Po">
