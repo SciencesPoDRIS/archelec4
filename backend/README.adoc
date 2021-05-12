@@ -61,8 +61,10 @@ To import data, you just need to run this command :
 
 [source,bach]
 ----
-curl -X 'POST' 'http://localhost/api/v1/import'
+curl -X POST -H "Origin: http://localhost" http://localhost/api/v1/import
 ----
+
+IMPORTANT: The header `Origin` is mandatory, the API only respond to this origin.
 
 The first time you run this command, it will do a full import.
 The other times, it will do a delta-import, based on the last import date that is stored in the the file `.last_import.txt`
