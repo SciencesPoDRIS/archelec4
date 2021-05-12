@@ -24,15 +24,17 @@ export const ProfessionList: React.FC<Props> = (props: Props) => {
       {professions !== null ? (
         <>
           <div className="panel-header">
-            <>
+            <span>
               Explorer <span className="highlight">{professions.total}</span> professions de foi
-            </>
-            {!loading && (
-              <button type="button" className="btn btn-link" onClick={download}>
-                <i className="fas fa-file-csv"></i>
-              </button>
-            )}
-            {loading && <>Génération du fichier ...</>}
+            </span>
+            <span>
+              {!loading && (
+                <button type="button" className="btn btn-link" onClick={download}>
+                  Télécharger en CSV
+                </button>
+              )}
+              {loading && <Loader />}
+            </span>
           </div>
           <div className="result-list">
             {professions.list.map((p) => (
