@@ -40,12 +40,6 @@ export const professionSearch: SearchTypeDefinition = {
           type: "terms",
           label: "Tour",
         },
-        {
-          id: "candidats.type",
-          type: "terms",
-          label: "Rang",
-          isMulti: true,
-        },
       ],
     },
     {
@@ -67,7 +61,7 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
-      label: "Groupe Politique",
+      label: "Groupe politique",
       filters: [
         {
           id: "candidats.liste",
@@ -78,7 +72,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.soutien",
           type: "terms",
-          label: "Soutien",
+          label: "Organisation",
           isMulti: true,
         },
       ],
@@ -101,7 +95,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.sexe",
           type: "terms",
-          label: "Genre",
+          label: "Sexe",
           isMulti: true,
         },
         {
