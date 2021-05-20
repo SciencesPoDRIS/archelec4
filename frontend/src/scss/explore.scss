@@ -58,6 +58,30 @@
         font-size: 1.2em;
       }
     }
+    blockquote {
+      margin: 0.5rem 2rem 0.8rem 2rem;
+      em {
+        font-weight: 600;
+      }
+
+      span:not(:last-child):after {
+        content: " […] ";
+        font-style: italic;
+      }
+    }
+    blockquote::before,
+    blockquote::after {
+      content: "«";
+      font-family: Georgia;
+      font-size: 3rem;
+      margin: -1.5rem 0 0 -2rem;
+      position: absolute;
+      opacity: 0.5;
+    }
+    blockquote::after {
+      content: "»";
+      margin: -1.5rem -2rem 0 0;
+    }
   }
   .scroll-to-top {
     position: fixed;

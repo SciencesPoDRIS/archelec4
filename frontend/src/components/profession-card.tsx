@@ -49,6 +49,13 @@ export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
           </div>
         </div>
       </Link>
+      {profession.highlight && (
+        <blockquote>
+          {(profession.highlight.ocr || []).map((h: string, i: number) => (
+            <span key={i} dangerouslySetInnerHTML={{ __html: h }}></span>
+          ))}
+        </blockquote>
+      )}
     </div>
   );
 };

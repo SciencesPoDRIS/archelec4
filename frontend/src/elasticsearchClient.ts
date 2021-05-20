@@ -1,6 +1,13 @@
-import { omit, omitBy, isUndefined, isEmpty, toPairs } from "lodash";
+import { omit, omitBy, isUndefined, isEmpty, toPairs, identity } from "lodash";
 import { config } from "./config";
-import { ESSearchQueryContext, FilterHistogramType, FiltersState, FilterState, PlainObject } from "./types";
+import {
+  ESSearchQueryContext,
+  FilterHistogramType,
+  FiltersState,
+  FilterState,
+  PlainObject,
+  SearchResult,
+} from "./types";
 
 function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
   if (filter.type === "terms")
@@ -38,6 +45,18 @@ function getESQueryBody(filters: FiltersState, suggestFilter?: { field: string; 
         }
       : queries[0];
   return esQuery;
+}
+
+function getESHighlight(filters: FiltersState, suggestFilter?: { field: string; value: string | undefined }) {
+  // TODO: add highlight conf into filter specs
+  return {
+    fields: toPairs(filters)
+      .map(([field, filter]) => {
+        if (filter.type === "query") return { [field]: { number_of_fragments: 2, fragment_size: 50 } };
+        return null;
+      })
+      .filter(identity),
+  };
 }
 
 export type SchemaFieldDefinition = {
@@ -267,7 +286,7 @@ export function search<ResultType>(
   from: number,
   size: number,
   histogramField?: string,
-): Promise<{ list: ResultType[]; total: number }> {
+): Promise<{ list: SearchResult<ResultType>[]; total: number }> {
   return fetch(`${config.api_path}/professionDeFoi/search`, {
     body: JSON.stringify(
       omitBy(
@@ -277,6 +296,7 @@ export function search<ResultType>(
           query: getESQueryBody(context.filters),
           sort: context.sort ? context.sort.expression : undefined,
           track_total_hits: true,
+          highlight: getESHighlight(context.filters),
         },
         isUndefined,
       ),
@@ -288,7 +308,7 @@ export function search<ResultType>(
   })
     .then((r) => r.json())
     .then((data) => ({
-      list: data.hits.hits.map((d: any): ResultType => cleanFn({ ...d._source })),
+      list: data.hits.hits.map((d: any): ResultType => cleanFn({ ...d._source, highlight: d.highlight })),
       total: data.hits.total.value,
       histogram: histogramField
         ? data.aggregations.histogram.buckets.map((bucket: PlainObject) => ({
