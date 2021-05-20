@@ -1,4 +1,4 @@
-import { capitalize, upperCase } from "lodash";
+import { capitalize, uniq, upperCase } from "lodash";
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { ProfessionDeFoi } from "../types";
@@ -7,6 +7,8 @@ export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
   const { profession } = props;
   const titulaire = profession.candidats.find((c) => c.type === "titulaire");
   const suppleant = profession.candidats.find((c) => c.type === "suppleant");
+  const soutiens = uniq((titulaire?.soutien || []).concat(suppleant?.soutien || []));
+
   return (
     <div className="result-card">
       <Link to={`/profession/${profession.id}`} title={profession.title}>
@@ -28,19 +30,20 @@ export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
                 {suppleant.prenom} {suppleant.nom}
               </span>
             )}
-            {/* {titulaire && titulaire?.soutien?.length > 0 && (
-              <>
-                <br />
-                {titulaire.soutien.map((s) => (
-                  <span>{s}</span>
-                ))}
-              </>
-            )} */}
+          </div>
+          <div>
+            {soutiens && soutiens.length > 0 && (
+              <span>
+                {soutiens[0]}
+                {soutiens.length > 1 && ",..."}
+              </span>
+            )}
           </div>
           <div>
             {capitalize(profession["contexte-election"])} {profession.annee}
             <br />
-            {capitalize(profession["departement-nom"])}, Circ. n°{profession.circonscription}
+            {profession.circonscription}
+            <sup>{profession.circonscription === "1" ? "er" : "e"}</sup> circ. {profession["departement-nom"]}
             <br />
             {profession["contexte-tour"] === "1" ? "Premier tour" : "Second tour"}
           </div>
