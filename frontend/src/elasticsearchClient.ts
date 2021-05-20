@@ -9,6 +9,7 @@ function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
     return {
       range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },
     };
+  if (filter.type === "query") return { simple_query_string: { query: filter.value, fields: ["ocr"] } };
 }
 
 function getESQueryBody(filters: FiltersState, suggestFilter?: { field: string; value: string | undefined }) {

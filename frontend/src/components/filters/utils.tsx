@@ -30,9 +30,7 @@ export const SEARCH_TYPE_KEY = "t";
 export const SEPARATOR = "|";
 export const SIZE = 50;
 
-export function getSearchURL(query: string, filters?: FiltersState): string {
-  if (!query) return "/explorer";
-
+export function getSearchURL(filters?: FiltersState): string {
   const filterPairs: string[][] = toPairs(filters || {}).flatMap(([k, v]: [string, FilterState]) => {
     if (v.type === "terms") {
       return [[k, v.value.join(SEPARATOR)]];
@@ -42,13 +40,16 @@ export function getSearchURL(query: string, filters?: FiltersState): string {
       const max = v.value.max;
       return compact([min ? [`${k}.min`, min + ""] : null, max ? [`${k}.max`, max + ""] : null]);
     }
+    if (v.type === "query") {
+      return [[k, v.value]];
+    }
 
     return [];
   });
 
   return (
     "/explorer?" +
-    [[SEARCH_QUERY_KEY, query], ...filterPairs]
+    filterPairs
       .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(Array.isArray(v) ? v.join(SEPARATOR) : v)}`)
       .join("&")
   );

@@ -147,5 +147,15 @@ export const professionSearch: SearchTypeDefinition = {
         },
       ],
     },
+    {
+      label: "Contenu",
+      filters: [
+        {
+          id: "ocr",
+          type: "query",
+          label: "OCR",
+        },
+      ],
+    },
   ],
 };

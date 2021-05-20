@@ -44,6 +44,10 @@ export type TermsFilterState = {
   type: "terms";
   value: string[];
 };
+export type QueryFilterState = {
+  type: "query";
+  value: string;
+};
 
 export type DatesFilterState = {
   type: "dates";
@@ -53,7 +57,7 @@ export type DatesFilterState = {
   };
 };
 
-export type FilterState = TermsFilterState | DatesFilterState;
+export type FilterState = TermsFilterState | DatesFilterState | QueryFilterState;
 
 export type FiltersState = { [key: string]: FilterState };
 
@@ -78,8 +82,13 @@ export type DatesFilterType = {
   type: "dates";
   label: string;
 };
+export type QueryFilterType = {
+  id: string;
+  type: "query";
+  label: string;
+};
 
-export type FilterType = TermsFilterType | DatesFilterType;
+export type FilterType = TermsFilterType | DatesFilterType | QueryFilterType;
 
 export type FilterHistogramType = { values: { label: string; count: number }[]; total: number; maxCount?: number };
 

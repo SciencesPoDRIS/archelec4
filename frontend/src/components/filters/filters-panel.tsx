@@ -6,6 +6,7 @@ import {
   DatesFilterState,
   ESSearchQueryContext,
   FiltersState,
+  QueryFilterState,
   SearchTypeDefinition,
   TermsFilterState,
 } from "../../types";
@@ -13,6 +14,7 @@ import { getTerms } from "../../elasticsearchClient";
 
 import { DatesFilter } from "./dates-filter";
 import { TermsFilter } from "./term-filter";
+import { QueryFilter } from "./query-filter";
 
 /**
  * Helper to get the properly typed function to retrieve options for a given
@@ -42,7 +44,6 @@ export const FiltersPanel: FC<{
   state: FiltersState;
   setState: (newState: FiltersState) => void;
   // Surrounding context:
-  query: string;
   searchTypeDefinition: SearchTypeDefinition;
 }> = (props) => {
   const context: ESSearchQueryContext = {
@@ -91,6 +92,22 @@ export const FiltersPanel: FC<{
                     )
                   }
                   state={(props.state[filter.id] || { type: "dates", value: [] }) as DatesFilterState}
+                  context={context}
+                />
+              );
+            if (filter.type === "query")
+              return (
+                <QueryFilter
+                  key={i}
+                  filter={filter}
+                  setState={(newState) => {
+                    props.setState(
+                      newState && newState.value !== ""
+                        ? { ...props.state, [filter.id]: newState }
+                        : omit(props.state, filter.id),
+                    );
+                  }}
+                  state={(props.state[filter.id] || { type: "query", value: "" }) as QueryFilterState}
                   context={context}
                 />
               );

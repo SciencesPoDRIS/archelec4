@@ -46,7 +46,18 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
     }
 
     if (filter.type === "dates" && (param === "min" || param === "max") && parseInt(value) + "" === value) {
-      state[field] = { type: "dates", value: { ...(state[field]?.value || {}), [param]: +value } } as DatesFilterState;
+      state[field] = {
+        type: "dates",
+        value: { ...(state[field] as DatesFilterState)?.value, [param]: +value },
+      } as DatesFilterState;
+    }
+
+    if (filter.type === "query") {
+      if (state[key]) {
+        state[key] = { type: "query", value: (state[key].value as string) + value };
+      } else {
+        state[key] = { type: "query", value: value };
+      }
     }
   }
 
@@ -134,9 +145,8 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
             <FiltersPanel
               state={filtersState}
               setState={(newFiltersState) => {
-                history.push(getSearchURL(registeredQuery, newFiltersState));
+                history.push(getSearchURL(newFiltersState));
               }}
-              query={registeredQuery}
               searchTypeDefinition={professionSearch}
             />
           </div>
