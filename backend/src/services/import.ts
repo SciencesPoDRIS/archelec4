@@ -323,7 +323,7 @@ export class Import {
     };
 
     const titulaire: Partial<ArchiveElectoralCandidat> = { type: "titulaire" };
-    const suppleant: Partial<ArchiveElectoralCandidat> = { type: "suppleant" };
+    const suppleant: Partial<ArchiveElectoralCandidat> = { type: "suppléant" };
 
     // Take each metadata and remove the prefix
     Object.keys(item.metadata).forEach((key: string) => {
