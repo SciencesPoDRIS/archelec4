@@ -31,6 +31,17 @@
     .filters-group:hover {
       border-left: 4px solid $secondary;
     }
+    .query-filter {
+      input {
+        width: calc(100% - 50px);
+      }
+      .btn-img {
+        padding: 0;
+        width: 20px;
+        margin-left: 5px;
+        vertical-align: baseline;
+      }
+    }
   }
 
   .result-list {
@@ -50,7 +61,7 @@
       margin-left: 0.3em;
       display: flex;
       flex-direction: column;
-      font-size: 1.2em;
+      font-size: 1.1em;
       > div {
         margin-bottom: 0.2em;
       }
@@ -72,15 +83,16 @@
     blockquote::before,
     blockquote::after {
       content: "«";
-      font-family: Georgia;
+      font-style: italic;
+      // font-family: Georgia;
       font-size: 3rem;
-      margin: -1.5rem 0 0 -2rem;
+      margin: -1.8rem 0 0 -2rem;
       position: absolute;
       opacity: 0.5;
     }
     blockquote::after {
       content: "»";
-      margin: -1.5rem -2rem 0 0;
+      margin: -1.6rem -2rem 0 0;
     }
   }
   .scroll-to-top {

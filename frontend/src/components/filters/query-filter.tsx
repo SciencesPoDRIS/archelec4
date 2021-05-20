@@ -20,13 +20,14 @@ export const QueryFilter: FC<{
           e.preventDefault();
           setState({ type: "query", value: query });
         }}
+        className="query-filter"
       >
         <input
           name="q"
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Indiquez des mots-clefs..."
+          placeholder="Recherche plein-texte..."
         />
         <button
           className="btn btn-img"
