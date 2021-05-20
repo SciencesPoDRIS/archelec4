@@ -66,7 +66,7 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
   const { professionDeFoi } = props;
   const titulaire = professionDeFoi.candidats.find((c) => c.type === "titulaire");
 
-  const suppleant = professionDeFoi.candidats.find((c) => c.type === "suppleant");
+  const suppleant = professionDeFoi.candidats.find((c) => c.type === "suppléant");
   return (
     <div className="metadatapanel">
       <>

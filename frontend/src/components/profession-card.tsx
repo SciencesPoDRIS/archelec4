@@ -6,7 +6,7 @@ import { ProfessionDeFoi } from "../types";
 export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
   const { profession } = props;
   const titulaire = profession.candidats.find((c) => c.type === "titulaire");
-  const suppleant = profession.candidats.find((c) => c.type === "suppleant");
+  const suppleant = profession.candidats.find((c) => c.type === "suppléant");
   const soutiens = uniq((titulaire?.soutien || []).concat(suppleant?.soutien || []));
 
   return (
