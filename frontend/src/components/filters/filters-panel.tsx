@@ -1,20 +1,14 @@
-import React, { FC } from "react";
-import { omit, isEmpty } from "lodash";
+import React, { FC, useEffect, useState } from "react";
+import { sortBy } from "lodash";
 
 import { OptionType } from "../custom-select";
-import {
-  DatesFilterState,
-  ESSearchQueryContext,
-  FiltersState,
-  QueryFilterState,
-  SearchTypeDefinition,
-  TermsFilterState,
-} from "../../types";
+import { ESSearchQueryContext, FiltersState, SearchTypeDefinition } from "../../types";
 import { getTerms } from "../../elasticsearchClient";
 
 import { DatesFilter } from "./dates-filter";
 import { TermsFilter } from "./term-filter";
 import { QueryFilter } from "./query-filter";
+import { useStateUrl } from "../../hooks/state-url";
 
 /**
  * Helper to get the properly typed function to retrieve options for a given
@@ -39,10 +33,11 @@ function asyncOptionsFactory(
     ]);
 }
 
+const OPENED_SEPARATOR = "|";
+
 export const FiltersPanel: FC<{
   // Filters state management:
   state: FiltersState;
-  setState: (newState: FiltersState) => void;
   // Surrounding context:
   searchTypeDefinition: SearchTypeDefinition;
 }> = (props) => {
@@ -52,65 +47,54 @@ export const FiltersPanel: FC<{
     sort: null,
   };
 
+  const openedByDefault = sortBy(
+    props.searchTypeDefinition.filtersGroups.filter((g) => g.openByDefault).map((g) => g.id),
+  );
+  const [openedUrl, setOpenedUrl] = useStateUrl<string>("opened", openedByDefault.join(OPENED_SEPARATOR));
+  const [openedAsList, setOpenedAsList] = useState<string[]>([]);
+  useEffect(() => {
+    setOpenedAsList(openedUrl && openedUrl !== "" ? openedUrl?.split(OPENED_SEPARATOR) : []);
+  }, [openedUrl]);
+
   return (
     <div className="filters">
       {props.searchTypeDefinition.filtersGroups.map((group, gi) => (
         <details
           className="filters-group"
           key={gi}
-          open={group.openByDefault || group.filters.some((f) => props.state[f.id])}
+          open={openedAsList.includes(group.id)}
+          //open={!!opened && opened.indexOf(group.id) !== -1}
+          onToggle={(e) => {
+            if (!(e.target as any).open && openedAsList.includes(group.id)) {
+              // remove current group from opened list
+              let newOpened: string | null = sortBy(openedAsList.filter((id) => id !== group.id)).join(
+                OPENED_SEPARATOR,
+              );
+              setOpenedUrl(newOpened);
+            } else if ((e.target as any).open && !openedAsList.includes(group.id)) {
+              const newOpened = sortBy([...openedAsList, group.id]).join(OPENED_SEPARATOR);
+              setOpenedUrl(newOpened);
+            }
+          }}
         >
-          <summary className="filters-group-label">{group.label}</summary>
+          <summary className="filters-group-label">
+            {group.label}{" "}
+            {!openedAsList.includes(group.id) &&
+              group.filters.filter((f) => props.state[f.id]).length > 0 &&
+              ` (${group.filters.filter((f) => props.state[f.id]).length})`}
+          </summary>
           {group.filters.map((filter, i) => {
             if (filter.type === "terms")
               return (
                 <TermsFilter
                   key={i}
                   filter={{ ...filter, asyncOptions: asyncOptionsFactory(filter.id) }}
-                  setState={(newState) =>
-                    props.setState(
-                      newState && (newState.value as string[]).length
-                        ? { ...props.state, [filter.id]: newState }
-                        : omit(props.state, filter.id),
-                    )
-                  }
                   //histogram={histograms[filter.id] && { ...histograms[filter.id], maxCount }}
-                  state={(props.state[filter.id] || { type: "terms", value: [] }) as TermsFilterState}
                   context={context}
                 />
               );
-            if (filter.type === "dates")
-              return (
-                <DatesFilter
-                  key={i}
-                  filter={filter}
-                  setState={(newState) =>
-                    props.setState(
-                      newState && !isEmpty(newState.value)
-                        ? { ...props.state, [filter.id]: newState }
-                        : omit(props.state, filter.id),
-                    )
-                  }
-                  state={(props.state[filter.id] || { type: "dates", value: [] }) as DatesFilterState}
-                  context={context}
-                />
-              );
-            if (filter.type === "query")
-              return (
-                <QueryFilter
-                  key={i}
-                  filter={filter}
-                  setState={(newState) => {
-                    props.setState(
-                      newState && newState.value !== ""
-                        ? { ...props.state, [filter.id]: newState }
-                        : omit(props.state, filter.id),
-                    );
-                  }}
-                  state={(props.state[filter.id] || { type: "query", value: "" }) as QueryFilterState}
-                  context={context}
-                />
-              );
+            if (filter.type === "dates") return <DatesFilter key={i} filter={filter} />;
+            if (filter.type === "query") return <QueryFilter key={i} filter={filter} />;
             return null;
           })}
         </details>

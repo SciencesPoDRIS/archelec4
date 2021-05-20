@@ -1,36 +1,35 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { config } from "../../config";
-import { DatesFilterState, DatesFilterType, ESSearchQueryContext } from "../../types";
-import { omitBy, isUndefined } from "lodash";
+import { DatesFilterType } from "../../types";
+import { useStateUrl } from "../../hooks/state-url";
 
 export const DatesFilter: FC<{
   filter: DatesFilterType;
-  state: DatesFilterState;
-  setState: (newState: DatesFilterState | null) => void;
-  context: ESSearchQueryContext;
-}> = ({ filter, state, setState }) => {
-  const boundaries = {
-    min: config.minYear,
-    max: config.maxYear,
-  };
+}> = ({ filter }) => {
+  const boundaries = useMemo(
+    () => ({
+      min: config.minYear,
+      max: config.maxYear,
+    }),
+    [],
+  );
 
-  const [value, setValue] = useState<{ min: number; max: number }>({ ...boundaries, ...state.value });
+  const [minDateUrl, setMinDateUrl] = useStateUrl<string>(`${filter.id}.min`, "" + boundaries.min);
+  const [maxDateUrl, setMaxDateUrl] = useStateUrl<string>(`${filter.id}.max`, "" + boundaries.max);
 
+  const [value, setValue] = useState<{ min: number; max: number }>(boundaries);
   useEffect(() => {
-    setValue({ ...boundaries, ...state.value });
-    // eslint-disable-next-line
-  }, [state]);
+    setValue({
+      min: minDateUrl && minDateUrl !== "" ? parseInt(minDateUrl) : boundaries.min,
+      max: maxDateUrl && maxDateUrl !== "" ? parseInt(maxDateUrl) : boundaries.max,
+    });
+  }, [minDateUrl, maxDateUrl, boundaries]);
 
   function submit() {
     const min = Math.max(boundaries.min, Math.min(value.min, boundaries.max));
     const max = Math.max(min, Math.min(value.max, boundaries.max));
-    setState({
-      type: "dates",
-      value: omitBy(
-        { min: min === boundaries.min ? undefined : min, max: max === boundaries.max ? undefined : max },
-        isUndefined,
-      ),
-    });
+    setMinDateUrl(min === boundaries.min ? "" : "" + min);
+    setMaxDateUrl(max === boundaries.max ? "" : "" + max);
   }
 
   return (
@@ -82,7 +81,7 @@ export const DatesFilter: FC<{
         <button
           className="btn btn-sm"
           type="submit"
-          disabled={value.min === state.value.min && value.max === state.value.max}
+          disabled={value.min === parseInt(minDateUrl) && value.max === parseInt(maxDateUrl)}
         >
           Valider
         </button>

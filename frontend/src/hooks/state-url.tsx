@@ -2,6 +2,8 @@ import { useHistory } from "react-router-dom";
 
 type SetterInputFunction<Z> = (prev: Z) => Z;
 
+// This magic is messy when working with string.
+// TODO: add a cast method params to useStateUrl definition to define when and how to cast string into T
 /**
  * Guess the type of a string and return it casted.
  * examples:
@@ -9,7 +11,7 @@ type SetterInputFunction<Z> = (prev: Z) => Z;
  *   - "10.1" => 10.1
  */
 export function stringGuessCast(value: string): any {
-  if (value !== null) {
+  if (value !== null && value !== "") {
     if (isNaN((value as unknown) as number) === false) {
       return parseFloat(value) % 1 === 0 ? parseInt(value) : (parseFloat(value) as unknown);
     }
@@ -40,10 +42,11 @@ export function useStateUrl<T>(
   function getQueryParam(key: string): T {
     const urlQueryParams = new URLSearchParams(window.location.search);
     const value = urlQueryParams.get(key);
+
     if (value === null) {
       return defaultValue;
     } else {
-      return (stringGuessCast(value) as unknown) as T;
+      return (value as unknown) as T;
     }
   }
 

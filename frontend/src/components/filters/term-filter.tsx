@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
 import {
   OptionType,
@@ -7,25 +7,25 @@ import {
   CreatableSelect,
   objectToStringValue,
 } from "../../components/custom-select";
-import { TermsFilterState, TermsFilterType, FilterHistogramType, ESSearchQueryContext, PlainObject } from "../../types";
+import { TermsFilterType, FilterHistogramType, ESSearchQueryContext } from "../../types";
 
-import { compact, keyBy, mapValues, constant, without } from "lodash";
-import { Loader } from "../loader";
-import cx from "classnames";
+import { useStateUrl } from "../../hooks/state-url";
 
-function getArrayValue(value: string | string[] | undefined): string[] {
-  return Array.isArray(value) ? value : compact([value]);
-}
-
+const SEPARATOR = "|";
 export const TermsFilter: FC<{
   filter: TermsFilterType;
-  state: TermsFilterState;
   histogram?: FilterHistogramType;
-  setState: (newState: TermsFilterState | null) => void;
   context: ESSearchQueryContext;
-}> = ({ filter, state, setState, context, histogram }) => {
-  const remainingCount = histogram ? histogram.total - histogram.values.length : 0;
-  const valuesDict: PlainObject<boolean> = mapValues(keyBy(getArrayValue(state.value)), constant(true));
+}> = ({ filter, context }) => {
+  // const remainingCount = histogram ? histogram.total - histogram.values.length : 0;
+  // const valuesDict: PlainObject<boolean> = mapValues(keyBy(getArrayValue(state.value)), constant(true));
+
+  const [termsUrl, setTermsUrl] = useStateUrl<string>(filter.id, "");
+
+  const [terms, setTerms] = useState<string[]>([]);
+  useEffect(() => {
+    setTerms(termsUrl && termsUrl !== "" ? termsUrl.split(SEPARATOR) : []);
+  }, [termsUrl]);
 
   // TODO:
   // Find a better way to invalidate cache.
@@ -41,17 +41,17 @@ export const TermsFilter: FC<{
           <AsyncCreatableSelect
             key={JSON.stringify(context)}
             loadOptions={(inputValue: string) => filter.asyncOptions && filter.asyncOptions(inputValue, context)}
-            value={stringToObjectValue(state.value)}
+            value={stringToObjectValue(terms)}
             isMulti={!!filter.isMulti}
             placeholder={"Rechercher une valeur..."}
             noOptionsMessage={() => "Aucune option disponible dans les filtres actuels"}
             defaultOptions
             onChange={(value: any) =>
-              setState({ type: "terms", value: objectToStringValue(value as OptionType | OptionType[]) })
+              setTermsUrl(objectToStringValue(value as OptionType | OptionType[]).join(SEPARATOR))
             }
           />
         ) : (
-          <CreatableSelect options={filter.options} value={stringToObjectValue(state.value)} isMulti={filter.isMulti} />
+          <CreatableSelect options={filter.options} value={stringToObjectValue(terms)} isMulti={filter.isMulti} />
         )}
       </div>
     </div>

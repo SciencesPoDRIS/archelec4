@@ -20,6 +20,7 @@ export const professionSearch: SearchTypeDefinition = {
   ],
   filtersGroups: [
     {
+      id: "elec",
       label: "Élection",
       openByDefault: true,
       filters: [
@@ -43,6 +44,7 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
+      id: "circ",
       label: "Circonscription",
       openByDefault: true,
       filters: [
@@ -61,6 +63,7 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
+      id: "pol",
       label: "Groupe politique",
       filters: [
         {
@@ -78,6 +81,7 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
+      id: "candidat",
       label: "Candidat⋅e",
       filters: [
         {
@@ -107,6 +111,7 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
+      id: "act",
       label: "Activités candidat⋅e",
       filters: [
         {
@@ -148,6 +153,7 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
+      id: "cont",
       label: "Contenu",
       filters: [
         {

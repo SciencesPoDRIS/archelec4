@@ -1,15 +1,17 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
+import { useStateUrl } from "../../hooks/state-url";
 
-import { FilterHistogramType, ESSearchQueryContext, QueryFilterState, QueryFilterType } from "../../types";
+import { QueryFilterType } from "../../types";
 
 export const QueryFilter: FC<{
   filter: QueryFilterType;
-  state: QueryFilterState;
-  histogram?: FilterHistogramType;
-  setState: (newState: QueryFilterState | null) => void;
-  context: ESSearchQueryContext;
-}> = ({ filter, state, setState, context, histogram }) => {
-  const [query, setQuery] = useState<string>(state.value);
+}> = ({ filter }) => {
+  const [queryUrl, setQueryUrl] = useStateUrl<string>(filter.id, "");
+  const [query, setQuery] = useState<string>("");
+
+  useEffect(() => {
+    if (queryUrl) setQuery(queryUrl);
+  }, [queryUrl]);
 
   return (
     <div className="filter-block">
@@ -18,7 +20,7 @@ export const QueryFilter: FC<{
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          setState({ type: "query", value: query });
+          setQueryUrl(query);
         }}
         className="query-filter"
       >
@@ -35,7 +37,8 @@ export const QueryFilter: FC<{
           title="Annuler la recherche"
           onClick={() => {
             setQuery("");
-            setState({ type: "query", value: "" });
+            setQueryUrl("");
+            //setState({ type: "query", value: "" });
           }}
         >
           <i className="fas fa-times" />

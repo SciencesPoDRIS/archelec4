@@ -4,18 +4,20 @@ import { ProfessionList } from "../components/profession-list";
 import { professionSearch } from "../config/searchDefinitions";
 
 import { useLocation } from "react-router";
-import { useHistory } from "react-router-dom";
 import cx from "classnames";
 
 import { DatesFilterState, FiltersState, FilterType, PageProps, PlainObject, ProfessionDeFoi } from "../types";
 import { search } from "../elasticsearchClient";
 import { useStateUrl } from "../hooks/state-url";
 
-import { getSearchURL, SEARCH_QUERY_KEY, SEARCH_TYPE_KEY, SEPARATOR, SIZE } from "../components/filters/utils";
+import { SEARCH_QUERY_KEY, SEARCH_TYPE_KEY, SEPARATOR, SIZE } from "../components/filters/utils";
 
 // TODO: enable SORT ? import { SearchSort } from "../components/search-sort";
 import { filtersDictFromGroups, getSortDefinition } from "../components/filters/utils";
+import { isEqual } from "lodash";
 
+// this method is used only to compute a context which is used to invalidate option cache.
+// TODO: refacto by using filterSpecs to isolare relevant params directly in asyncSelects (only termsFilter so far)
 function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<FilterType>): FiltersState {
   const state: FiltersState = {};
 
@@ -67,15 +69,9 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
 export const Explore: React.FC<PageProps> = (props: PageProps) => {
   const { isNearBottom, isNotOnTop, scrollTo } = props;
   const location = useLocation();
-  const history = useHistory();
   const list = useRef<HTMLDivElement>(null);
   const queryParams = new URLSearchParams(location.search);
 
-  // State from URL, determines whether or not data should be loaded:
-  const registeredQuery = queryParams.get(SEARCH_QUERY_KEY) || ("*" as string);
-  // const registeredSearchType = queryParams.get(SEARCH_TYPE_KEY) as SearchType;
-  // const fullRegisteredSearchType = SEARCH_TYPES_DICT[registeredSearchType || ""];
-  const shouldSearch = !!registeredQuery && !!professionSearch;
   // TODO : enable changiing sort ?
   const [sort, setSort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
 
@@ -89,9 +85,10 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
 
   //TODO: refacto the two useEffects into one ?
   useEffect(() => {
+    const lastFilterState = filtersState;
     const currentFilterState = getFiltersState(new URLSearchParams(location.search), filtersDict);
     setFiltersState(currentFilterState);
-    if (shouldSearch) {
+    if (!results || !isEqual(currentFilterState, lastFilterState)) {
       setLoading(true);
       setResults(null);
       search<ProfessionDeFoi>(
@@ -142,13 +139,7 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
         <div className="col-3">
           <div className="side-bar full-height">
             <div className="panel-header">Filtrer</div>
-            <FiltersPanel
-              state={filtersState}
-              setState={(newFiltersState) => {
-                history.push(getSearchURL(newFiltersState));
-              }}
-              searchTypeDefinition={professionSearch}
-            />
+            <FiltersPanel state={filtersState} searchTypeDefinition={professionSearch} />
           </div>
         </div>
         <div className="col-9">

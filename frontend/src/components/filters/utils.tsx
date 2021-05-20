@@ -1,6 +1,5 @@
 import { flatten, keyBy } from "lodash";
-import { FiltersGroupType, FilterType, SearchTypeDefinition, SortType, FiltersState, FilterState } from "../../types";
-import { compact, toPairs } from "lodash";
+import { FiltersGroupType, FilterType, SearchTypeDefinition, SortType } from "../../types";
 
 export const filtersFromGroups = (groups: FiltersGroupType[]): FilterType[] => flatten(groups.map((g) => g.filters));
 
@@ -29,28 +28,3 @@ export const SEARCH_QUERY_KEY = "q";
 export const SEARCH_TYPE_KEY = "t";
 export const SEPARATOR = "|";
 export const SIZE = 50;
-
-export function getSearchURL(filters?: FiltersState): string {
-  const filterPairs: string[][] = toPairs(filters || {}).flatMap(([k, v]: [string, FilterState]) => {
-    if (v.type === "terms") {
-      return [[k, v.value.join(SEPARATOR)]];
-    }
-    if (v.type === "dates") {
-      const min = v.value.min;
-      const max = v.value.max;
-      return compact([min ? [`${k}.min`, min + ""] : null, max ? [`${k}.max`, max + ""] : null]);
-    }
-    if (v.type === "query") {
-      return [[k, v.value]];
-    }
-
-    return [];
-  });
-
-  return (
-    "/explorer?" +
-    filterPairs
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(Array.isArray(v) ? v.join(SEPARATOR) : v)}`)
-      .join("&")
-  );
-}
