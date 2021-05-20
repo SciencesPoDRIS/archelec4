@@ -83,7 +83,8 @@ export class InternetArchive {
     lastUpdatePeriod?: { from: Date; to: Date } | null,
   ): Promise<Array<string>> {
     const url = `${config.internet_archive_url}/services/search/v1/scrape`;
-    const queryParts: Array<string> = [`(collection:"${collection}")`, `(type:"${type}")`];
+    // filter on contexte-election is added to discard deprecated notices which uses a deprecated contexte_election field
+    const queryParts: Array<string> = [`(collection:"${collection}")`, `(type:"${type}")`, `(contexte-election:(*))`];
     if (lastUpdatePeriod)
       queryParts.push(
         ` oai_updatedate:[ ${lastUpdatePeriod.from.toISOString()} TO ${lastUpdatePeriod.to.toISOString()} ]`,
