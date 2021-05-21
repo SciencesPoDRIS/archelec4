@@ -1,5 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
-import { sortBy } from "lodash";
+import React, { FC, useState } from "react";
 
 import { OptionType } from "../custom-select";
 import { ESSearchQueryContext, FiltersState, SearchTypeDefinition } from "../../types";
@@ -8,7 +7,7 @@ import { getTerms } from "../../elasticsearchClient";
 import { DatesFilter } from "./dates-filter";
 import { TermsFilter } from "./term-filter";
 import { QueryFilter } from "./query-filter";
-import { useStateUrl } from "../../hooks/state-url";
+import { values } from "lodash";
 
 /**
  * Helper to get the properly typed function to retrieve options for a given
@@ -33,8 +32,6 @@ function asyncOptionsFactory(
     ]);
 }
 
-const OPENED_SEPARATOR = "|";
-
 export const FiltersPanel: FC<{
   // Filters state management:
   state: FiltersState;
@@ -47,14 +44,10 @@ export const FiltersPanel: FC<{
     sort: null,
   };
 
-  const openedByDefault = sortBy(
-    props.searchTypeDefinition.filtersGroups.filter((g) => g.openByDefault).map((g) => g.id),
-  );
-  const [openedUrl, setOpenedUrl] = useStateUrl<string>("opened", openedByDefault.join(OPENED_SEPARATOR));
-  const [openedAsList, setOpenedAsList] = useState<string[]>([]);
-  useEffect(() => {
-    setOpenedAsList(openedUrl && openedUrl !== "" ? openedUrl?.split(OPENED_SEPARATOR) : []);
-  }, [openedUrl]);
+  const openedByDefault = props.searchTypeDefinition.filtersGroups
+    .filter((g) => (values(props.state).length === 0 ? g.openByDefault : g.filters.some((f) => props.state[f.id])))
+    .map((g) => g.label);
+  const [openedAsList, setOpenedAsList] = useState<string[]>(openedByDefault);
 
   return (
     <div className="filters">
@@ -62,24 +55,21 @@ export const FiltersPanel: FC<{
         <details
           className="filters-group"
           key={gi}
-          open={openedAsList.includes(group.id)}
-          //open={!!opened && opened.indexOf(group.id) !== -1}
+          open={openedAsList.includes(group.label) || group.filters.filter((f) => props.state[f.id]).length > 0}
           onToggle={(e) => {
-            if (!(e.target as any).open && openedAsList.includes(group.id)) {
+            if (!(e.target as any).open && openedAsList.includes(group.label)) {
               // remove current group from opened list
-              let newOpened: string | null = sortBy(openedAsList.filter((id) => id !== group.id)).join(
-                OPENED_SEPARATOR,
-              );
-              setOpenedUrl(newOpened);
-            } else if ((e.target as any).open && !openedAsList.includes(group.id)) {
-              const newOpened = sortBy([...openedAsList, group.id]).join(OPENED_SEPARATOR);
-              setOpenedUrl(newOpened);
+              let newOpened: string[] = openedAsList.filter((id) => id !== group.label);
+              setOpenedAsList(newOpened);
+            } else if ((e.target as any).open && !openedAsList.includes(group.label)) {
+              const newOpened: string[] = [...openedAsList, group.label];
+              setOpenedAsList(newOpened);
             }
           }}
         >
           <summary className="filters-group-label">
             {group.label}{" "}
-            {!openedAsList.includes(group.id) &&
+            {!openedAsList.includes(group.label) &&
               group.filters.filter((f) => props.state[f.id]).length > 0 &&
               ` (${group.filters.filter((f) => props.state[f.id]).length})`}
           </summary>

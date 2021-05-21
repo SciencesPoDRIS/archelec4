@@ -19,7 +19,6 @@ export type PlainObject<T = any> = { [k: string]: T };
 export type SearchType = "profession"; // | "logo";
 
 export type FiltersGroupType = {
-  id: string;
   label: string;
   openByDefault?: boolean;
   filters: FilterType[];
