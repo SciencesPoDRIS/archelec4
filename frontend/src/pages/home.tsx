@@ -19,7 +19,7 @@ export const Home: React.FC<Props> = (props: Props) => {
           <Link className="btn btn-lg" to="/explorer">
             <i className="fas fa-search"></i> explorer
           </Link>
-          <Link className="btn btn-lg" to="/explorer">
+          <Link className="btn btn-lg" to="/faq">
             <i className="far fa-question-circle"></i> faq
           </Link>
         </p>

@@ -13,7 +13,7 @@ export const Header: React.FC = () => {
           <Link className="navbar-brand" to="/explorer" title="explorer">
             ⋅ Explorer
           </Link>{" "}
-          <Link className="navbar-brand" to={"/FAQ"} title="Archelec">
+          <Link className="navbar-brand" to="/faq" title="Archelec">
             ⋅ FAQ
           </Link>
         </div>
