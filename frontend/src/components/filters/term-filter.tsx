@@ -34,12 +34,15 @@ export const TermsFilter: FC<{
   // **the current input**, only on previous/upcoming inputs.
   return (
     <div className="filter-block">
-      <span className="filter-label">{filter.label}</span>
+      <label htmlFor={filter.id} className="filter-label">
+        {filter.label}
+      </label>
 
       <div>
         {filter.asyncOptions ? (
           <AsyncCreatableSelect
             key={JSON.stringify(context)}
+            inputId={filter.id}
             loadOptions={(inputValue: string) => filter.asyncOptions && filter.asyncOptions(inputValue, context)}
             value={stringToObjectValue(terms)}
             isMulti={!!filter.isMulti}

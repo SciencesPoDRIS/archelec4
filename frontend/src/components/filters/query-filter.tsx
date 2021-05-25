@@ -15,7 +15,9 @@ export const QueryFilter: FC<{
 
   return (
     <div className="filter-block">
-      <span className="filter-label">{filter.label}</span>
+      <label htmlFor={filter.id} className="filter-label">
+        {filter.label}
+      </label>
 
       <form
         onSubmit={(e) => {
@@ -26,6 +28,7 @@ export const QueryFilter: FC<{
       >
         <input
           name="q"
+          id={filter.id}
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
