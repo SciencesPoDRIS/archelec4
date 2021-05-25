@@ -11,9 +11,9 @@ export const Footer: React.FC = () => {
         <Link to="/" title="crédits">
           crédits
         </Link>{" "}
-        <Link to="https://github.com/SciencesPoDRIS/archelec4/" title="Code source ouvert sur github">
+        <a href="https://github.com/SciencesPoDRIS/archelec4/" title="Code source ouvert sur github">
           code source
-        </Link>
+        </a>
       </div>
     </footer>
   );
