@@ -105,6 +105,7 @@ export interface ArchiveElectoralProfessionDeFoi {
   // custom field
   images: Array<{ url: string; thumb?: string }>;
   pdf: string;
+  ocr_url: string;
 }
 
 type ArchiveElectoralImportProfessionDeFoi = ArchiveElectoralProfessionDeFoi & { ocr?: string };
@@ -363,7 +364,10 @@ export class Import {
 
     // OCR file
     const ocr = item.files.find((f) => f.format === "DjVuTXT");
-    if (ocr) result.ocr = await makeHttpCall({ url: ocr.url });
+    if (ocr) {
+      result.ocr = await makeHttpCall({ url: ocr.url });
+      result.ocr_url = ocr.url;
+    }
 
     // JPEG
     result.images = item.files

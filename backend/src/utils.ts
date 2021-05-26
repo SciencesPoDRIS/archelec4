@@ -200,6 +200,7 @@ export function archiveElectoralProfessionDeFoiToCsvLine(esItem: ArchiveElectora
     item.circonscription,
     item.images.map((i) => i.url).join(";"),
     item.pdf,
+    item.ocr_url,
   ];
 
   const titulaire: Partial<ArchiveElectoralProfessionDeFoi> = item.candidats.find((c) => c.type === "titulaire") || {};
@@ -225,6 +226,7 @@ export const ArchiveElectoralProfessionDeFoiCsvHeader = [
   "circonscription",
   "images",
   "pdf",
+  "ocr_url",
   "titulaire-nom",
   "titulaire-prenom",
   "titulaire-sexe",
