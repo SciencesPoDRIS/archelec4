@@ -210,7 +210,7 @@ export async function getTerms(
         terms: {
           field: `${field}.raw`,
           size: count || 15,
-          order: { _key: "desc" },
+          order: { _key: "asc" },
           include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
         },
       },
