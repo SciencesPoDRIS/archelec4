@@ -1,6 +1,7 @@
 import { Home } from "../pages/home";
 import { Explore } from "../pages/explore";
 import { Profession } from "../pages/profession";
+import { FAQ } from "../pages/faq";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -27,6 +28,10 @@ export const routes: RouteDefinition[] = [
       {
         path: "/explorer",
         component: Explore,
+      },
+      {
+        path: "/faq",
+        component: FAQ,
       },
     ],
   },

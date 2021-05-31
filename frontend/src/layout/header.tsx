@@ -10,10 +10,10 @@ export const Header: React.FC = () => {
           <Link className="navbar-brand" to="/" title="Archelec">
             ARCHELEC
           </Link>{" "}
-          <Link className="navbar-brand" to="/explorer" title="explorer">
+          <Link className="navbar-brand" to="/explorer" title="Explorer">
             ⋅ Explorer
           </Link>{" "}
-          <Link className="navbar-brand" to="/faq" title="Archelec">
+          <Link className="navbar-brand" to="/faq" title="Foire Aux Questions">
             ⋅ FAQ
           </Link>
         </div>
