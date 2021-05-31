@@ -5,7 +5,7 @@ export const Footer: React.FC = () => {
   return (
     <footer>
       <div className="container-fluid d-flex justify-content-center">
-        <Link to="/" title="mentions légales">
+        <Link to="/mentions-legales" title="mentions légales">
           mentions légales
         </Link>{" "}
         <Link to="/" title="crédits">

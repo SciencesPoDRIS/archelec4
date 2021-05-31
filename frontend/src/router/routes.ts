@@ -2,6 +2,7 @@ import { Home } from "../pages/home";
 import { Explore } from "../pages/explore";
 import { Profession } from "../pages/profession";
 import { FAQ } from "../pages/faq";
+import { LegalNotice } from "../pages/legal-notice";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -32,6 +33,10 @@ export const routes: RouteDefinition[] = [
       {
         path: "/faq",
         component: FAQ,
+      },
+      {
+        path: "/mentions-legales",
+        component: LegalNotice,
       },
     ],
   },
