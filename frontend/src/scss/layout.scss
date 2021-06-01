@@ -15,15 +15,27 @@ header .navbar {
   height: $header-height;
   border-bottom: 3px solid $primary;
   justify-content: space-between;
-  .navbar-brand {
+
+  .navbar-navigation {
     //text-transform: uppercase;
     font-size: 2em;
+    @media (max-height: 500px), (max-width: 400px) {
+      font-size: 1em;
+    }
     font-weight: 600;
+    span:not(:first-child)::before {
+      content: " ⋅ ";
+      color: $primary;
+    }
   }
 
   .logo {
     margin-right: 0.2em;
     height: 24px;
+    vertical-align: baseline;
+    @media (max-height: 500px), (max-width: 400px) {
+      height: 12px;
+    }
   }
 }
 #app-wrapper {
@@ -46,6 +58,9 @@ main {
 .panel-header {
   font-size: 1.75em;
   position: sticky;
+  @media (max-height: 500px), (max-width: 400px) {
+    position: relative;
+  }
   z-index: 1;
   background-color: white;
   padding: 0.5em 0.5em 0.5em 0;

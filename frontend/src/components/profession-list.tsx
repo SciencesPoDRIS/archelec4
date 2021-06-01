@@ -24,7 +24,7 @@ export const ProfessionList: React.FC<Props> = (props: Props) => {
       {professions !== null ? (
         <>
           <div className="panel-header">
-            <span>
+            <span aria-level={2} role="heading">
               Explorer <span className="highlight">{professions.total}</span> professions de foi
             </span>
             <span>

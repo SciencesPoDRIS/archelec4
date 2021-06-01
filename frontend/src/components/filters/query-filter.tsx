@@ -32,7 +32,8 @@ export const QueryFilter: FC<{
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Recherche plein-texte..."
+          placeholder="Rechercher..."
+          role="searchbox"
         />
         <button
           className="btn btn-img"

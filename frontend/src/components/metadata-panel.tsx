@@ -71,7 +71,7 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
     <div className="metadatapanel">
       <>
         <div className="metadata-section">
-          <div className="panel-header">
+          <div className="panel-header" role="heading" aria-level={3}>
             Élections {professionDeFoi["contexte-election"]} de {professionDeFoi.annee}
           </div>
           <h4>

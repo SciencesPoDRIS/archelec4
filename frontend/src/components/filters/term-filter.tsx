@@ -33,7 +33,7 @@ export const TermsFilter: FC<{
   // changes. But react-select does not provide a way to invalidate cache on
   // **the current input**, only on previous/upcoming inputs.
   return (
-    <div className="filter-block">
+    <div className="filter-block" role="search">
       <label htmlFor={filter.id} className="filter-label">
         {filter.label}
       </label>
@@ -46,12 +46,20 @@ export const TermsFilter: FC<{
             loadOptions={(inputValue: string) => filter.asyncOptions && filter.asyncOptions(inputValue, context)}
             value={stringToObjectValue(terms)}
             isMulti={!!filter.isMulti}
-            placeholder={"Rechercher une valeur..."}
+            placeholder={"Sélectionner..."}
             noOptionsMessage={() => "Aucune option disponible dans les filtres actuels"}
             defaultOptions
             onChange={(value: any) =>
               setTermsUrl(objectToStringValue(value as OptionType | OptionType[]).join(SEPARATOR))
             }
+            theme={(theme) => ({
+              ...theme,
+              colors: {
+                ...theme.colors,
+                neutral50: "rgb(0,0,0,0.7)", // Placeholder color
+              },
+            })}
+            aria-multiselectable={true}
           />
         ) : (
           <CreatableSelect options={filter.options} value={stringToObjectValue(terms)} isMulti={filter.isMulti} />

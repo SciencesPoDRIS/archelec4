@@ -6,20 +6,26 @@ export const Header: React.FC = () => {
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-fixed">
-        <div id="brand">
-          <Link className="navbar-brand" to="/" title="Archelec">
-            ARCHELEC
-          </Link>{" "}
-          <Link className="navbar-brand" to="/explorer" title="Explorer">
-            ⋅ Explorer
-          </Link>{" "}
-          <Link className="navbar-brand" to="/faq" title="Foire Aux Questions">
-            ⋅ FAQ
-          </Link>
+        <div className="navbar-navigation" role="navigation">
+          <span>
+            <Link to="/" title="Page d'accueil">
+              ARCHELEC
+            </Link>
+          </span>
+          <span>
+            <Link to="/explorer" title="Explorer">
+              Explorer
+            </Link>
+          </span>
+          <span>
+            <Link to="/faq" title="Foire Aux Questions">
+              FAQ
+            </Link>
+          </span>
         </div>
-        <Link to="http://www.sciencepo.fr" title="Sciences Po">
-          <img className="logo" src={ScPoLogo} title="Sciences Po" alt="Sciences Po" />
-        </Link>
+        <a href="http://www.sciencespo.fr" title="Sciences Po">
+          <img className="logo" src={ScPoLogo} title="Sciences Po" alt="Sciences Po" role="banner" />
+        </a>
       </nav>
     </header>
   );

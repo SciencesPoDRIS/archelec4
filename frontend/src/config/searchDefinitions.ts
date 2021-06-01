@@ -153,7 +153,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "ocr",
           type: "query",
-          label: "Transcription par OCR",
+          label: "Transcription (OCR)",
         },
       ],
     },

@@ -83,6 +83,10 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
 
   const [results, setResults] = useState<{ list: ProfessionDeFoi[]; total: number } | null>(null);
 
+  useEffect(() => {
+    document.title = "Archelec: exploration des professions de foi électorales";
+  }, []);
+
   //TODO: refacto the two useEffects into one ?
   useEffect(() => {
     const lastFilterState = filtersState;
@@ -136,13 +140,15 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
   return (
     <div className="home container-fluid" ref={list}>
       <div className="row">
-        <div className="col-3">
+        <div className="col-xl-3 col-sm-4">
           <div className="side-bar full-height">
-            <div className="panel-header">Filtrer</div>
+            <div className="panel-header" aria-level={2} role="heading">
+              Filtrer
+            </div>
             <FiltersPanel state={filtersState} searchTypeDefinition={professionSearch} />
           </div>
         </div>
-        <div className="col-9">
+        <div className="col-xl-9 col-sm-8">
           <ProfessionList
             esContext={{
               index: professionSearch.index,

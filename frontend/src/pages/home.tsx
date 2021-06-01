@@ -8,7 +8,9 @@ export const Home: React.FC<Props> = (props: Props) => {
   return (
     <div className="container-fluid about full-height">
       <div>
-        <h1>Archives électorales de Sciences Po</h1>
+        <h1>
+          Archives électorales de <span style={{ whiteSpace: "nowrap" }}>Sciences Po</span>
+        </h1>
         <h2>Explorer les professions de foi des élections législatives de la Ve République</h2>
         <p>
           Interface de recherche avancée pour une exploration multicritère des archives électorales mis en ligne par
