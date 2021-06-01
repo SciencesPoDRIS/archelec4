@@ -16,10 +16,14 @@ export const Home: React.FC<Props> = (props: Props) => {
         </p>
         <p>Mentionner COLLEX ?</p>
         <p>
-          <Link className="btn btn-lg" to="/explorer">
+          <Link
+            className="btn btn-lg"
+            to="/explorer"
+            title="Explorer les professions de foi des élections législatives de la Ve République"
+          >
             <i className="fas fa-search"></i> explorer
           </Link>
-          <Link className="btn btn-lg" to="/faq">
+          <Link className="btn btn-lg" to="/faq" title="Foire aux questions">
             <i className="far fa-question-circle"></i> faq
           </Link>
         </p>
