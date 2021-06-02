@@ -45,7 +45,7 @@ header .navbar {
 }
 main {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow: hidden;
 }
 .full-height {
   // TODO: remove - 6 px when debugged profession iframe height

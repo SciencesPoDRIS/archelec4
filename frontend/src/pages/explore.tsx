@@ -67,10 +67,39 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
 }
 
 export const Explore: React.FC<PageProps> = (props: PageProps) => {
-  const { isNearBottom, isNotOnTop, scrollTo } = props;
   const location = useLocation();
-  const list = useRef<HTMLDivElement>(null);
   const queryParams = new URLSearchParams(location.search);
+  // scroll
+  const resultColumn = useRef<HTMLDivElement>(null);
+  const [isNotOnTop, setIsNotOnTop] = useState<boolean>(false);
+  const [isNearBottom, setIsNearBottom] = useState<boolean>(false);
+  /**
+   * This function checks if the page is scrolled to the bottom (or near the
+   * bottom), and, if there is no data loading and there are more results to
+   * fetch, it will load the next N results.
+   */
+
+  function checkScroll() {
+    if (resultColumn && resultColumn.current && !loading) {
+      setIsNearBottom(
+        resultColumn.current.scrollTop >= resultColumn.current.scrollHeight - resultColumn.current.offsetHeight - 500,
+      );
+      setIsNotOnTop(resultColumn.current.scrollTop > resultColumn.current.offsetHeight);
+    }
+  }
+  // Check scroll on window scroll:
+  useEffect(() => {
+    let resultColumnClojure = resultColumn.current;
+    if (resultColumn && resultColumn.current) {
+      resultColumn.current.addEventListener("scroll", checkScroll);
+    }
+    return function cleanup() {
+      if (resultColumnClojure) resultColumnClojure.removeEventListener("scroll", checkScroll);
+    };
+  }, [resultColumn]);
+  const scrollTo = (p: PlainObject) => {
+    if (resultColumn && resultColumn.current) resultColumn.current.scrollTo(p);
+  };
 
   // TODO : enable changiing sort ?
   const [sort, setSort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
@@ -132,13 +161,14 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
         SIZE,
       ).then((newResults) => {
         setLoading(false);
+        setIsNearBottom(false);
         setResults({ total: newResults.total, list: results.list.concat(newResults.list) });
       });
     }
   }, [isNearBottom, loading, results]);
 
   return (
-    <div className="home container-fluid" ref={list}>
+    <div className="home container-fluid">
       <div className="row">
         <div className="col-xl-3 col-sm-4">
           <div className="side-bar full-height">
@@ -148,7 +178,7 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
             <FiltersPanel state={filtersState} searchTypeDefinition={professionSearch} />
           </div>
         </div>
-        <div className="col-xl-9 col-sm-8">
+        <div className="col-xl-9 col-sm-8 full-height result-column" ref={resultColumn}>
           <ProfessionList
             esContext={{
               index: professionSearch.index,
