@@ -8,6 +8,8 @@ import ndLogo from "../assets/nd.png";
 
 interface Props {
   professionDeFoi: ProfessionDeFoi;
+  viewMode: string;
+  setViewMode: (viewMode: string) => void;
 }
 
 const MetadataList: React.FC<{ list: string[]; label?: string }> = (props: { list: string[]; label?: string }) => {
@@ -63,7 +65,7 @@ const CandidatMetadata: React.FC<{ candidat: Candidat }> = (props: { candidat: C
 };
 
 export const MetadataPanel: React.FC<Props> = (props: Props) => {
-  const { professionDeFoi } = props;
+  const { professionDeFoi, viewMode, setViewMode } = props;
   const titulaire = professionDeFoi.candidats.find((c) => c.type === "titulaire");
 
   const suppleant = professionDeFoi.candidats.find((c) => c.type === "suppléant");
@@ -96,6 +98,25 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
         {suppleant && <CandidatMetadata candidat={suppleant} />}
         <div className="metadata-section">
           <h3>Accès au document</h3>
+          {professionDeFoi.ocr_url && (
+            <div className="metadata-group">
+              <div className="custom-control custom-switch">
+                <span>Original</span>
+                <input
+                  type="checkbox"
+                  className="custom-control-input"
+                  id="customSwitch1"
+                  checked={viewMode === "ocr"}
+                  onChange={(e) => {
+                    setViewMode(e.target.checked ? "ocr" : "original");
+                  }}
+                />
+                <label className="custom-control-label" htmlFor="customSwitch1">
+                  Transcrit par OCR
+                </label>
+              </div>
+            </div>
+          )}
           <div className="metadata-group">
             <div>
               Cote {professionDeFoi.cote} aux{" "}

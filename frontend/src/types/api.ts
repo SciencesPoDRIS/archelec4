@@ -15,11 +15,29 @@ export interface paths {
     /**
      * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
      * The body will be passed to elasticsearch.
+     * Example : {
+     *   "query": {
+     *     "simple_query_string": {
+     *       "fields": [ "title" ],
+     *       "query": "*"
+     *     }
+     *   }
+     * }
      */
     post: operations["Search"];
   };
   "/professiondefoi/search/csv": {
-    /** Given an ES search query, this method will create a CSV file in a stream way of the entire result. */
+    /**
+     * Given an ES search query, this method will create a CSV file in a stream way of the entire result.
+     * Example : {
+     *   "query": {
+     *     "simple_query_string": {
+     *       "fields": [ "title" ],
+     *       "query": "*"
+     *     }
+     *   }
+     * }
+     */
     post: operations["SearchAsCsv"];
   };
   "/elasticsearch/proxy_search": {
@@ -97,6 +115,7 @@ export interface components {
         url: string;
       }[];
       pdf: string;
+      ocr_url: string;
     } & { [key: string]: any };
     SearchResponse_ArchiveElectoralProfessionDeFoi_: {
       hits: {
@@ -201,6 +220,14 @@ export interface operations {
   /**
    * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
    * The body will be passed to elasticsearch.
+   * Example : {
+   *   "query": {
+   *     "simple_query_string": {
+   *       "fields": [ "title" ],
+   *       "query": "*"
+   *     }
+   *   }
+   * }
    */
   Search: {
     parameters: {};
@@ -220,7 +247,17 @@ export interface operations {
       };
     };
   };
-  /** Given an ES search query, this method will create a CSV file in a stream way of the entire result. */
+  /**
+   * Given an ES search query, this method will create a CSV file in a stream way of the entire result.
+   * Example : {
+   *   "query": {
+   *     "simple_query_string": {
+   *       "fields": [ "title" ],
+   *       "query": "*"
+   *     }
+   *   }
+   * }
+   */
   SearchAsCsv: {
     parameters: {
       query: {
