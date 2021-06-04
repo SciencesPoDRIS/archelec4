@@ -101,17 +101,25 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
           {professionDeFoi.ocr_url && (
             <div className="metadata-group">
               <div className="custom-control custom-switch">
-                <span>Original</span>
+                <label
+                  onClick={() => {
+                    if (viewMode === "ocr") setViewMode("original");
+                  }}
+                >
+                  Original
+                </label>
+
                 <input
                   type="checkbox"
                   className="custom-control-input"
-                  id="customSwitch1"
+                  id="viewModeSwitch"
                   checked={viewMode === "ocr"}
                   onChange={(e) => {
                     setViewMode(e.target.checked ? "ocr" : "original");
                   }}
                 />
-                <label className="custom-control-label" htmlFor="customSwitch1">
+
+                <label className="custom-control-label" htmlFor="viewModeSwitch">
                   Transcrit par OCR
                 </label>
               </div>
