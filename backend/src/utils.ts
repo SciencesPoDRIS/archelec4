@@ -204,7 +204,7 @@ export function archiveElectoralProfessionDeFoiToCsvLine(esItem: ArchiveElectora
   ];
 
   const titulaire: Partial<ArchiveElectoralProfessionDeFoi> = item.candidats.find((c) => c.type === "titulaire") || {};
-  const suppleant: Partial<ArchiveElectoralProfessionDeFoi> = item.candidats.find((c) => c.type === "suppleant") || {};
+  const suppleant: Partial<ArchiveElectoralProfessionDeFoi> = item.candidats.find((c) => c.type === "suppléant") || {};
 
   const columnsValue = electionValue
     .concat(archiveElectoralCandidatToArrayFields(titulaire))
