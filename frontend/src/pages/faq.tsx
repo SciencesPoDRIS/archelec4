@@ -3,7 +3,7 @@ import React from "react";
 interface Props {}
 export const FAQ: React.FC<Props> = (props: Props) => {
   return (
-    <div className="container full-height faq">
+    <div className="container full-height content-page">
       <div className="row mt-3">
         <h1>Foire Aux Questions</h1>
       </div>
