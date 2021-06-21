@@ -30,6 +30,9 @@ export const Home: React.FC<Props> = (props: Props) => {
           </Link>
         </p>
       </div>
+      <div className="credit-photo" title="Crédit photo: Caroline Maufroid / Sciences Po">
+        <i className="fas fa-camera"></i> Caroline Maufroid, Sciences Po
+      </div>
     </div>
   );
 };

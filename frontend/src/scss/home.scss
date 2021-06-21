@@ -3,7 +3,7 @@
   justify-content: center;
   background-image: url("../assets/about_background.jpg");
   background-size: cover;
-  > div {
+  > div:first-child {
     padding: 3em;
     border-radius: 5px;
     color: white;
@@ -20,5 +20,14 @@
       font-weight: 600;
       margin-right: 0.5em;
     }
+  }
+  .credit-photo {
+    position: absolute;
+    right: 0px;
+    bottom: calc(#{$footer_height} + 2px);
+    font-size: 0.8rem;
+    padding: 0.1rem;
+    background-color: rgba($color: #ffffff, $alpha: 0.5);
+    border-top-left-radius: 5px;
   }
 }
