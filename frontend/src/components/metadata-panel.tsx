@@ -102,6 +102,7 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
             <div className="metadata-group">
               <div className="custom-control custom-switch">
                 <label
+                  className="left-label"
                   onClick={() => {
                     if (viewMode === "ocr") setViewMode("original");
                   }}
