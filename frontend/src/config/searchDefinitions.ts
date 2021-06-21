@@ -39,6 +39,7 @@ export const professionSearch: SearchTypeDefinition = {
           id: "contexte-tour",
           type: "terms",
           label: "Tour",
+          isMulti: true,
         },
       ],
     },
