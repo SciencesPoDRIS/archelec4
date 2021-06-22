@@ -22,9 +22,11 @@ function getESQueryBody(filters: FiltersState, suggestFilter?: { field: string; 
 
   if (suggestFilter && suggestFilter.value) {
     queries.push({
-      simple_query_string: {
-        query: `${suggestFilter.value}*`,
-        fields: [suggestFilter.field],
+      wildcard: {
+        [`${suggestFilter.field}.raw`]: {
+          value: `*${suggestFilter.value}*`,
+          case_insensitive: true,
+        },
       },
     });
   }
@@ -91,7 +93,7 @@ export async function getTerms(
         terms: {
           field: `${field}.raw`,
           size: count || 15,
-          order: { _term: "asc" },
+          order: { _key: "asc" },
           include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
         },
       },
