@@ -344,6 +344,8 @@ export class Import {
           result[newKey] = value;
           // compute year of election for search facet
           result["annee"] = new Date(value).getFullYear() + "";
+        } else if (key === "circonscription") {
+          result[newKey] = value.padStart(2, "0");
         } else result[newKey] = value;
       }
     });
