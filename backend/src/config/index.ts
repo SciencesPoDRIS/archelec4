@@ -154,6 +154,8 @@ export const config: Configuration = {
             match_mapping_type: "string",
             mapping: {
               type: "text",
+              analyzer: "IndexAnalyzer",
+              search_analyzer: "SearchAnalyzer",
               fields: {
                 raw: {
                   type: "keyword",
