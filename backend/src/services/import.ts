@@ -307,7 +307,7 @@ export class Import {
     }
     if (candidate["sexe"]) {
       modifiedCandidate["sexe"] =
-        candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : "Indéterminé";
+        candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : "Non déterminé";
     }
     //multivalued fields
     ["profession", "mandat-en-cours", "mandat-passe", "associations", "autres-statuts", "soutien", "liste"].forEach(
@@ -333,20 +333,18 @@ export class Import {
         const value: any = key.endsWith("date") ? new Date(item.metadata[key] as any) : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
-        if (value !== "NR" && value !== "") {
-          if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
-          else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
-          else if (key === "subject") {
-            result[newKey] = typeof value === "string" ? value.split(";") : value;
-          } else if (key === "departement") {
-            result[newKey] = value;
-            result["departement-insee"] = departments[value];
-          } else if (key === "date") {
-            result[newKey] = value;
-            // compute year of election for search facet
-            result["annee"] = new Date(value).getFullYear() + "";
-          } else result[newKey] = value;
-        }
+        if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
+        else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
+        else if (key === "subject") {
+          result[newKey] = typeof value === "string" ? value.split(";") : value;
+        } else if (key === "departement") {
+          result[newKey] = value;
+          result["departement-insee"] = departments[value];
+        } else if (key === "date") {
+          result[newKey] = value;
+          // compute year of election for search facet
+          result["annee"] = new Date(value).getFullYear() + "";
+        } else result[newKey] = value;
       }
     });
 
