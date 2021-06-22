@@ -330,12 +330,18 @@ export class Import {
     Object.keys(item.metadata).forEach((key: string) => {
       // Check if the key validate the spec
       if (config.internet_archive_collection_metadata_filters.find((e) => key.endsWith(e))) {
-        const value: any = key.endsWith("date") ? new Date(item.metadata[key] as any) : item.metadata[key];
+        const value: any = key.endsWith("date")
+          ? new Date(item.metadata[key] as any)
+          : item.metadata[key] === "NR" || item.metadata[key] === ""
+          ? "Non renseigné"
+          : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
-        if (key.endsWith("-titulaire")) titulaire[newKey.replace("-titulaire", "")] = value;
-        else if (key.endsWith("-suppleant")) suppleant[newKey.replace("-suppleant", "")] = value;
-        else if (key === "subject") {
+        if (key.endsWith("-titulaire")) {
+          titulaire[newKey.replace("-titulaire", "")] = value;
+        } else if (key.endsWith("-suppleant")) {
+          suppleant[newKey.replace("-suppleant", "")] = value;
+        } else if (key === "subject") {
           result[newKey] = typeof value === "string" ? value.split(";") : value;
         } else if (key === "departement") {
           result[newKey] = value.padStart(2, "0");
