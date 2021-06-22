@@ -24,7 +24,7 @@ function asyncOptionsFactory(
         ? [
             {
               value: "HOPPE::DISABLED",
-              label: "Pour voir plus de résultats, veuillez affiner votre rechercher",
+              label: "Pour voir plus de résultats, veuillez affiner votre recherche",
               isDisabled: true,
             },
           ]
