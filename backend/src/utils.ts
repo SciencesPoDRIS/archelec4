@@ -131,31 +131,31 @@ export function computeAge(dateElection: Date, age: string): { age: string; rang
   } else if (age === "192X") {
     // nothing to do (default value)
   } else if (age === "23 et demi") {
-    result.range = "20-29";
+    result.range = "Entre 20 et 29 ans";
   } else if (age === "29 ou 28") {
-    result.range = "20-29";
+    result.range = "Entre 20 et 29 ans";
   } else if (age === "30 ou 29") {
-    result.range = "30-39";
+    result.range = "Entre 30 et 39 ans";
   } else if (age === "33 ou 30") {
-    result.range = "30-39";
+    result.range = "Entre 30 et 39 ans";
   } else if (age === "37 ou 36") {
-    result.range = "30-39";
+    result.range = "Entre 30 et 39 ans";
   } else if (age === "38 ou 37") {
-    result.range = "30-39";
+    result.range = "Entre 30 et 39 ans";
   } else if (age === "40 ou 39") {
-    result.range = "40-49";
+    result.range = "Entre 40 et 49 ans";
   } else if (age === "41 ou 40") {
-    result.range = "40-49";
+    result.range = "Entre 40 et 49 ans";
   } else if (age === "60 au moins") {
-    result.range = "60-69";
+    result.range = "Entre 60 et 69 ans";
   } else if (age === "doyen") {
     // nothing to do (default value)
   } else if (age === "moins de 30") {
-    result.range = "20-29";
+    result.range = "Entre 20 et 29 ans";
   } else if (age === "moins de 40") {
-    result.range = "30-39";
+    result.range = "Entre 30 et 39 ans";
   } else if (age === "quarantaine") {
-    result.range = "40-49";
+    result.range = "Entre 40 et 49 ans";
   }
 
   return result;
