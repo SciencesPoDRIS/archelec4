@@ -127,14 +127,20 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
           )}
           <div className="metadata-group">
             <div>
-              Cote {professionDeFoi.cote} aux{" "}
-              <a href="https://www.sciencespo.fr/cevipof/fr/content/archives-electorales.html">
-                Archives électorales du CEVIPOF
+              {professionDeFoi.id} sur{" "}
+              <a target="_blank" href={`https://archive.org/details/${professionDeFoi.id}`} rel="noreferrer">
+                Internet Archive
               </a>
             </div>
             <div>
-              Id {professionDeFoi.id} sur{" "}
-              <a href={`https://archive.org/details/${professionDeFoi.id}`}>Internet Archive</a>
+              Cote {professionDeFoi.cote} aux{" "}
+              <a
+                target="_blank"
+                href="https://www.sciencespo.fr/cevipof/fr/content/archives-electorales.html"
+                rel="noreferrer"
+              >
+                Archives électorales du CEVIPOF
+              </a>
             </div>
             <div>
               <a
