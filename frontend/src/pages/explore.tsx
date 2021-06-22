@@ -73,36 +73,9 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
   const resultColumn = useRef<HTMLDivElement>(null);
   const [isNotOnTop, setIsNotOnTop] = useState<boolean>(false);
   const [isNearBottom, setIsNearBottom] = useState<boolean>(false);
-  /**
-   * This function checks if the page is scrolled to the bottom (or near the
-   * bottom), and, if there is no data loading and there are more results to
-   * fetch, it will load the next N results.
-   */
-
-  function checkScroll() {
-    if (resultColumn && resultColumn.current && !loading) {
-      setIsNearBottom(
-        resultColumn.current.scrollTop >= resultColumn.current.scrollHeight - resultColumn.current.offsetHeight - 500,
-      );
-      setIsNotOnTop(resultColumn.current.scrollTop > resultColumn.current.offsetHeight);
-    }
-  }
-  // Check scroll on window scroll:
-  useEffect(() => {
-    let resultColumnClojure = resultColumn.current;
-    if (resultColumn && resultColumn.current) {
-      resultColumn.current.addEventListener("scroll", checkScroll);
-    }
-    return function cleanup() {
-      if (resultColumnClojure) resultColumnClojure.removeEventListener("scroll", checkScroll);
-    };
-  }, [resultColumn]);
-  const scrollTo = (p: PlainObject) => {
-    if (resultColumn && resultColumn.current) resultColumn.current.scrollTo(p);
-  };
 
   // TODO : enable changiing sort ?
-  const [sort, setSort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
+  const [sort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
 
   // Top page form state (unplugged to search until form is submitted):
   const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
@@ -111,6 +84,35 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
   const [filtersState, setFiltersState] = useState<FiltersState>(getFiltersState(queryParams, filtersDict));
 
   const [results, setResults] = useState<{ list: ProfessionDeFoi[]; total: number } | null>(null);
+
+  // Check scroll on window scroll:
+  useEffect(() => {
+    /**
+     * This function checks if the page is scrolled to the bottom (or near the
+     * bottom), and, if there is no data loading and there are more results to
+     * fetch, it will load the next N results.
+     */
+    function checkScroll() {
+      if (resultColumn && resultColumn.current && !loading) {
+        setIsNearBottom(
+          resultColumn.current.scrollTop >= resultColumn.current.scrollHeight - resultColumn.current.offsetHeight - 500,
+        );
+        setIsNotOnTop(resultColumn.current.scrollTop > resultColumn.current.offsetHeight);
+      }
+    }
+
+    let resultColumnClojure = resultColumn.current;
+    if (resultColumn && resultColumn.current) {
+      resultColumn.current.addEventListener("scroll", checkScroll);
+    }
+    return () => {
+      if (resultColumnClojure) resultColumnClojure.removeEventListener("scroll", checkScroll);
+    };
+  }, [resultColumn, loading]);
+
+  const scrollTo = (p: PlainObject) => {
+    if (resultColumn && resultColumn.current) resultColumn.current.scrollTo(p);
+  };
 
   useEffect(() => {
     document.title = "Archelec: exploration des professions de foi électorales";
@@ -165,7 +167,7 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
         setResults({ total: newResults.total, list: results.list.concat(newResults.list) });
       });
     }
-  }, [isNearBottom, loading, results]);
+  }, [isNearBottom, loading, results, filtersState, sort]);
 
   return (
     <div className="home container-fluid">

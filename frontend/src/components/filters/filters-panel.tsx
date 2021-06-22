@@ -23,7 +23,7 @@ function asyncOptionsFactory(
       ...(terms.length > count
         ? [
             {
-              value: "HOPPE::DISABLED",
+              value: "ARCHELEC::DISABLED",
               label: "Pour voir plus de résultats, veuillez affiner votre recherche",
               isDisabled: true,
             },

@@ -16,7 +16,7 @@ ReactDOM.render(
       </Router>
     </div>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById("root"),
 );
 
 // If you want to start measuring performance in your app, pass a function

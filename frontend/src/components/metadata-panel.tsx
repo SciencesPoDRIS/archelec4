@@ -1,4 +1,3 @@
-import { listenerCount } from "node:events";
 import React from "react";
 import { Candidat, ProfessionDeFoi } from "../types";
 import byLogo from "../assets/by.png";

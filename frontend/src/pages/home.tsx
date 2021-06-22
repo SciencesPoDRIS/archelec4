@@ -1,7 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Loader } from "../components/loader";
-import { MetadataPanel } from "../components/metadata-panel";
 
 interface Props {}
 export const Home: React.FC<Props> = (props: Props) => {

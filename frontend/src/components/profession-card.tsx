@@ -1,4 +1,4 @@
-import { capitalize, uniq, upperCase } from "lodash";
+import { capitalize, uniq } from "lodash";
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { ProfessionDeFoi } from "../types";

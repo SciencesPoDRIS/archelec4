@@ -7,14 +7,13 @@ import {
   CreatableSelect,
   objectToStringValue,
 } from "../../components/custom-select";
-import { TermsFilterType, FilterHistogramType, ESSearchQueryContext } from "../../types";
+import { TermsFilterType, ESSearchQueryContext } from "../../types";
 
 import { useStateUrl } from "../../hooks/state-url";
 
 const SEPARATOR = "|";
 export const TermsFilter: FC<{
   filter: TermsFilterType;
-  histogram?: FilterHistogramType;
   context: ESSearchQueryContext;
 }> = ({ filter, context }) => {
   // const remainingCount = histogram ? histogram.total - histogram.values.length : 0;

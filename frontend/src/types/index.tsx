@@ -90,8 +90,6 @@ export type QueryFilterType = {
 
 export type FilterType = TermsFilterType | DatesFilterType | QueryFilterType;
 
-export type FilterHistogramType = { values: { label: string; count: number }[]; total: number; maxCount?: number };
-
 export type PageProps = { isNearBottom?: boolean; isNotOnTop?: boolean; scrollTo?: (props: PlainObject) => void };
 
 export type SearchResult<O> = O & { highlight: { [key: string]: string } | undefined };
