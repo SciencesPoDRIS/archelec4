@@ -14,13 +14,13 @@ export const Home: React.FC<Props> = (props: Props) => {
         </h2>
         <p>
           Interface de recherche avancée pour une exploration multicritère des archives électorals du CEVIPOF mises en
-          ligne à partir du corpus diffusé sur
+          ligne à partir du corpus diffusé sur{" "}
           <a
             title="Lien vers le corpus sur Internet Archive"
             href="https://archive.org/details/archiveselectoralesducevipof"
           >
             Internet Archive
-          </a>
+          </a>{" "}
           et sur la{" "}
           <a
             title="Lien vers le corpus sur la bibliothèque numérique de Sciences Po"
