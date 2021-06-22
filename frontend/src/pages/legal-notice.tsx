@@ -36,7 +36,7 @@ export const LegalNotice: React.FC<Props> = (props: Props) => {
 
         <p>L'hébergement de la plateforme est assuré par la Direction des systèmes d'information (DSI).</p>
 
-        <h2>Propiété industrielle et intellectuelle</h2>
+        <h2>Propriété industrielle et intellectuelle</h2>
 
         <p>
           Toutes les données relatives au matériel électoral mises à disposition via l’interface de recherche sont
