@@ -338,7 +338,7 @@ export class Import {
         else if (key === "subject") {
           result[newKey] = typeof value === "string" ? value.split(";") : value;
         } else if (key === "departement") {
-          result[newKey] = value;
+          result[newKey] = value.padStart(2, "0");
           result["departement-insee"] = departments[value];
         } else if (key === "date") {
           result[newKey] = value;
