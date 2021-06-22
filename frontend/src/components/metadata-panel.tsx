@@ -128,7 +128,7 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
           <div className="metadata-group">
             <div>
               {professionDeFoi.id} sur{" "}
-              <a target="_blank" href={`https://archive.org/details/${professionDeFoi.id}`} rel="noreferrer">
+              <a rel="noopener noreferrer" target="_blank" href={`https://archive.org/details/${professionDeFoi.id}`}>
                 Internet Archive
               </a>
             </div>
@@ -136,8 +136,8 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
               Cote {professionDeFoi.cote} aux{" "}
               <a
                 target="_blank"
+                rel="noopener noreferrer"
                 href="https://www.sciencespo.fr/cevipof/fr/content/archives-electorales.html"
-                rel="noreferrer"
               >
                 Archives électorales du CEVIPOF
               </a>
@@ -145,7 +145,8 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
             <div>
               <a
                 className="licenses"
-                rel="license"
+                rel="noopener noreferrer license"
+                target="_blank"
                 title="Attribution-NonCommercial-NoDerivs 4.0 International"
                 href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
               >
