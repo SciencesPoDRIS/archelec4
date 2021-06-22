@@ -102,7 +102,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.age-tranche",
           type: "terms",
-          label: "Âge",
+          label: "Tranche d'âge",
           isMulti: true,
         },
       ],
