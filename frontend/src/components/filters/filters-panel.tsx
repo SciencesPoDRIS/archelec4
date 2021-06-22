@@ -43,7 +43,6 @@ export const FiltersPanel: FC<{
     index: props.searchTypeDefinition.index,
     sort: null,
   };
-
   const openedByDefault = props.searchTypeDefinition.filtersGroups
     .filter((g) => (values(props.state).length === 0 ? g.openByDefault : g.filters.some((f) => props.state[f.id])))
     .map((g) => g.label);
@@ -79,7 +78,6 @@ export const FiltersPanel: FC<{
                 <TermsFilter
                   key={i}
                   filter={{ ...filter, asyncOptions: asyncOptionsFactory(filter.id) }}
-                  //histogram={histograms[filter.id] && { ...histograms[filter.id], maxCount }}
                   context={context}
                 />
               );
