@@ -17,13 +17,8 @@ const MetadataList: React.FC<{ list: string[]; label?: string }> = (props: { lis
     <>
       {list && list.length > 0 && (
         <div className="metadata-line">
-          {label && `${label} : `}
-          {list.map((p, i) => (
-            <span key={i}>
-              <span>{p}</span>
-              {i < list.length - 1 && ", "}
-            </span>
-          ))}
+          <span className="metadata-field">{label && `${label} : `}</span>
+          <span className="metadata-value">{list.join(", ")}</span>
         </div>
       )}
     </>
@@ -40,10 +35,18 @@ const CandidatMetadata: React.FC<{ candidat: Candidat }> = (props: { candidat: C
       {candidat.age && (
         <div className="metadata-group">
           <div>
-            Âge déclaré : {candidat.age || "aucun"}{" "}
-            {candidat["age-calcule"] !== candidat.age && <span>(calculé : {candidat["age-calcule"]})</span>}
+            <span className="metadata-field">Âge déclaré : </span>
+            <span className="metadata-value">
+              {candidat.age || "aucun"}{" "}
+              {candidat.age !== "Non renseigné" && candidat["age-calcule"] !== candidat.age && (
+                <span>(calculé : {candidat["age-calcule"]})</span>
+              )}
+            </span>
           </div>
-          <div>Sexe : {candidat.sexe}</div>
+          <div>
+            <span className="metadata-field">Sexe : </span>
+            <span className="metadata-value">{candidat.sexe}</span>
+          </div>
         </div>
       )}
 
