@@ -1,10 +1,24 @@
 import { omit, omitBy, isUndefined, isEmpty, toPairs, identity } from "lodash";
+import { isWildcardSpecialValue, valueFromWildcardSpecialValue } from "./components/filters/utils";
 import { config } from "./config";
 import { ESSearchQueryContext, FiltersState, FilterState, PlainObject, SearchResult } from "./types";
 
 function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
   if (filter.type === "terms")
-    return { bool: { should: filter.value.map((v) => ({ terms: { [`${field}.raw`]: [v] } })) } };
+    return {
+      bool: {
+        should: filter.value.map((v) => {
+          if (isWildcardSpecialValue(v))
+            // special value prefixed with WILDCARD to be used in a wildcard query
+            return {
+              wildcard: {
+                [`${field}.raw`]: { value: `*${valueFromWildcardSpecialValue(v)}*`, case_insensitive: true },
+              },
+            };
+          else return { terms: { [`${field}.raw`]: [v] } };
+        }),
+      },
+    };
   if (filter.type === "dates")
     return {
       range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },

@@ -72,6 +72,7 @@ export type TermsFilterType = {
   type: "terms";
   label: string;
   order: "count_desc" | "key_asc";
+  wildcardSearch?: boolean;
   isMulti?: boolean;
   cacheOptions?: boolean;
   options?: OptionType[];

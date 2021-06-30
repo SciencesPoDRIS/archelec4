@@ -8,6 +8,7 @@ import { DatesFilter } from "./dates-filter";
 import { TermsFilter } from "./term-filter";
 import { QueryFilter } from "./query-filter";
 import { values } from "lodash";
+import { wildcardSpecialLabel, wildcardSpecialValue } from "./utils";
 
 /**
  * Helper to get the properly typed function to retrieve options for a given
@@ -16,10 +17,20 @@ import { values } from "lodash";
 function asyncOptionsFactory(
   field: string,
   order: "count_desc" | "key_asc" = "count_desc",
+  wildcardSearch: boolean = true,
   count: number = 200,
 ): (inputValue: string, context: ESSearchQueryContext) => Promise<OptionType[]> {
   return async (inputValue: string, context: ESSearchQueryContext) =>
     getTerms(context, field, order, inputValue, count + 1).then((terms) => [
+      // create a wildcardSpecialValue which allow wildCard search on terms
+      ...(wildcardSearch && inputValue !== "" && terms.length > 0
+        ? [
+            {
+              value: wildcardSpecialValue(inputValue),
+              label: wildcardSpecialLabel(inputValue),
+            },
+          ]
+        : []),
       ...terms.map(({ term, count }) => ({ label: `${term} (${count})`, value: term })),
       ...(terms.length > count
         ? [
@@ -79,7 +90,10 @@ export const FiltersPanel: FC<{
                 <TermsFilter
                   key={i}
                   //TODO: add sort options configuration here
-                  filter={{ ...filter, asyncOptions: asyncOptionsFactory(filter.id, filter.order) }}
+                  filter={{
+                    ...filter,
+                    asyncOptions: asyncOptionsFactory(filter.id, filter.order, filter.wildcardSearch),
+                  }}
                   context={context}
                 />
               );

@@ -28,3 +28,17 @@ export const SEARCH_QUERY_KEY = "q";
 export const SEARCH_TYPE_KEY = "t";
 export const SEPARATOR = "|";
 export const SIZE = 50;
+
+/**
+ * Wildcard choices in filters management
+ */
+
+export const wildcardSpecialValue = (value: string): string => `wildcard::${value}`;
+// Label can be generated from normal or special value
+export const wildcardSpecialLabel = (value: string): string => `incluant '${valueFromWildcardSpecialValue(value)}'`;
+export const isWildcardSpecialValue = (value: string): boolean => value.startsWith("wildcard::");
+export const valueFromWildcardSpecialValue = (value: string): string => {
+  if (isWildcardSpecialValue(value)) return value.split("::")[1];
+  // if it's not a wildcard value return as is
+  else return value;
+};

@@ -4,6 +4,7 @@ import ReactSelect, { Props as ReactSelectProps } from "react-select";
 import ReactAsyncSelect, { Props as ReactAsyncSelectProps } from "react-select/async";
 import ReactCreatableSelect, { Props as ReactCreatableSelectProps } from "react-select/creatable";
 import ReactAsyncCreatableSelect, { Props as ReactAsyncCreatableSelectProps } from "react-select/async-creatable";
+import { isWildcardSpecialValue, wildcardSpecialLabel } from "./filters/utils";
 
 const CLASS_NAME = "react-select";
 const CLASS_NAME_PREFIX = "react-select";
@@ -28,9 +29,16 @@ export function stringToObjectValue(
   value?: string | string[],
   options?: OptionType[],
 ): OptionType | OptionType[] | undefined {
+  //recure on array
   if (Array.isArray(value)) return compact(value.map((v) => stringToObjectValue(v, options) as OptionType));
   if (typeof value !== "string") return value;
-
+  if (isWildcardSpecialValue(value))
+    // special value prefixed with WILDCARD to be used in a wildcard query
+    return {
+      value,
+      label: wildcardSpecialLabel(value),
+    };
+  // default behaviour : find the value in options prop or return the value itself
   return options ? options.find((option) => option.value === value) : { label: value, value };
 }
 export function objectToStringValue(value?: OptionType | OptionType[]): string[] {
