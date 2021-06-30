@@ -3,6 +3,8 @@ import { Explore } from "../pages/explore";
 import { Profession } from "../pages/profession";
 import { FAQ } from "../pages/faq";
 import { LegalNotice } from "../pages/legal-notice";
+import { Credits } from "../pages/credits";
+import { CollexPersee } from "../pages/collex-persee";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -37,6 +39,14 @@ export const routes: RouteDefinition[] = [
       {
         path: "/mentions-legales",
         component: LegalNotice,
+      },
+      {
+        path: "/credits",
+        component: Credits,
+      },
+      {
+        path: "/collex-persee",
+        component: CollexPersee,
       },
     ],
   },

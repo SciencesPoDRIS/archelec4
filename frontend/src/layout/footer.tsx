@@ -8,7 +8,10 @@ export const Footer: React.FC = () => {
         <Link to="/mentions-legales" title="mentions légales">
           mentions légales
         </Link>{" "}
-        <Link to="/" title="crédits">
+        <Link to="/collex-persee" title="CollEx-Persée">
+          CollEx-Persée
+        </Link>{" "}
+        <Link to="/credits" title="crédits">
           crédits
         </Link>{" "}
         <a href="https://github.com/SciencesPoDRIS/archelec4/" title="Code source ouvert sur github">
