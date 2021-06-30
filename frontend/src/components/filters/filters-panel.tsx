@@ -15,11 +15,12 @@ import { values } from "lodash";
  */
 function asyncOptionsFactory(
   field: string,
+  order: "count_desc" | "key_asc" = "count_desc",
   count: number = 200,
 ): (inputValue: string, context: ESSearchQueryContext) => Promise<OptionType[]> {
   return async (inputValue: string, context: ESSearchQueryContext) =>
-    getTerms(context, field, inputValue, count + 1).then((terms) => [
-      ...terms.map(({ term }) => ({ label: term, value: term })),
+    getTerms(context, field, order, inputValue, count + 1).then((terms) => [
+      ...terms.map(({ term, count }) => ({ label: `${term} (${count})`, value: term })),
       ...(terms.length > count
         ? [
             {
@@ -77,7 +78,8 @@ export const FiltersPanel: FC<{
               return (
                 <TermsFilter
                   key={i}
-                  filter={{ ...filter, asyncOptions: asyncOptionsFactory(filter.id) }}
+                  //TODO: add sort options configuration here
+                  filter={{ ...filter, asyncOptions: asyncOptionsFactory(filter.id, filter.order) }}
                   context={context}
                 />
               );

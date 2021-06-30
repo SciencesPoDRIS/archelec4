@@ -82,6 +82,7 @@ function getESIncludeRegexp(query: string): string {
 export async function getTerms(
   context: ESSearchQueryContext,
   field: string,
+  order: "count_desc" | "key_asc" = "count_desc",
   value?: string,
   count?: number,
 ): Promise<{ term: string; count: number }[]> {
@@ -93,7 +94,7 @@ export async function getTerms(
         terms: {
           field: `${field}.raw`,
           size: count || 15,
-          order: { _key: "asc" },
+          order: order === "key_asc" ? { _key: "asc" } : { _count: "desc" },
           include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
         },
       },
