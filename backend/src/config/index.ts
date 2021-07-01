@@ -50,6 +50,8 @@ export interface Configuration {
   import_batch_size: number;
   // max nb of concurrent request we do to IA
   import_api_max_concurrency: number;
+  // missing value special tag
+  missing_value_tag: { sexe: string; default: string };
 }
 
 // Default configuration file
@@ -93,6 +95,10 @@ export const config: Configuration = {
     "departement-nom",
     "circonscription",
   ],
+  missing_value_tag: {
+    sexe: "Non déterminé",
+    default: "Non renseigné",
+  },
   elastic_index_configuration: {
     settings: {
       analysis: {

@@ -307,7 +307,7 @@ export class Import {
     }
     if (candidate["sexe"]) {
       modifiedCandidate["sexe"] =
-        candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : "Non déterminé";
+        candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : config.missing_value_tag.sexe;
     }
     //multivalued fields
     ["profession", "mandat-en-cours", "mandat-passe", "associations", "autres-statuts", "soutien", "liste"].forEach(
@@ -333,7 +333,7 @@ export class Import {
         const value: any = key.endsWith("date")
           ? new Date(item.metadata[key] as any)
           : item.metadata[key] === "NR" || item.metadata[key] === ""
-          ? "Non renseigné"
+          ? config.missing_value_tag.default
           : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
@@ -341,16 +341,17 @@ export class Import {
           titulaire[newKey.replace("-titulaire", "")] = value;
         } else if (key.endsWith("-suppleant")) {
           suppleant[newKey.replace("-suppleant", "")] = value;
-        } else if (key === "subject") {
+        } else if (newKey === "subject") {
           result[newKey] = typeof value === "string" ? value.split(";") : value;
-        } else if (key === "departement") {
+        } else if (newKey === "departement") {
           result[newKey] = value.padStart(2, "0");
           result["departement-insee"] = departments[value];
-        } else if (key === "date") {
+        } else if (newKey === "date") {
           result[newKey] = value;
           // compute year of election for search facet
           result["annee"] = new Date(value).getFullYear() + "";
-        } else if (key === "circonscription") {
+        } else if (newKey === "circonscription") {
+          console.log(value, value.padStart(2, "0"));
           result[newKey] = value.padStart(2, "0");
         } else result[newKey] = value;
       }
