@@ -309,6 +309,11 @@ export class Import {
       modifiedCandidate["sexe"] =
         candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : config.missing_value_tag.sexe;
     }
+    // create a special field which stores  "prenom nom" to ease search
+    const prenomNom = ["prenom", "nom"]
+      .map((n) => (candidate[n] && candidate[n] !== config.missing_value_tag.default ? candidate[n] : ""))
+      .filter((n) => n != "");
+    modifiedCandidate["prenom-nom"] = prenomNom.length > 0 ? prenomNom.join(" ") : config.missing_value_tag.default;
     //multivalued fields
     ["profession", "mandat-en-cours", "mandat-passe", "associations", "autres-statuts", "soutien", "liste"].forEach(
       (f) => {

@@ -93,6 +93,13 @@ export const professionSearch: SearchTypeDefinition = {
       label: "Candidat⋅e",
       filters: [
         {
+          id: "candidats.prenom-nom",
+          type: "terms",
+          label: "Prénom Nom",
+          isMulti: true,
+          order: "count_desc",
+        },
+        {
           id: "candidats.nom",
           type: "terms",
           label: "Nom",
