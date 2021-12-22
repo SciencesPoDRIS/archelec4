@@ -17,14 +17,14 @@
   "dependencies": {
     "@elastic/elasticsearch": "^7.12.0",
     "@hapi/boom": "^9.1.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",
     "lodash": "^4.17.21",
     "p-limit": "^2.3.0",
-    "swagger-ui-express": "^4.1.6",
-    "tsoa": "^3.6.1",
+    "swagger-ui-express": "^4.3.0",
+    "tsoa": "^3.14.1",
     "typescript-ioc": "^3.2.2",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.2"
