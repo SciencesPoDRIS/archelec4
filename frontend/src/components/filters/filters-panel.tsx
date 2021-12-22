@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 
 import { OptionType } from "../custom-select";
-import { ESSearchQueryContext, FiltersState, SearchTypeDefinition } from "../../types";
+import { ESSearchQueryContext, FiltersState, SearchTypeDefinition, TermsFilterType } from "../../types";
 import { getTerms } from "../../elasticsearchClient";
 
 import { DatesFilter } from "./dates-filter";
@@ -15,15 +15,13 @@ import { wildcardSpecialLabel, wildcardSpecialValue } from "./utils";
  * TERMS field.
  */
 function asyncOptionsFactory(
-  field: string,
-  order: "count_desc" | "key_asc" = "count_desc",
-  wildcardSearch: boolean = true,
+  filter: TermsFilterType,
   count: number = 200,
 ): (inputValue: string, context: ESSearchQueryContext) => Promise<OptionType[]> {
   return async (inputValue: string, context: ESSearchQueryContext) =>
-    getTerms(context, field, order, inputValue, count + 1).then((terms) => [
+    getTerms(context, filter, inputValue, count + 1).then((terms) => [
       // create a wildcardSpecialValue which allow wildCard search on terms
-      ...(wildcardSearch && inputValue !== "" && terms.length > 0
+      ...(filter.wildcardSearch && inputValue !== "" && terms.length > 0
         ? [
             {
               value: wildcardSpecialValue(inputValue),
@@ -92,7 +90,7 @@ export const FiltersPanel: FC<{
                   //TODO: add sort options configuration here
                   filter={{
                     ...filter,
-                    asyncOptions: asyncOptionsFactory(filter.id, filter.order, filter.wildcardSearch),
+                    asyncOptions: asyncOptionsFactory(filter),
                   }}
                   context={context}
                 />

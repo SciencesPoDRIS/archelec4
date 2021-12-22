@@ -10,10 +10,10 @@ import { DatesFilterState, FiltersState, FilterType, PageProps, PlainObject, Pro
 import { search } from "../elasticsearchClient";
 import { useStateUrl } from "../hooks/state-url";
 
-import { SEARCH_QUERY_KEY, SEARCH_TYPE_KEY, SEPARATOR, SIZE } from "../components/filters/utils";
+import { filtersDict, SEARCH_QUERY_KEY, SEARCH_TYPE_KEY, SEPARATOR, SIZE } from "../components/filters/utils";
 
 // TODO: enable SORT ? import { SearchSort } from "../components/search-sort";
-import { filtersDictFromGroups, getSortDefinition } from "../components/filters/utils";
+import { getSortDefinition } from "../components/filters/utils";
 import { isEqual } from "lodash";
 
 // this method is used only to compute a context which is used to invalidate option cache.
@@ -41,9 +41,13 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
 
     if (filter.type === "terms") {
       if (state[key]) {
-        state[key] = { type: "terms", value: (state[key].value as string[]).concat(value.split(SEPARATOR)) };
+        state[key] = {
+          type: "terms",
+          value: (state[key].value as string[]).concat(value.split(SEPARATOR)),
+          spec: filter,
+        };
       } else {
-        state[key] = { type: "terms", value: value.split(SEPARATOR) };
+        state[key] = { type: "terms", value: value.split(SEPARATOR), spec: filter };
       }
     }
 
@@ -51,14 +55,15 @@ function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<Filte
       state[field] = {
         type: "dates",
         value: { ...(state[field] as DatesFilterState)?.value, [param]: +value },
-      } as DatesFilterState;
+        spec: filter,
+      };
     }
 
     if (filter.type === "query") {
       if (state[key]) {
-        state[key] = { type: "query", value: (state[key].value as string) + value };
+        state[key] = { type: "query", value: (state[key].value as string) + value, spec: filter };
       } else {
-        state[key] = { type: "query", value: value };
+        state[key] = { type: "query", value: value, spec: filter };
       }
     }
   }
@@ -78,7 +83,7 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
   const [sort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
 
   // Top page form state (unplugged to search until form is submitted):
-  const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const [filtersState, setFiltersState] = useState<FiltersState>(getFiltersState(queryParams, filtersDict));

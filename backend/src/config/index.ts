@@ -134,6 +134,9 @@ export const config: Configuration = {
           analyzer: "IndexAnalyzer",
           search_analyzer: "SearchAnalyzer",
         },
+        candidats: {
+          type: "nested",
+        },
         _search: {
           type: "text",
           store: false,

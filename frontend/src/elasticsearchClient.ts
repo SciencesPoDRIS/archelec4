@@ -1,48 +1,86 @@
 import { omit, omitBy, isUndefined, isEmpty, toPairs, identity } from "lodash";
-import { isWildcardSpecialValue, valueFromWildcardSpecialValue } from "./components/filters/utils";
+import {
+  isWildcardSpecialValue,
+  valueFromWildcardSpecialValue,
+  wildcardSpecialValue,
+} from "./components/filters/utils";
 import { config } from "./config";
-import { ESSearchQueryContext, FiltersState, FilterState, PlainObject, SearchResult } from "./types";
+import {
+  ESSearchQueryContext,
+  FiltersState,
+  FilterState,
+  PlainObject,
+  SearchResult,
+  TermsFilterState,
+  TermsFilterType,
+} from "./types";
+import { QueryDslQueryContainer, SearchRequest } from "@elastic/elasticsearch/api/types";
 
-function getESQueryFromFilter(field: string, filter: FilterState): any | any[] {
-  if (filter.type === "terms")
-    return {
+function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQueryContainer {
+  let query: QueryDslQueryContainer | null = null;
+
+  //todo: move the spec retrieval in filterSatet build stage
+  const filterSpec = filter.spec;
+
+  switch (filter.type) {
+    case "terms":
+      query = {
+        bool: {
+          should: filter.value.map(
+            (v): QueryDslQueryContainer => {
+              if (isWildcardSpecialValue(v))
+                // special value prefixed with WILDCARD to be used in a wildcard query
+                return {
+                  wildcard: {
+                    [`${field}.raw`]: { value: `*${valueFromWildcardSpecialValue(v)}*`, case_insensitive: true },
+                  },
+                };
+              else return { terms: { [`${field}.raw`]: [v] } };
+            },
+          ),
+        },
+      };
+      break;
+    case "dates":
+      query = {
+        range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },
+      };
+      break;
+    case "query":
+      query = { simple_query_string: { query: filter.value, fields: ["ocr"] } };
+  }
+  // add extraQueryField if specified
+  if (filterSpec && "extraQueryField" in filterSpec && filterSpec.extraQueryField) {
+    query = {
       bool: {
-        should: filter.value.map((v) => {
-          if (isWildcardSpecialValue(v))
-            // special value prefixed with WILDCARD to be used in a wildcard query
-            return {
-              wildcard: {
-                [`${field}.raw`]: { value: `*${valueFromWildcardSpecialValue(v)}*`, case_insensitive: true },
-              },
-            };
-          else return { terms: { [`${field}.raw`]: [v] } };
-        }),
+        must: [query, filterSpec.extraQueryField],
       },
     };
-  if (filter.type === "dates")
-    return {
-      range: { [field]: omitBy({ gte: filter.value.min, lte: filter.value.max, format: "yyyy" }, isUndefined) },
+  }
+  // special case of nested
+  if (field.includes(".")) {
+    query = {
+      nested: {
+        path: field.split(".")[0],
+        query,
+      },
     };
-  if (filter.type === "query") return { simple_query_string: { query: filter.value, fields: ["ocr"] } };
+  }
+  return query;
 }
 
-function getESQueryBody(filters: FiltersState, suggestFilter?: { field: string; value: string | undefined }) {
-  const contextFilters = suggestFilter ? omit(filters, [suggestFilter.field]) : filters;
+function getESQueryBody(filters: FiltersState, suggestFilter?: TermsFilterState): QueryDslQueryContainer {
+  const contextFilters = suggestFilter ? omit(filters, [suggestFilter.spec.field]) : filters;
   const queries = [
     ...(!isEmpty(contextFilters)
-      ? toPairs(contextFilters).flatMap(([field, filter]) => getESQueryFromFilter(field, filter))
+      ? toPairs(contextFilters).flatMap(([field, filter]) =>
+          getESQueryFromFilter("field" in filter.spec ? filter.spec.field : field, filter),
+        )
       : []),
   ];
 
   if (suggestFilter && suggestFilter.value) {
-    queries.push({
-      wildcard: {
-        [`${suggestFilter.field}.raw`]: {
-          value: `*${suggestFilter.value}*`,
-          case_insensitive: true,
-        },
-      },
-    });
+    queries.push(getESQueryFromFilter(suggestFilter.spec.field, suggestFilter));
   }
   const esQuery =
     queries.length > 1
@@ -95,40 +133,70 @@ function getESIncludeRegexp(query: string): string {
 
 export async function getTerms(
   context: ESSearchQueryContext,
-  field: string,
-  order: "count_desc" | "key_asc" = "count_desc",
+  filter: TermsFilterType,
   value?: string,
   count?: number,
 ): Promise<{ term: string; count: number }[]> {
-  const body: PlainObject = {
-    size: 0,
-    query: getESQueryBody(context.filters, { field, value }),
-    aggs: {
-      termsList: {
-        terms: {
-          field: `${field}.raw`,
-          size: count || 15,
-          order: order === "key_asc" ? { _key: "asc" } : { _count: "desc" },
-          include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
+  const field = filter.field;
+  //nested
+  const isNested = field.includes(".");
+  const nestedPath = isNested ? field.split(".")[0] : null;
+
+  const searchQuery: SearchRequest = {
+    body: {
+      size: 0,
+      query: getESQueryBody(
+        context.filters,
+        // create a temporaru filterState with a wildcardValue to trigger options suggestions the same way a wildcard choice would do
+        value !== undefined ? { spec: filter, value: [wildcardSpecialValue(value)], type: "terms" } : undefined,
+      ),
+      aggs: {
+        termsList: {
+          terms: {
+            field: `${field}.raw`,
+            size: count || 15,
+            order: filter.order === "key_asc" ? { _key: "asc" } : { _count: "desc" },
+            include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
+          },
         },
       },
     },
   };
+  // extraQueryField
+  if (filter.extraQueryField && searchQuery.body?.aggs?.termsList) {
+    searchQuery.body.aggs.termsList.aggs = {
+      extra: {
+        filter: filter.extraQueryField,
+      },
+    };
+  }
+
+  // nested case
+  if (isNested && nestedPath && searchQuery.body) {
+    searchQuery.body.aggs = {
+      [nestedPath]: {
+        nested: { path: nestedPath },
+        aggs: searchQuery.body.aggs,
+      },
+    };
+  }
 
   return await fetch(`${config.api_path}/elasticsearch/proxy_search/${context.index}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(searchQuery.body),
   })
     .then((res) => res.json())
-    .then((data) =>
-      data.aggregations.termsList.buckets.map((bucket: { key: string; doc_count: number }) => ({
+    .then((data) => {
+      const buckets =
+        isNested && nestedPath ? data.aggregations[nestedPath].termsList.buckets : data.aggregations.termsList.buckets;
+      return buckets.map((bucket: { key: string; doc_count: number; extra?: { doc_count: number } }) => ({
         term: bucket.key,
-        count: bucket.doc_count,
-      })),
-    );
+        count: filter.extraQueryField && bucket.extra ? bucket.extra.doc_count : bucket.doc_count,
+      }));
+    });
 }
 
 export function search<ResultType>(

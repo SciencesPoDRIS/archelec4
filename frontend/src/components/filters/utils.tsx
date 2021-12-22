@@ -1,10 +1,12 @@
 import { flatten, keyBy } from "lodash";
+import { professionSearch } from "../../config/searchDefinitions";
 import { FiltersGroupType, FilterType, SearchTypeDefinition, SortType } from "../../types";
 
 export const filtersFromGroups = (groups: FiltersGroupType[]): FilterType[] => flatten(groups.map((g) => g.filters));
 
 export const filtersDictFromGroups = (groups: FiltersGroupType[]): { [id: string]: FilterType } =>
   keyBy(filtersFromGroups(groups), (f) => f.id);
+export const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
 
 /**
  * Get the default sort object for the specified search type.

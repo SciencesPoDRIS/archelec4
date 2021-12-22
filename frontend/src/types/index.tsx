@@ -1,5 +1,6 @@
 import { components } from "./api";
 import { OptionType } from "../components/custom-select";
+import { QueryDslQueryContainer } from "@elastic/elasticsearch/api/types";
 
 export type Candidat = components["schemas"]["ArchiveElectoralCandidat"];
 export type ProfessionDeFoi = components["schemas"]["ArchiveElectoralProfessionDeFoi"];
@@ -43,10 +44,12 @@ export type SearchTypeDefinition = {
 export type TermsFilterState = {
   type: "terms";
   value: string[];
+  spec: TermsFilterType;
 };
 export type QueryFilterState = {
   type: "query";
   value: string;
+  spec: QueryFilterType;
 };
 
 export type DatesFilterState = {
@@ -55,6 +58,7 @@ export type DatesFilterState = {
     min?: number;
     max?: number;
   };
+  spec: DatesFilterType;
 };
 
 export type FilterState = TermsFilterState | DatesFilterState | QueryFilterState;
@@ -69,9 +73,11 @@ export type ESSearchQueryContext = {
 
 export type TermsFilterType = {
   id: string;
+  field: string;
   type: "terms";
   label: string;
   order: "count_desc" | "key_asc";
+  extraQueryField?: QueryDslQueryContainer;
   wildcardSearch?: boolean;
   isMulti?: boolean;
   cacheOptions?: boolean;
