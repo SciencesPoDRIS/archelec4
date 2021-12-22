@@ -131,7 +131,7 @@ export class Import {
    * If you have errors, you should have the list of IDS in the report, and you can retry to import those items
    * by calling the method
    *
-   * NOTE: To trigger a full reindex, just delete the file <code>last_import_date_file_path</code> on the FS
+   * NOTE: To trigger a full reindex, just delete the file <code>config.last_import_date_file_path (default: .last_import.txt)</code> on the FS
    *
    * IMPORTANT: You can override the period & index name of the import, by specifying the paramater <code>options</code>
    * on this method. It can be usefull to make an import per party (ex: by week slices).
@@ -356,7 +356,6 @@ export class Import {
           // compute year of election for search facet
           result["annee"] = new Date(value).getFullYear() + "";
         } else if (newKey === "circonscription") {
-          console.log(value, value.padStart(2, "0"));
           result[newKey] = value.padStart(2, "0");
         } else result[newKey] = value;
       }
