@@ -15,6 +15,7 @@ import {
   TermsFilterType,
 } from "./types";
 import { QueryDslQueryContainer, SearchRequest } from "@elastic/elasticsearch/api/types";
+import { stringGuessCast } from "./hooks/state-url";
 
 function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQueryContainer {
   let query: QueryDslQueryContainer | null = null;
@@ -192,10 +193,12 @@ export async function getTerms(
     .then((data) => {
       const buckets =
         isNested && nestedPath ? data.aggregations[nestedPath].termsList.buckets : data.aggregations.termsList.buckets;
-      return buckets.map((bucket: { key: string; doc_count: number; extra?: { doc_count: number } }) => ({
-        term: bucket.key,
-        count: filter.extraQueryField && bucket.extra ? bucket.extra.doc_count : bucket.doc_count,
-      }));
+      return buckets
+        .map((bucket: { key: string; doc_count: number; extra?: { doc_count: number } }) => ({
+          term: bucket.key,
+          count: filter.extraQueryField && bucket.extra ? bucket.extra.doc_count : bucket.doc_count,
+        }))
+        .filter((t: { term: string; count: number }) => t.count > 0);
     });
 }
 
