@@ -1,6 +1,7 @@
 import { components } from "./api";
 import { OptionType } from "../components/custom-select";
 import { QueryDslQueryContainer } from "@elastic/elasticsearch/api/types";
+import { FC } from "react";
 
 export type Candidat = components["schemas"]["ArchiveElectoralCandidat"];
 export type ProfessionDeFoi = components["schemas"]["ArchiveElectoralProfessionDeFoi"];
@@ -21,6 +22,7 @@ export type SearchType = "profession"; // | "logo";
 
 export type FiltersGroupType = {
   label: string;
+  activeFiltersPhrase: FC<{ filters: FiltersState }>;
   openByDefault?: boolean;
   filters: FilterType[];
 };

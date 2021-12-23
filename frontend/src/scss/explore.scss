@@ -119,3 +119,22 @@
     }
   }
 }
+
+.active-filters-phrase {
+  font-size: 1rem;
+
+  .group-label {
+    font-size: 1.5rem;
+  }
+  .filter-value,
+  .filter-label-in-phrase {
+    font-size: 1.2rem !important;
+  }
+  button.filter-value {
+    vertical-align: baseline;
+    padding: 0;
+  }
+  .filter-group-glue {
+    padding: 0 0.5rem 0 0.5rem;
+  }
+}

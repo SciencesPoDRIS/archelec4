@@ -1,3 +1,9 @@
+import {
+  GenericFilterGroupPhraseFactory,
+  ElectionGroupPhrase,
+  CirconscriptionGroupPhrase,
+  ContenuPhrase,
+} from "../components/filters/active-filters-phrase";
 import { SearchTypeDefinition } from "../types";
 
 // Default configuration file
@@ -21,6 +27,7 @@ export const professionSearch: SearchTypeDefinition = {
   filtersGroups: [
     {
       label: "Élection",
+      activeFiltersPhrase: ElectionGroupPhrase,
       openByDefault: true,
       filters: [
         {
@@ -45,7 +52,6 @@ export const professionSearch: SearchTypeDefinition = {
           field: "contexte-tour",
           type: "terms",
           label: "Tour",
-          isMulti: true,
           order: "key_asc",
           wildcardSearch: false,
         },
@@ -53,6 +59,7 @@ export const professionSearch: SearchTypeDefinition = {
     },
     {
       label: "Circonscription",
+      activeFiltersPhrase: CirconscriptionGroupPhrase,
       openByDefault: true,
       filters: [
         {
@@ -77,6 +84,7 @@ export const professionSearch: SearchTypeDefinition = {
     },
     {
       label: "Groupe politique",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Groupe politique", "dont le "),
       filters: [
         {
           id: "candidats.liste",
@@ -90,19 +98,19 @@ export const professionSearch: SearchTypeDefinition = {
           id: "candidats.soutien",
           field: "candidats.soutien",
           type: "terms",
-          label: "Organisation",
+          label: "Soutien",
           isMulti: true,
           order: "count_desc",
         },
       ],
     },
     {
-      label: "Candidat⋅e suppléant⋅e",
+      label: "Candidat⋅e",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat⋅e", "ayant un⋅e "),
       filters: [
         {
-          id: "suppleant.prenom-nom",
+          id: "candidats.prenom-nom",
           field: "candidats.prenom-nom",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Prénom Nom",
           isMulti: true,
@@ -110,45 +118,39 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "suppleant.nom",
+          id: "candidats.nom",
           field: "candidats.nom",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Nom",
           isMulti: true,
           order: "count_desc",
         },
         {
-          id: "suppleant.prenom",
+          id: "candidats.prenom",
           field: "candidats.prenom",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Prénom",
           isMulti: true,
           order: "count_desc",
         },
         {
-          id: "suppleant.sexe",
+          id: "candidats.sexe",
           field: "candidats.sexe",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Sexe",
-          isMulti: true,
           order: "count_desc",
         },
         {
-          id: "suppleant.age-tranche",
+          id: "candidats.age-tranche",
           field: "candidats.age-tranche",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Tranche d'âge",
           isMulti: true,
           order: "count_desc",
         },
         {
-          id: "suppleant.profession",
+          id: "candidats.profession",
           field: "candidats.profession",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Profession",
           isMulti: true,
@@ -156,9 +158,8 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "suppleant.mandat-en-cours",
+          id: "candidats.mandat-en-cours",
           field: "candidats.mandat-en-cours",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Mandat en cours",
           isMulti: true,
@@ -166,9 +167,8 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "suppleant.mandat-passe",
+          id: "candidats.mandat-passe",
           field: "candidats.mandat-passe",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Mandat passé",
           isMulti: true,
@@ -176,9 +176,8 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "suppleant.associations",
+          id: "candidats.associations",
           field: "candidats.associations",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Association",
           isMulti: true,
@@ -186,9 +185,8 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "suppleant.autres-statuts",
+          id: "candidats.autres-statuts",
           field: "candidats.autres-statuts",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Autre statut",
           isMulti: true,
@@ -196,9 +194,8 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "suppleant.decorations",
+          id: "candidats.decorations",
           field: "candidats.decorations",
-          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Décoration",
           isMulti: true,
@@ -209,6 +206,7 @@ export const professionSearch: SearchTypeDefinition = {
     },
     {
       label: "Candidat⋅e titulair⋅e",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat⋅e titulair⋅e", "ayant un⋅e "),
       filters: [
         {
           id: "titulaire.prenom-nom",
@@ -319,11 +317,13 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
-      label: "Candidat⋅e",
+      label: "Candidat⋅e suppléant⋅e",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat⋅e suppléant⋅e", "ayant un⋅e "),
       filters: [
         {
-          id: "candidats.prenom-nom",
+          id: "suppleant.prenom-nom",
           field: "candidats.prenom-nom",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Prénom Nom",
           isMulti: true,
@@ -331,39 +331,45 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "candidats.nom",
+          id: "suppleant.nom",
           field: "candidats.nom",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Nom",
           isMulti: true,
           order: "count_desc",
         },
         {
-          id: "candidats.prenom",
+          id: "suppleant.prenom",
           field: "candidats.prenom",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Prénom",
           isMulti: true,
           order: "count_desc",
         },
         {
-          id: "candidats.sexe",
+          id: "suppleant.sexe",
           field: "candidats.sexe",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Sexe",
+          isMulti: true,
           order: "count_desc",
         },
         {
-          id: "candidats.age-tranche",
+          id: "suppleant.age-tranche",
           field: "candidats.age-tranche",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Tranche d'âge",
           isMulti: true,
           order: "count_desc",
         },
         {
-          id: "candidats.profession",
+          id: "suppleant.profession",
           field: "candidats.profession",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Profession",
           isMulti: true,
@@ -371,8 +377,9 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "candidats.mandat-en-cours",
+          id: "suppleant.mandat-en-cours",
           field: "candidats.mandat-en-cours",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Mandat en cours",
           isMulti: true,
@@ -380,8 +387,9 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "candidats.mandat-passe",
+          id: "suppleant.mandat-passe",
           field: "candidats.mandat-passe",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Mandat passé",
           isMulti: true,
@@ -389,8 +397,9 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "candidats.associations",
+          id: "suppleant.associations",
           field: "candidats.associations",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Association",
           isMulti: true,
@@ -398,8 +407,9 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "candidats.autres-statuts",
+          id: "suppleant.autres-statuts",
           field: "candidats.autres-statuts",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Autre statut",
           isMulti: true,
@@ -407,8 +417,9 @@ export const professionSearch: SearchTypeDefinition = {
           order: "count_desc",
         },
         {
-          id: "candidats.decorations",
+          id: "suppleant.decorations",
           field: "candidats.decorations",
+          extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Décoration",
           isMulti: true,
@@ -417,8 +428,10 @@ export const professionSearch: SearchTypeDefinition = {
         },
       ],
     },
+
     {
-      label: "Contenu",
+      label: "Texte",
+      activeFiltersPhrase: ContenuPhrase,
       filters: [
         {
           id: "ocr",

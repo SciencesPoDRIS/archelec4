@@ -4,6 +4,7 @@ import { Loader } from "./loader";
 import { ProfessionCard } from "./profession-card";
 import { downSearchAsCSV } from "../elasticsearchClient";
 import { ESSearchQueryContext } from "../types";
+import { ActiveFiltersPhrase } from "./filters/active-filters-phrase";
 
 interface Props {
   esContext: ESSearchQueryContext;
@@ -24,9 +25,12 @@ export const ProfessionList: React.FC<Props> = (props: Props) => {
       {professions !== null ? (
         <>
           <div className="panel-header">
-            <span aria-level={2} role="heading">
-              Explorer <span className="highlight">{professions.total}</span> professions de foi
-            </span>
+            <div>
+              <span aria-level={2} role="heading">
+                <span className="highlight">{professions.total}</span> professions de foi
+              </span>
+              <ActiveFiltersPhrase filtersState={esContext.filters} />
+            </div>
             <span>
               {!loading && (
                 <button type="button" className="btn btn-link" onClick={download}>
