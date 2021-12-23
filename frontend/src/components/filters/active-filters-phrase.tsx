@@ -3,7 +3,7 @@ import { FC } from "react";
 import { professionSearch } from "../../config/searchDefinitions";
 import { FiltersState, FilterState } from "../../types";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { SEPARATOR } from "./utils";
+import { isWildcardSpecialValue, SEPARATOR, wildcardSpecialLabel } from "./utils";
 import { useStateUrl } from "../../hooks/state-url";
 
 export const ActiveFiltersPhrase: FC<{ filtersState: FiltersState }> = ({ filtersState }) => {
@@ -42,7 +42,7 @@ const FilterValue: FC<{ filterState: FilterState; value: string; label?: string 
         )
       }
     >
-      {label || value} <IoMdCloseCircleOutline />
+      {label || isWildcardSpecialValue(value) ? wildcardSpecialLabel(value) : value} <IoMdCloseCircleOutline />
     </button>
   );
 };
