@@ -1,8 +1,7 @@
-import { FC, useEffect, useState, useRef, RefObject } from "react";
+import { FC, useEffect, useState, RefObject } from "react";
 import cx from "classnames";
 
 import { config } from "../../config";
-import { professionSearch } from "../../config/searchDefinitions";
 import { search } from "../../elasticsearchClient";
 import { PlainObject, ProfessionDeFoi, ESSearchQueryContext } from "../../types";
 import { ProfessionList } from "../../components/profession-list";
@@ -72,7 +71,7 @@ export const ResultList: FC<ResultListProps> = ({ containerRef, context, result 
         setList(list.concat(newResults.data));
       });
     }
-  }, [isNearBottom, loading, list, result, context.filters, context.sort]);
+  }, [isNearBottom, loading, list, result, context, context.sort]);
 
   return (
     <div>

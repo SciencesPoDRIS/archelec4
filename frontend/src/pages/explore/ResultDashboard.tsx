@@ -1,16 +1,15 @@
 import { FC } from "react";
 import { Cartography } from "../../components/viz/Cartography";
-import { ProfessionDeFoi, ESSearchQueryContext } from "../../types";
+import { ESSearchQueryContext } from "../../types";
 
 interface ResultDashboardProps {
   context: ESSearchQueryContext;
   result: {
-    data: Array<ProfessionDeFoi>;
+    data: number;
     total: number;
   };
 }
-export const ResultDashboard: FC<ResultDashboardProps> = ({ context, result }) => {
-  console.log(context, result);
+export const ResultDashboard: FC<ResultDashboardProps> = ({}) => {
   return (
     <div className="container-fluid">
       <div className="row">

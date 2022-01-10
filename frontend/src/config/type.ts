@@ -1,5 +1,3 @@
-import { ESSearchQueryContext } from "../types";
-
 // Type for the config object
 export interface Configuration {
   api_path: string;

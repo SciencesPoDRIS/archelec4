@@ -4,7 +4,6 @@ import { useLocation } from "react-router";
 import { DatesFilterState, FiltersState, FilterType, PageProps, PlainObject } from "../../types";
 import { professionSearch } from "../../config/searchDefinitions";
 import { useStateUrl } from "../../hooks/state-url";
-import { search } from "../../elasticsearchClient";
 import { filtersDictFromGroups, SEARCH_QUERY_KEY, SEARCH_TYPE_KEY, SEPARATOR } from "../../components/filters/utils";
 import { FiltersPanel } from "../../components/filters/filters-panel";
 import { getSortDefinition } from "../../components/filters/utils";
@@ -94,22 +93,29 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
 
   //TODO: refacto the two useEffects into one ?
   useEffect(() => {
-    const lastFilterState = filtersState;
+    const abortController = new AbortController();
+    const signal = abortController.signal;
     const currentFilterState = getFiltersState(new URLSearchParams(location.search), filtersDict);
     setFiltersState(currentFilterState);
-    console.log("fetch data");
-
     setLoading(true);
     selectedMode
-      .fetchData({
-        index: professionSearch.index,
-        filters: currentFilterState,
-        sort: getSortDefinition(professionSearch, sort),
-      })
+      .fetchData(
+        {
+          index: professionSearch.index,
+          filters: currentFilterState,
+          sort: getSortDefinition(professionSearch, sort),
+        },
+        signal,
+      )
       .then((data) => {
         setResult(data);
       })
+      .catch((e) => console.log(e))
       .finally(() => setLoading(false));
+    return () => {
+      setResult(null);
+      abortController.abort();
+    };
   }, [location.search, selectedMode]); // eslint-disable-line
 
   return (

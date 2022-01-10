@@ -206,9 +206,10 @@ export function search<ResultType>(
   cleanFn: (rawData: PlainObject) => ResultType,
   from: number,
   size: number,
-  histogramField?: string,
+  signal?: AbortSignal,
 ): Promise<{ data: SearchResult<ResultType>[]; total: number }> {
   return fetch(`${config.api_path}/professionDeFoi/search`, {
+    signal,
     body: JSON.stringify(
       omitBy(
         {
@@ -231,12 +232,6 @@ export function search<ResultType>(
     .then((data) => ({
       data: data.hits.hits.map((d: any): ResultType => cleanFn({ ...d._source, highlight: d.highlight })),
       total: data.hits.total.value,
-      histogram: histogramField
-        ? data.aggregations.histogram.buckets.map((bucket: PlainObject) => ({
-            year: bucket.key_as_string,
-            value: bucket.doc_count,
-          }))
-        : undefined,
     }));
 }
 
@@ -258,4 +253,11 @@ export function downSearchAsCSV(context: ESSearchQueryContext, filename: string)
       link.setAttribute("download", filename);
       link.click();
     });
+}
+
+export async function fetchDashboardData(
+  context: ESSearchQueryContext,
+  signal: AbortSignal,
+): Promise<{ total: number; data: number }> {
+  return { total: 10, data: 2 };
 }
