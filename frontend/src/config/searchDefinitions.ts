@@ -442,3 +442,5 @@ export const professionSearch: SearchTypeDefinition = {
     },
   ],
 };
+
+console.log(professionSearch);

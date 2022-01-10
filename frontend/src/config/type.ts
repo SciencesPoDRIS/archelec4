@@ -1,4 +1,4 @@
-import { config_default } from "./default";
+import { ESSearchQueryContext } from "../types";
 
 // Type for the config object
 export interface Configuration {
@@ -7,7 +7,3 @@ export interface Configuration {
   minYear: number;
   maxYear: number;
 }
-
-const config: Configuration = config_default;
-
-export { config };
