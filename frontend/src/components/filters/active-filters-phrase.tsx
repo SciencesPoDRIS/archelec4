@@ -30,7 +30,7 @@ const FilterValue: FC<{ filterState: FilterState; value: string; label?: string 
   value,
   label,
 }) => {
-  const [termsUrl, setTermsUrl] = useStateUrl<string>(filterState.spec.id, "");
+  const [, setTermsUrl] = useStateUrl<string>(filterState.spec.id, "");
   return (
     <button
       className="filter-value btn btn-link"

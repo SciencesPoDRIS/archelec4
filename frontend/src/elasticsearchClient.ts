@@ -15,7 +15,6 @@ import {
   TermsFilterType,
 } from "./types";
 import { QueryDslQueryContainer, SearchRequest } from "@elastic/elasticsearch/api/types";
-import { stringGuessCast } from "./hooks/state-url";
 
 function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQueryContainer {
   let query: QueryDslQueryContainer | null = null;
@@ -208,7 +207,7 @@ export function search<ResultType>(
   from: number,
   size: number,
   histogramField?: string,
-): Promise<{ list: SearchResult<ResultType>[]; total: number }> {
+): Promise<{ data: SearchResult<ResultType>[]; total: number }> {
   return fetch(`${config.api_path}/professionDeFoi/search`, {
     body: JSON.stringify(
       omitBy(
@@ -230,7 +229,7 @@ export function search<ResultType>(
   })
     .then((r) => r.json())
     .then((data) => ({
-      list: data.hits.hits.map((d: any): ResultType => cleanFn({ ...d._source, highlight: d.highlight })),
+      data: data.hits.hits.map((d: any): ResultType => cleanFn({ ...d._source, highlight: d.highlight })),
       total: data.hits.total.value,
       histogram: histogramField
         ? data.aggregations.histogram.buckets.map((bucket: PlainObject) => ({
