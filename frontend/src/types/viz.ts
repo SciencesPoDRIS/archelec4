@@ -1,7 +1,6 @@
 // Visualization data types
 
 // Cartography
-
 export type CartographyDataItemType = {
   departement: string; // to match map polygon
   "departement-insee": string;
@@ -9,16 +8,12 @@ export type CartographyDataItemType = {
   doc_count: number;
 };
 
-export type CartographyDataType = CartographyDataItemType[];
-
 // Timeline
-
 export type TimelineDataItemType = {
   dates: Date[]; // could also be string and let the viz do the format into date
   annee: string;
   doc_count: number;
 };
-export type TimelineDataType = TimelineDataItemType[];
 
 // it's important to keep all available years in the agregation event if empty.
 // so We must use a 0 min_doc_count to makes empty years be present in the agregated data
@@ -45,32 +40,19 @@ export type AgePyramidDataItemType = {
   candidat_count: number;
 };
 
-export type AgePyramideDataType = AgePyramidDataItemType[];
-// {
-//     "size": 0,
-//   "aggs": {
-// 		"candidats": {
-
-// 			"nested":{ "path" : "candidats" },
-// 			"aggs": {
-//     "sexe": {
-//       "terms": { "field": "candidats.sexe.raw"
-
-// 							 },
-// 			"aggs": {
-// 								 "age":{"terms":{"field" : "candidats.age-tranche.raw"}}
-// 							 }
-//     }}
-// 		}
-
-//   }
-
-// }
-
 export type TopValuesDataType = {
   field: string;
-  tops: {
+  tops: Array<{
     key: string;
-    cov_count: number;
-  }[];
+    count: number;
+  }>;
 };
+
+export interface DashboardDataType {
+  agePyramid: Array<AgePyramidDataItemType>;
+  timeline: Array<TimelineDataItemType>;
+  carto: Array<CartographyDataItemType>;
+  topListes: TopValuesDataType;
+  topSoutiens: TopValuesDataType;
+  topMandats: TopValuesDataType;
+}

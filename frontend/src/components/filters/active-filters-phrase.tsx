@@ -58,10 +58,10 @@ const CommaSeparatedFilterValues: FC<{ filter: FilterState; labelfactory?: (valu
     return (
       <span className="filter-values">
         {values.map((v, i) => (
-          <>
-            <FilterValue key={i} filterState={filter} value={v} label={labelfactory && labelfactory(v)} />
+          <span key={i}>
+            <FilterValue filterState={filter} value={v} label={labelfactory && labelfactory(v)} />
             {values.length > 1 && i < values.length - 1 ? " ou " : ""}
-          </>
+          </span>
         ))}
       </span>
     );

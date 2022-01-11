@@ -1,0 +1,12 @@
+.tooltip {
+  @extend .rounded;
+  position: fixed;
+  background-color: #000;
+  opacity: 0.8;
+  max-width: 25%;
+  overflow: hidden;
+  color: $white;
+  padding: $spacer;
+  visibility: hidden;
+  z-index: 999;
+}

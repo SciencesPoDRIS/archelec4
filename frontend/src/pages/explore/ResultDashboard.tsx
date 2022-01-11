@@ -1,42 +1,40 @@
 import { FC } from "react";
-import { Cartography } from "../../components/viz/Cartography";
+
 import { ESSearchQueryContext } from "../../types";
+import { DashboardDataType } from "../../types/viz";
+import { Cartography } from "../../components/viz/Cartography";
+import { AgePyramid } from "../../components/viz/AgePyramid";
+import { Timeline } from "../../components/viz/Timeline";
+import { TopValues } from "../../components/viz/TopValues";
 
 interface ResultDashboardProps {
   context: ESSearchQueryContext;
   result: {
-    data: number;
+    data: DashboardDataType;
     total: number;
   };
 }
-export const ResultDashboard: FC<ResultDashboardProps> = ({}) => {
+export const ResultDashboard: FC<ResultDashboardProps> = ({ result }) => {
+  console.log(result);
   return (
     <div className="container-fluid">
       <div className="row">
-        <Cartography
-          height={700}
-          width={700}
-          data={[
-            {
-              "departement-insee": "44 - Loire-Atlantique",
-              doc_count: 4000,
-              "departement-nom": "Loire Atlantique",
-              departement: "44",
-            },
-            {
-              "departement-insee": "60 - Oise",
-              doc_count: 2000,
-              "departement-nom": "Oise",
-              departement: "60",
-            },
-            {
-              "departement-insee": "56 - Morbihan",
-              doc_count: 1000,
-              "departement-nom": "Morbihan",
-              departement: "56",
-            },
-          ]}
-        />
+        <Cartography data={result.data.carto} />
+      </div>
+      <div className="row">
+        <AgePyramid data={result.data.agePyramid} />
+      </div>
+      <div className="row">
+        <Timeline data={result.data.timeline} />
+      </div>
+      <div className="row">
+        <TopValues data={result.data.topListes} />
+      </div>
+      <div className="row">
+        <TopValues data={result.data.topMandats} />
+      </div>
+      <div className="row">
+        <TopValues data={result.data.topSoutiens} />
       </div>
     </div>
   );

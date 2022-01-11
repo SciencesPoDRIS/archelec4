@@ -1,6 +1,7 @@
 import { RefObject } from "react";
 import { FaChartArea, FaRegListAlt } from "react-icons/fa";
 import { config } from "../../config";
+import { DashboardDataType } from "../../types/viz";
 import { ESSearchQueryContext, ProfessionDeFoi, PlainObject } from "../../types";
 import { search, fetchDashboardData } from "../../elasticsearchClient";
 import { ResultList } from "./ResultList";
@@ -47,5 +48,5 @@ export const modes = [
     icon: <FaChartArea />,
     fetchData: fetchDashboardData,
     component: ResultDashboard,
-  } as ModeType<number>,
+  } as ModeType<DashboardDataType>,
 ];

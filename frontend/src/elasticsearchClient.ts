@@ -5,6 +5,7 @@ import {
   wildcardSpecialValue,
 } from "./components/filters/utils";
 import { config } from "./config";
+import { DashboardDataType } from "./types/viz";
 import {
   ESSearchQueryContext,
   FiltersState,
@@ -258,6 +259,136 @@ export function downSearchAsCSV(context: ESSearchQueryContext, filename: string)
 export async function fetchDashboardData(
   context: ESSearchQueryContext,
   signal: AbortSignal,
-): Promise<{ total: number; data: number }> {
-  return { total: 10, data: 2 };
+): Promise<{ total: number; data: DashboardDataType }> {
+  const query = getESQueryBody(context.filters);
+  const aggs = {
+    carto: {
+      multi_terms: {
+        size: 110,
+        terms: [{ field: "departement-insee.raw" }, { field: "departement-nom.raw" }, { field: "departement.raw" }],
+      },
+    },
+    timeline: {
+      terms: {
+        field: "annee.raw",
+        min_doc_count: 0,
+        size: 100,
+      },
+      aggs: {
+        dates: {
+          terms: {
+            field: "date",
+          },
+        },
+      },
+    },
+    agePyramid: {
+      nested: {
+        path: "candidats",
+      },
+      aggs: {
+        sexe: {
+          terms: {
+            field: "candidats.sexe.raw",
+          },
+          aggs: {
+            age: {
+              terms: {
+                field: "candidats.age-tranche.raw",
+              },
+            },
+          },
+        },
+      },
+    },
+    topListes: {
+      nested: {
+        path: "candidats",
+      },
+      aggs: {
+        listes: {
+          terms: {
+            field: "candidats.liste.raw",
+            size: 10,
+          },
+        },
+      },
+    },
+    topSoutiens: {
+      nested: {
+        path: "candidats",
+      },
+      aggs: {
+        soutiens: {
+          terms: {
+            field: "candidats.soutien.raw",
+            size: 10,
+          },
+        },
+      },
+    },
+    topMandats: {
+      nested: {
+        path: "candidats",
+      },
+      aggs: {
+        mandats: {
+          multi_terms: {
+            terms: [{ field: "candidats.mandat-en-cours.raw" }, { field: "candidats.mandat-passe.raw" }],
+            size: 10,
+          },
+        },
+      },
+    },
+  };
+
+  const result = await fetch(`${config.api_path}/professionDeFoi/search`, {
+    signal,
+    body: JSON.stringify({
+      size: 0,
+      track_total_hits: true,
+      query,
+      aggs,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+  const data = await result.json();
+  return {
+    total: data.hits.total.value,
+    data: {
+      agePyramid: data.aggregations.agePyramid.sexe.buckets.flatMap((e: any) =>
+        e.age.buckets.map((a: any) => ({
+          sexe: e.key,
+          "age-tranche": a.key,
+          candidat_count: a.doc_count,
+        })),
+      ),
+      timeline: data.aggregations.timeline.buckets.flatMap((e: any) => ({
+        annee: e.key,
+        doc_count: e.doc_count,
+        dates: e.dates.buckets.map((d: any) => new Date(d.key_as_string)),
+      })),
+      carto: data.aggregations.carto.buckets.flatMap((e: any) => ({
+        "departement-insee": e.key[0],
+        departement: e.key[2],
+        "departement-nom": e.key[1],
+        doc_count: e.doc_count,
+      })),
+      topListes: {
+        field: "liste",
+        tops: data.aggregations.topListes.listes.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
+      },
+      topSoutiens: {
+        field: "soutiens",
+        tops: data.aggregations.topSoutiens.soutiens.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
+      },
+      topMandats: {
+        field: "mandats",
+        tops: data.aggregations.topMandats.mandats.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
+      },
+    },
+  };
 }
