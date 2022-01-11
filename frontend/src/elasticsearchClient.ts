@@ -308,8 +308,8 @@ export async function fetchDashboardData(
       aggs: {
         listes: {
           terms: {
-            field: "candidats.liste.raw",
-            size: 10,
+            exclude: "non|renseigne",
+            field: "candidats.liste",
           },
         },
       },
@@ -348,7 +348,7 @@ export async function fetchDashboardData(
       size: 0,
       track_total_hits: true,
       query,
-      aggs,
+      aggregations: aggs,
     }),
     headers: {
       "Content-Type": "application/json",

@@ -163,6 +163,7 @@ export const config: Configuration = {
             match_mapping_type: "string",
             mapping: {
               type: "text",
+              fielddata: true,
               analyzer: "IndexAnalyzer",
               search_analyzer: "SearchAnalyzer",
               fields: {
