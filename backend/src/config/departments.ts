@@ -60,7 +60,7 @@ export const departments = {
   "57": "57 - Moselle",
   "58": "58 - Nièvre",
   "59": "59 - Nord",
-  "60": "60 - OIse",
+  "60": "60 - Oise",
   "61": "61 - Orne",
   "62": "62 - Pas-de-Calais",
   "63": "63 - Puy-de-Dôme",
