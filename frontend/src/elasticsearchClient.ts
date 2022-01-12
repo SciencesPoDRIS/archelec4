@@ -48,7 +48,7 @@ function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQuery
       };
       break;
     case "query":
-      query = { simple_query_string: { query: filter.value, fields: ["ocr"] } };
+      query = { simple_query_string: { query: filter.value, fields: ["ocr.search"] } };
   }
   // add extraQueryField if specified
   if (filterSpec && "extraQueryField" in filterSpec && filterSpec.extraQueryField) {
@@ -308,8 +308,9 @@ export async function fetchDashboardData(
       aggs: {
         listes: {
           terms: {
-            exclude: "non|renseigne",
+            exclude: "non|renseigné",
             field: "candidats.liste",
+            size: 10,
           },
         },
       },
@@ -321,6 +322,7 @@ export async function fetchDashboardData(
       aggs: {
         soutiens: {
           terms: {
+            exclude: "Non renseigné",
             field: "candidats.soutien.raw",
             size: 10,
           },
@@ -333,8 +335,9 @@ export async function fetchDashboardData(
       },
       aggs: {
         mandats: {
-          multi_terms: {
-            terms: [{ field: "candidats.mandat-en-cours.raw" }, { field: "candidats.mandat-passe.raw" }],
+          terms: {
+            exclude: "Non renseigné",
+            field: "candidats.mandat-en-cours.raw",
             size: 10,
           },
         },
@@ -388,6 +391,10 @@ export async function fetchDashboardData(
       topMandats: {
         field: "mandats",
         tops: data.aggregations.topMandats.mandats.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
+      },
+      topOcr: {
+        field: "text",
+        tops: data.aggregations.topOcr.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
       },
     },
   };

@@ -36,6 +36,9 @@ export const ResultDashboard: FC<ResultDashboardProps> = ({ result }) => {
       <div className="row">
         <TopValues data={result.data.topSoutiens} />
       </div>
+      <div className="row">
+        <TopValues data={result.data.topOcr} />
+      </div>
     </div>
   );
 };

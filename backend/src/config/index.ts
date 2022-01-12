@@ -106,16 +106,21 @@ export const config: Configuration = {
           french_stop: {
             type: "stop",
             stopwords: "_french_",
+            ignore_case: true,
+          },
+          length_min: {
+            type: "length",
+            min: 4,
           },
         },
         analyzer: {
-          IndexAnalyzer: {
-            filter: ["lowercase", "asciifolding", "word_delimiter", "french_stop"],
+          TopAnalyzer: {
+            filter: ["french_stop", "lowercase", "word_delimiter", "length_min"],
             type: "custom",
             tokenizer: "whitespace",
           },
           SearchAnalyzer: {
-            filter: ["lowercase", "asciifolding", "word_delimiter", "french_stop"],
+            filter: ["french_stop", "lowercase", "asciifolding", "word_delimiter"],
             type: "custom",
             tokenizer: "whitespace",
           },
@@ -130,31 +135,18 @@ export const config: Configuration = {
         },
         ocr: {
           type: "text",
-          store: false,
-          analyzer: "IndexAnalyzer",
-          search_analyzer: "SearchAnalyzer",
-        },
-        candidats: {
-          type: "nested",
-        },
-        _search: {
-          type: "text",
-          store: false,
-          analyzer: "IndexAnalyzer",
-          search_analyzer: "SearchAnalyzer",
+          analyzer: "TopAnalyzer",
+          search_analyzer: "TopAnalyzer",
           fields: {
-            raw: {
-              type: "keyword",
-              ignore_above: 256,
+            search: {
+              type: "text",
+              analyzer: "SearchAnalyzer",
+              search_analyzer: "SearchAnalyzer",
             },
           },
         },
-        _suggest: {
-          type: "completion",
-          analyzer: "IndexAnalyzer",
-          search_analyzer: "SearchAnalyzer",
-          preserve_separators: true,
-          preserve_position_increments: true,
+        candidats: {
+          type: "nested",
         },
       },
       dynamic_templates: [
@@ -164,15 +156,13 @@ export const config: Configuration = {
             mapping: {
               type: "text",
               fielddata: true,
-              analyzer: "IndexAnalyzer",
-              search_analyzer: "SearchAnalyzer",
+              analyzer: "TopAnalyzer",
+              search_analyzer: "TopAnalyzer",
               fields: {
                 raw: {
                   type: "keyword",
-                  ignore_above: 256,
                 },
               },
-              copy_to: ["_suggest", "_search"],
             },
           },
         },
