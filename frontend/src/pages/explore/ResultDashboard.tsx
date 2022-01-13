@@ -3,7 +3,7 @@ import { FC } from "react";
 import { ESSearchQueryContext } from "../../types";
 import { DashboardDataType } from "../../types/viz";
 import { Cartography } from "../../components/viz/Cartography";
-import { AgePyramid } from "../../components/viz/AgePyramid";
+import { AgePyramid } from "../../components/viz/AgePyramid/AgePyramid";
 import { Timeline } from "../../components/viz/Timeline";
 import { TopValues } from "../../components/viz/TopValues";
 
@@ -35,9 +35,6 @@ export const ResultDashboard: FC<ResultDashboardProps> = ({ result }) => {
       </div>
       <div className="row">
         <TopValues data={result.data.topSoutiens} />
-      </div>
-      <div className="row">
-        <TopValues data={result.data.topOcr} />
       </div>
     </div>
   );

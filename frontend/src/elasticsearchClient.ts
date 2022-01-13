@@ -392,10 +392,6 @@ export async function fetchDashboardData(
         field: "mandats",
         tops: data.aggregations.topMandats.mandats.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
       },
-      topOcr: {
-        field: "text",
-        tops: data.aggregations.topOcr.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
-      },
     },
   };
 }

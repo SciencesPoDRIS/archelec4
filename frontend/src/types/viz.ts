@@ -55,5 +55,5 @@ export interface DashboardDataType {
   topListes: TopValuesDataType;
   topSoutiens: TopValuesDataType;
   topMandats: TopValuesDataType;
-  topOcr: TopValuesDataType;
+  //topOcr: TopValuesDataType;
 }
