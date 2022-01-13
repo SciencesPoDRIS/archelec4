@@ -98,7 +98,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       </div>
       {hovered && (
         <div className="tooltip" ref={tooltipRef}>
-          {hovered["departement-nom"]} - {hovered.doc_count}
+          {hovered["departement-insee"]} - {hovered.doc_count}
         </div>
       )}
     </div>
