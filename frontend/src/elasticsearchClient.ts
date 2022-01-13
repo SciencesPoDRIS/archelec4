@@ -264,7 +264,7 @@ export async function fetchDashboardData(
   const aggs = {
     carto: {
       multi_terms: {
-        size: 110,
+        size: 150,
         terms: [{ field: "departement-insee.raw" }, { field: "departement-nom.raw" }, { field: "departement.raw" }],
       },
     },
