@@ -273,11 +273,18 @@ export async function fetchDashboardData(
         field: "annee.raw",
         min_doc_count: 0,
         size: 100,
+        order: { _key: "asc" },
       },
       aggs: {
         dates: {
-          terms: {
-            field: "date",
+          multi_terms: {
+            terms: [
+              {
+                field: "date",
+              },
+              { field: "contexte-tour.raw" },
+              { field: "contexte-election.raw" },
+            ],
           },
         },
       },
@@ -372,7 +379,12 @@ export async function fetchDashboardData(
       timeline: data.aggregations.timeline.buckets.flatMap((e: any) => ({
         annee: e.key,
         doc_count: e.doc_count,
-        dates: e.dates.buckets.map((d: any) => new Date(d.key_as_string)),
+        dates_tours: e.dates.buckets.map((d: any) => ({
+          date: new Date(d.key[0]),
+          tour: d.key[1],
+          election: d.key[2],
+          doc_count: d.doc_count,
+        })),
       })),
       carto: data.aggregations.carto.buckets.flatMap((e: any) => ({
         "departement-insee": e.key[0],

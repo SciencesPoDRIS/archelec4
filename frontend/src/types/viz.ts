@@ -10,7 +10,12 @@ export type CartographyDataItemType = {
 
 // Timeline
 export type TimelineDataItemType = {
-  dates: Date[]; // could also be string and let the viz do the format into date
+  dates_tours: {
+    date: Date;
+    tour: string;
+    election: string;
+    doc_count: number;
+  }[]; // could also be string and let the viz do the format into date
   annee: string;
   doc_count: number;
 };

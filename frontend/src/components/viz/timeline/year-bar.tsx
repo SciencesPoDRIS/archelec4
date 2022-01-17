@@ -1,0 +1,74 @@
+import { range, max } from "lodash";
+import { FC, ReactElement } from "react";
+import { TimelineDataItemType } from "../../../types/viz";
+
+const ELECTION_YEAR_WIDTH = 50;
+const NO_ELECTION_YEAR_WIDTH = ELECTION_YEAR_WIDTH / 3;
+
+export const YearBar: FC<{
+  data: TimelineDataItemType;
+  maxValue: number;
+  setTooltipMessage: (message: ReactElement | null) => void;
+  displayToolTip: (x: number, y: number) => void;
+}> = ({ data, maxValue, setTooltipMessage, displayToolTip }) => {
+  return (
+    <div
+      className="d-flex flex-column align-items-center justify-content-end ml-1 h-100"
+      style={{ width: ELECTION_YEAR_WIDTH }}
+    >
+      <div className="value-label">{data.doc_count}</div>
+      <div
+        className="w-100 d-flex value-bar"
+        style={{ boxSizing: "border-box", height: `${(max([0.05, data.doc_count / maxValue]) || 0) * 75}%` }}
+      >
+        {(data.dates_tours || []).map((d) => (
+          <div
+            className={`h-100 tour-${d.tour}`}
+            style={{ width: `${(d.doc_count / data.doc_count) * 100}%` }}
+            aria-label={`${d.doc_count} Professions de foi - ${d.election} ${d.date.toLocaleDateString(
+              "fr-FR",
+            )} - tour ${d.tour}`}
+            onMouseEnter={(e) => {
+              setTooltipMessage(
+                <div className="d-flex flex-column">
+                  <div>{d.doc_count} Professions de foi</div>
+                  <div>
+                    {d.election} {d.date.toLocaleDateString("fr-FR")}
+                  </div>
+                  <div>tour {d.tour}</div>
+                </div>,
+              );
+              displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
+            }}
+            onMouseLeave={() => {
+              setTooltipMessage(null);
+            }}
+            onMouseMove={(e) => {
+              displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
+            }}
+          ></div>
+        ))}
+      </div>
+
+      <div className="year-label">{data.annee}</div>
+    </div>
+  );
+};
+
+export interface NoElectrionPeriodData {
+  startYear: number;
+  endYear: number;
+}
+
+export const NoElectionsPeriod: FC<NoElectrionPeriodData> = (props) => (
+  <div
+    className="d-flex justify-content-between align-items-end"
+    style={{ width: NO_ELECTION_YEAR_WIDTH * (props.endYear - props.startYear) }}
+  >
+    {range(0, props.startYear - props.endYear).map((y) => (
+      <div className="flex-grow-1 d-flex justify-content-center align-items-center year-label">
+        <span style={{ fontSize: "0.5rem" }}>|</span>
+      </div>
+    ))}
+  </div>
+);

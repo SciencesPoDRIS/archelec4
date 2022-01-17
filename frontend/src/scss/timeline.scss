@@ -1,0 +1,25 @@
+#dashboard-timeline {
+  height: 150px;
+  .value-label {
+    height: 15%;
+    font-size: 0.8rem;
+  }
+  .year-label {
+    height: 10%;
+  }
+  .value-bar {
+    * {
+      margin-right: 1px;
+      min-width: 3px;
+    }
+    .tour-1 {
+      background-color: khaki;
+    }
+    .tour-2 {
+      background-color: lightcoral;
+    }
+    :last-child {
+      margin-right: 0;
+    }
+  }
+}
