@@ -13,7 +13,7 @@ export const Home: React.FC<Props> = (props: Props) => {
           Explorer les professions de foi des élections législatives de la V<sup>e</sup> République
         </h2>
         <p>
-          Interface de recherche avancée pour une exploration multicritère des archives électorals du CEVIPOF mises en
+          Interface de recherche avancée pour une exploration multicritère des archives électorales du CEVIPOF mises en
           ligne à partir du corpus diffusé sur{" "}
           <a
             title="Lien vers le corpus sur Internet Archive"
