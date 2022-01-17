@@ -22,11 +22,11 @@ export const AgeClassBar: FC<{
     // notKnownBar
     notKnownCount ? (
       <div
-        style={{ height: "80%", width: `${max !== 0 ? (notKnownCount / max) * 100 : 0}%`, background: "lightgrey" }}
+        style={{ height: "100%", width: `${max !== 0 ? (notKnownCount / max) * 100 : 0}%`, background: "lightgrey" }}
       ></div>
     ) : null,
     // count Bar
-    <div style={{ height: "80%", width: `${max !== 0 ? (count / max) * 100 : 0}%`, background: color }}></div>,
+    <div style={{ height: "100%", width: `${max !== 0 ? (count / max) * 100 : 0}%`, background: color }}></div>,
   ];
   return (
     <div

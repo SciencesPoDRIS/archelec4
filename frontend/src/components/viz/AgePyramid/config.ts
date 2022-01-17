@@ -5,6 +5,6 @@ export const agePyramidConfig = {
     notknown: "grey",
   },
   size: {
-    notKnown: "15px",
+    label: "150px",
   },
 };
