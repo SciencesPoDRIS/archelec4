@@ -4,9 +4,8 @@ export const AgeClassBar: FC<{
   count: number;
   notKnownCount?: number;
   max: number;
-  color: string;
   anchored: "left" | "right";
-}> = ({ count, notKnownCount, max, color, anchored }) => {
+}> = ({ count, notKnownCount, max, anchored }) => {
   const width = max !== 0 ? (count / max) * 100 : 0;
   const label = notKnownCount
     ? `${count}/${count + notKnownCount} (${Math.round((count / (count + notKnownCount)) * 100)}%)`
@@ -26,7 +25,7 @@ export const AgeClassBar: FC<{
       ></div>
     ) : null,
     // count Bar
-    <div style={{ height: "100%", width: `${max !== 0 ? (count / max) * 100 : 0}%`, background: color }}></div>,
+    <div className="bar" style={{ height: "100%", width: `${max !== 0 ? (count / max) * 100 : 0}%` }}></div>,
   ];
   return (
     <div

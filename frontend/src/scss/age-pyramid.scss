@@ -1,0 +1,45 @@
+.age-pyramid {
+  display: grid;
+  grid-template-columns: [women]1fr [labels]auto [men]1fr;
+  grid-template-rows: [headers]auto auto;
+  row-gap: 0.5em;
+  .women-column {
+    grid-column: women/labels;
+    .bar {
+      background-color: $viz-color-primary;
+    }
+  }
+  .labels-column {
+    grid-column: labels/men;
+    text-align: center;
+  }
+  .men-column {
+    grid-column: men/auto;
+    .bar {
+      background-color: $viz-color-secondary;
+    }
+  }
+  .headers {
+    grid-row: headers/auto;
+    font-weight: bold;
+  }
+  .separator {
+    grid-column: women/end;
+  }
+  .totals {
+    .bar {
+      background-color: white;
+    }
+    &.women-column {
+      .bar {
+        border: $viz-color-primary solid 2px;
+      }
+    }
+
+    &.men-column {
+      .bar {
+        border: $viz-color-secondary solid 2px;
+      }
+    }
+  }
+}

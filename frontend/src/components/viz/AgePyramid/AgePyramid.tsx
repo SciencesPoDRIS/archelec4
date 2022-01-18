@@ -49,7 +49,7 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
       <div className="row">
         <h2>Pyramide des ages</h2>
       </div>
-      <div className="row">
+      <div className="row age-pyramid">
         <AgeHeaders />
         {dataByAgeClass.map((ageBarData) => (
           <AgeClassBars key={ageBarData.ageClass} data={ageBarData} max={maxNbCandidatByAgeClass} />
