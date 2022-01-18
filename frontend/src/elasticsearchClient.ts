@@ -317,7 +317,7 @@ export async function fetchDashboardData(
           terms: {
             exclude: "non|renseigné",
             field: "candidats.liste",
-            size: 10,
+            size: 12,
           },
         },
       },
@@ -331,7 +331,7 @@ export async function fetchDashboardData(
           terms: {
             exclude: "Non renseigné",
             field: "candidats.soutien.raw",
-            size: 10,
+            size: 12,
           },
         },
       },
@@ -345,7 +345,21 @@ export async function fetchDashboardData(
           terms: {
             exclude: "Non renseigné",
             field: "candidats.mandat-en-cours.raw",
-            size: 10,
+            size: 12,
+          },
+        },
+      },
+    },
+    topProfessions: {
+      nested: {
+        path: "candidats",
+      },
+      aggs: {
+        professions: {
+          terms: {
+            exclude: "non|renseigné",
+            field: "candidats.profession",
+            size: 12,
           },
         },
       },
@@ -403,6 +417,13 @@ export async function fetchDashboardData(
       topMandats: {
         field: "mandats",
         tops: data.aggregations.topMandats.mandats.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
+      },
+      topProfessions: {
+        field: "profession",
+        tops: data.aggregations.topProfessions.professions.buckets.map((e: any) => ({
+          key: e.key,
+          count: e.doc_count,
+        })),
       },
     },
   };
