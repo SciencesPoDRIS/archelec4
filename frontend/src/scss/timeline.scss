@@ -13,10 +13,10 @@
       min-width: 3px;
     }
     .tour-1 {
-      background-color: khaki;
+      background-color: $viz-color-primary;
     }
     .tour-2 {
-      background-color: lightcoral;
+      background-color: $viz-color-secondary;
     }
     :last-child {
       margin-right: 0;
