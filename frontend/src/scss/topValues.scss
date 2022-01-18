@@ -1,0 +1,15 @@
+.barchart {
+  display: grid;
+  grid-template-columns: [bars]1fr [labels]auto;
+  grid-template-rows: min-content;
+  row-gap: 0.5em;
+  .bar-container {
+    grid-column: bars / labels;
+    .bar {
+      background-color: $viz-color-primary;
+    }
+  }
+  .label {
+    grid-column: labels / auto;
+  }
+}
