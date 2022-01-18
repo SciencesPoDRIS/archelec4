@@ -1,0 +1,14 @@
+.cartography-legend {
+  display: inline-block;
+  height: 20px;
+  width: 100px;
+  background: linear-gradient(to right, white, $viz-color-primary);
+}
+#cartography {
+  path {
+    fill: $viz-color-primary;
+  }
+  path.disabled {
+    fill: white;
+  }
+}

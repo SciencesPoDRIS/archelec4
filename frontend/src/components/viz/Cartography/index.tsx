@@ -17,7 +17,6 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
   // prepare data
   const dataByINSEEDep = keyBy(data, (d) => d.departement);
   const maxCount = max(data.map((d) => d.doc_count)) || 1;
-  const colorScale = chroma.scale(["white", "red"]);
 
   /**
    * Sync the map selected state with the corresponding url parameter.
@@ -46,26 +45,18 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       <div className="row">
         <h2>Nombre de professions de foi par département</h2>
       </div>
-      <div className="row legend d-flex align-items-center">
-        Nombre de Profession de foi: 0{" "}
-        <div
-          className="mx-2"
-          style={{
-            display: "inline-block",
-            height: "20px",
-            width: "100px",
-            background: "linear-gradient(to right,white, red)",
-          }}
-        />
+      <div className="row d-flex align-items-center">
+        Nombre de Profession de foi: 0 <div className="mx-2 cartography-legend" />
         {maxCount}
       </div>
       <div className="row">
-        <svg version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+        <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
           {FranceSVGParts.map((p) => {
             const depFilterKey = dataByINSEEDep[p.insee_dep]?.["departement-insee"];
             const selected = selectedDepartements.includes(depFilterKey);
             return (
               <path
+                className={`${termsUrl === "" || selected ? "active" : "disabled"}`}
                 onClick={() => {
                   // TODO: refine the selection or add "code - name" key in cartographic data (json)
                   if (depFilterKey)
@@ -86,11 +77,12 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
                 key={p.insee_dep}
                 id={p.insee_dep}
                 stroke="black"
-                fill={
-                  termsUrl === "" || selected
-                    ? colorScale((dataByINSEEDep[p.insee_dep]?.doc_count || 0) / maxCount).hex()
-                    : "lightgrey"
-                }
+                fillOpacity={(dataByINSEEDep[p.insee_dep]?.doc_count || 0) / maxCount}
+                // fill={
+                //   termsUrl === "" || selected
+                //     ? colorScale((dataByINSEEDep[p.insee_dep]?.doc_count || 0) / maxCount).hex()
+                //     : "lightgrey"
+                // }
               />
             );
           })}
