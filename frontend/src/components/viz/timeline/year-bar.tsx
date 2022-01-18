@@ -2,9 +2,6 @@ import { range, max } from "lodash";
 import { FC, ReactElement } from "react";
 import { TimelineDataItemType } from "../../../types/viz";
 
-const ELECTION_YEAR_WIDTH = 50;
-const NO_ELECTION_YEAR_WIDTH = ELECTION_YEAR_WIDTH / 3;
-
 export const YearBar: FC<{
   data: TimelineDataItemType;
   maxValue: number;
@@ -14,7 +11,7 @@ export const YearBar: FC<{
   return (
     <div
       className="d-flex flex-column align-items-center justify-content-end ml-1 h-100"
-      style={{ width: ELECTION_YEAR_WIDTH }}
+      style={{ flexGrow: 3 }} // election year width will be third time empty year's width
     >
       <div className="value-label">{data.doc_count}</div>
       <div
@@ -62,10 +59,10 @@ export interface NoElectrionPeriodData {
 
 export const NoElectionsPeriod: FC<NoElectrionPeriodData> = (props) => (
   <div
-    className="d-flex justify-content-between align-items-end"
-    style={{ width: NO_ELECTION_YEAR_WIDTH * (props.endYear - props.startYear) }}
+    className={`d-flex justify-content-between align-items-end`}
+    style={{ flexGrow: props.endYear - props.startYear }}
   >
-    {range(0, props.startYear - props.endYear).map((y) => (
+    {range(0, props.endYear - props.startYear + 1).map((y) => (
       <div className="flex-grow-1 d-flex justify-content-center align-items-center year-label">
         <span style={{ fontSize: "0.5rem" }}>|</span>
       </div>
