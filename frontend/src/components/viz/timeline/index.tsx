@@ -29,7 +29,7 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
   return (
     <div className="container-fluid">
       <div className="row">
-        <h2>Timeline</h2>
+        <h2>Dans le temps</h2>
       </div>
       <div className="row d-flex " id="dashboard-timeline">
         {data.map((currentYear: DashboardDataType["timeline"][0], i: number) => {

@@ -18,23 +18,40 @@ export const ResultDashboard: FC<ResultDashboardProps> = ({ result }) => {
   console.log(result);
   return (
     <div className="container-fluid">
-      <div className="row">
-        <Cartography data={result.data.carto} />
+      <div className="row mb-5">
+        <div className="col-12">
+          <Timeline data={result.data.timeline} />
+        </div>
       </div>
       <div className="row">
-        <AgePyramid data={result.data.agePyramid} />
+        <div className="col-6">
+          <Cartography data={result.data.carto} />
+        </div>
+        <div className="col-6">
+          <TopValues title="Soutiens" data={result.data.topSoutiens} />
+        </div>
       </div>
+
+      <div className="row"></div>
       <div className="row">
-        <Timeline data={result.data.timeline} />
+        <div className="col"></div>
+        <div className="col-10">
+          <AgePyramid data={result.data.agePyramid} />
+        </div>
+        <div className="col"></div>
       </div>
+
       <div className="row">
-        <TopValues data={result.data.topListes} />
-      </div>
-      <div className="row">
-        <TopValues data={result.data.topMandats} />
-      </div>
-      <div className="row">
-        <TopValues data={result.data.topSoutiens} />
+        <div className="col-4">
+          <TopValues title="Mots des professions" data={result.data.topProfessions} />
+        </div>
+        <div className="col-4">
+          <TopValues title="Mandats" data={result.data.topMandats} />
+        </div>
+        <div className="col-4">
+          {" "}
+          <TopValues title="Mots des listes" data={result.data.topListes} />
+        </div>
       </div>
     </div>
   );
