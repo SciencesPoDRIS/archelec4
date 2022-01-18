@@ -1,10 +1,16 @@
 .barchart {
   display: grid;
-  grid-template-columns: [bars]1fr [labels]auto;
+  grid-template-columns: [bars]1fr [labels]minmax(auto, 65%);
   grid-template-rows: min-content;
+  align-items: center;
   row-gap: 0.5em;
+  label {
+    margin-bottom: 0;
+    font-size: 1.5rem;
+  }
   .bar-container {
     grid-column: bars / labels;
+    height: 40px;
     .bar {
       background-color: $viz-color-primary;
     }
