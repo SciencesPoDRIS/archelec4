@@ -47,7 +47,7 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
   return (
     <div className="container-fluid">
       <div className="row d-flex justify-content-center mb-2">
-        <h2>Sexe et âge des candidat(e)s</h2>
+        <h2 className="h4">Sexe et âge des candidat(e)s</h2>
       </div>
       <div className="row age-pyramid">
         <AgeHeaders />

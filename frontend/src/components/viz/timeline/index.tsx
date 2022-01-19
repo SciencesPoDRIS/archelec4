@@ -29,7 +29,7 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
   return (
     <div className="container-fluid">
       <div className="row d-flex flex-column">
-        <h2>Dans le temps</h2>
+        <h2 className="h4">Dans le temps</h2>
         <div className="d-flex ">
           <div className="tour-1 mr-1" style={{ width: "20px", height: "20px" }}></div> Premier tour{" "}
           <div className="tour-2 ml-2 mr-1" style={{ width: "20px", height: "20px" }}></div> Second tour

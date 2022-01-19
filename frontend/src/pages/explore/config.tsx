@@ -1,6 +1,6 @@
 import { RefObject } from "react";
 import { FaChartArea, FaRegListAlt } from "react-icons/fa";
-import { GrGroup } from "react-icons/gr";
+import { BiGroup } from "react-icons/bi";
 import { config } from "../../config";
 import { DashboardDataType } from "../../types/viz";
 import { ESSearchQueryContext, ProfessionDeFoi, PlainObject } from "../../types";
@@ -54,7 +54,7 @@ export const modes = [
   {
     id: "candidates-dashboard",
     title: "Démographie des candidats",
-    icon: <GrGroup />,
+    icon: <BiGroup />,
     fetchData: fetchDashboardData,
     component: CandidatesDashboard,
   } as ModeType<DashboardDataType>,

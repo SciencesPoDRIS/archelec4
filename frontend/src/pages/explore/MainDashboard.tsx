@@ -15,12 +15,15 @@ interface ResultDashboardProps {
 }
 export const MainDashboard: FC<ResultDashboardProps> = ({ result }) => {
   return (
-    <div className="container-fluid">
+    <div className="container-fluid mb-4 px-0">
       <div className="row mb-5">
         <div className="col-12">
           <Timeline data={result.data.timeline} />
         </div>
       </div>
+
+      <hr />
+
       <div className="row">
         <div className="col-6">
           <Cartography data={result.data.carto} />

@@ -1,12 +1,12 @@
 .barchart {
   > div {
-    margin-bottom: 0.5em;
+    margin-bottom: 0.3em;
   }
   :last-child {
     margin-bottom: 0;
   }
   label {
-    margin-bottom: 2px;
+    margin-bottom: 0;
   }
   .bar-container {
     display: flex;
@@ -24,7 +24,9 @@
   }
 
   .value-label {
-    padding: 0.5rem;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+    line-height: $viz-bar-height;
   }
 }
 

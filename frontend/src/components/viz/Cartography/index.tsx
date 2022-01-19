@@ -42,13 +42,13 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
 
   return (
     <div className="w-100">
-      <h2>Par département</h2>
+      <h2 className="h4">Par département</h2>
 
       <div className=" d-flex align-items-center mb-3">
         Nombre de Profession de foi: 0 <div className="mx-2 cartography-legend" />
         {maxCount}
       </div>
-      <div>
+      <div className="mt-4">
         <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
           {FranceSVGParts.map((p) => {
             const depFilterKey = dataByINSEEDep[p.insee_dep]?.["departement-insee"];

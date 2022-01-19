@@ -16,15 +16,16 @@ interface ResultDashboardProps {
 }
 export const CandidatesDashboard: FC<ResultDashboardProps> = ({ result }) => {
   return (
-    <div className="container-fluid">
-      <div className="row"></div>
+    <div className="container-fluid mb-4 px-0">
       <div className="row">
-        <div className="col"></div>
-        <div className="col-10">
+        <div className="col" />
+        <div className="col-12 col-lg-10">
           <AgePyramid data={result.data.agePyramid} />
         </div>
-        <div className="col"></div>
+        <div className="col" />
       </div>
+
+      <hr/>
 
       <div className="row">
         <div className="col-4">

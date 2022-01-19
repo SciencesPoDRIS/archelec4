@@ -8,8 +8,8 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
 
   return (
     <div className="w-100">
-      <h2>{title}</h2>
-      <div className="mb-3">Classement des {data.tops.length} occurences les plus grandes</div>
+      <h2 className="h4">{title}</h2>
+      <div className="mb-3 h5">Classement des {data.tops.length} occurences les plus grandes</div>
 
       <div className="w-100 mt-2 barchart">
         {data.tops.map((value, i) => {
@@ -17,7 +17,7 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
           const id = `${data.field}-${value.key}`;
           return (
             <div>
-              <label htmlFor={id} key={`${id}-label`} className="label h3 text-truncate d-block">
+              <label htmlFor={id} key={`${id}-label`} className="label text-truncate d-block">
                 {value.key}
               </label>
               <div id={id} key={`${id}-bar`} className="bar-container">
