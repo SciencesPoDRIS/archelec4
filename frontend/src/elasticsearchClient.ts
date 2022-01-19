@@ -329,7 +329,6 @@ export async function fetchDashboardData(
       aggs: {
         soutiens: {
           terms: {
-            exclude: "Non renseigné",
             field: "candidats.soutien.raw",
             size: 12,
           },
@@ -343,7 +342,6 @@ export async function fetchDashboardData(
       aggs: {
         mandats: {
           terms: {
-            exclude: "Non renseigné",
             field: "candidats.mandat-en-cours.raw",
             size: 12,
           },

@@ -19,7 +19,7 @@ export interface AgeBarData {
 const BarLabel: FC<{ label: string; total: number; notKnown?: number }> = ({ label, total, notKnown }) => (
   <div className="labels-column d-flex flex-column mx-2 justify-content-center align-items-center">
     <div>{label}</div>
-    <div style={{ fontSize: "0.8rem", lineHeight: "0.8rem", textAlign: "center", fontStyle: "italic" }}>
+    <div className="sub-label">
       {total} <span title="candidats">cand.</span>{" "}
       {notKnown ? (
         <>

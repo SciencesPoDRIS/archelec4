@@ -16,20 +16,17 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
           const widthPercentage = (value.count / maxValue) * 100;
           const id = `${data.field}-${value.key}`;
           return (
-            <>
-              <div id={id} key={`${id}-bar`} className="d-flex justify-content-end align-items-center bar-container">
-                {widthPercentage <= 90 && <span style={{ marginRight: "5px" }}>{value.count}</span>}
-                <div
-                  className="position-relative bar d-flex justify-content-start align-items-center"
-                  style={{ height: "100%", width: `${widthPercentage}%` }}
-                >
-                  {widthPercentage > 90 && <span style={{ marginLeft: "5px" }}>{value.count}</span>}
-                </div>
-              </div>
-              <label htmlFor={id} key={`${id}-label`} className="pl-2 label">
+            <div>
+              <label htmlFor={id} key={`${id}-label`} className="label h3 text-truncate d-block">
                 {value.key}
               </label>
-            </>
+              <div id={id} key={`${id}-bar`} className="bar-container">
+                <div className="bar" style={{ height: "100%", width: `${widthPercentage}%` }}>
+                  {widthPercentage > 90 && <span className="value-label">{value.count}</span>}
+                </div>
+                {widthPercentage <= 90 && <span className="value-label">{value.count}</span>}
+              </div>
+            </div>
           );
         })}
       </div>

@@ -1,27 +1,46 @@
 .age-pyramid {
+  margin-bottom: 1rem;
   display: grid;
   grid-template-columns: [women]1fr [labels]auto [men]1fr;
   grid-template-rows: [headers]auto auto;
   row-gap: 0.5em;
+
+  .bar {
+    display: flex;
+    align-items: center;
+    height: $viz-bar-height;
+  }
+  .value-label {
+    padding: 0.5rem;
+  }
+
   .women-column {
     grid-column: women/labels;
     .bar {
-      background-color: $viz-color-primary;
+      background-color: $viz-color-candidates;
     }
   }
   .labels-column {
     grid-column: labels/men;
     text-align: center;
+    font-size: 1.75rem;
+    padding: 0 0.5rem 0 0.5rem;
+    .sub-label {
+      font-size: 70%;
+      font-style: italic;
+      line-height: 70%;
+    }
   }
   .men-column {
     grid-column: men/auto;
     .bar {
-      background-color: $viz-color-secondary;
+      background-color: $viz-color-candidates-secondary;
     }
   }
   .headers {
     grid-row: headers/auto;
     font-weight: bold;
+    font-size: 1.75rem;
   }
   .separator {
     grid-column: women/end;
@@ -32,13 +51,13 @@
     }
     &.women-column {
       .bar {
-        border: $viz-color-primary solid 2px;
+        border: $viz-color-candidates solid 2px;
       }
     }
 
     &.men-column {
       .bar {
-        border: $viz-color-secondary solid 2px;
+        border: $viz-color-candidates-secondary solid 2px;
       }
     }
   }

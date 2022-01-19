@@ -2,11 +2,11 @@
   display: inline-block;
   height: 20px;
   width: 100px;
-  background: linear-gradient(to right, white, $viz-color-primary);
+  background: linear-gradient(to right, white, $viz-color-profession-foi);
 }
 #cartography {
   path {
-    fill: $viz-color-primary;
+    fill: $viz-color-profession-foi;
   }
   path.disabled {
     fill: white;

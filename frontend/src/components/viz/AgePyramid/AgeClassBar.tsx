@@ -6,30 +6,21 @@ export const AgeClassBar: FC<{
   max: number;
   anchored: "left" | "right";
 }> = ({ count, notKnownCount, max, anchored }) => {
-  const width = max !== 0 ? (count / max) * 100 : 0;
+  const widthRatio = max !== 0 ? (count / max) * 100 : 0;
   const label = notKnownCount
     ? `${count}/${count + notKnownCount} (${Math.round((count / (count + notKnownCount)) * 100)}%)`
     : count;
-  // labels are position just before/after the bar or on top of it if no space left
-  const LabelPosition =
-    width < 90 ? { [anchored]: `calc(${width}% + 0.2em)` } : { [anchored === "left" ? "right" : "left"]: 0 };
   const items = [
     //label
-    <div className="position-absolute" style={LabelPosition}>
-      {label}
-    </div>,
-    // notKnownBar
-    notKnownCount ? (
-      <div
-        style={{ height: "100%", width: `${max !== 0 ? (notKnownCount / max) * 100 : 0}%`, background: "lightgrey" }}
-      ></div>
-    ) : null,
+    widthRatio <= 90 ? <div className="value-label">{label}</div> : null,
     // count Bar
-    <div className="bar" style={{ height: "100%", width: `${max !== 0 ? (count / max) * 100 : 0}%` }}></div>,
+    <div className="bar" style={{ justifyContent: anchored === "left" ? "end" : "start", width: `${widthRatio}%` }}>
+      {widthRatio > 90 && <div className="value-label">{label}</div>}
+    </div>,
   ];
   return (
     <div
-      className={`d-flex h-100 position-relative align-items-center ${
+      className={`d-flex h-100 align-items-center ${
         anchored === "right" ? "justify-content-end" : "justify-content-start"
       }`}
     >

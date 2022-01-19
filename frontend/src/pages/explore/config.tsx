@@ -1,11 +1,13 @@
 import { RefObject } from "react";
 import { FaChartArea, FaRegListAlt } from "react-icons/fa";
+import { GrGroup } from "react-icons/gr";
 import { config } from "../../config";
 import { DashboardDataType } from "../../types/viz";
 import { ESSearchQueryContext, ProfessionDeFoi, PlainObject } from "../../types";
 import { search, fetchDashboardData } from "../../elasticsearchClient";
 import { ResultList } from "./ResultList";
-import { ResultDashboard } from "./ResultDashboard";
+import { MainDashboard } from "./MainDashboard";
+import { CandidatesDashboard } from "./CandidatesDashboard";
 
 export type ModeTypeData<T> = { data: T } & { total: number };
 
@@ -43,10 +45,17 @@ export const modes = [
     component: ResultList,
   } as ModeType<Array<ProfessionDeFoi>>,
   {
-    id: "dashboard",
+    id: "main-dashboard",
     title: "Dashboard",
     icon: <FaChartArea />,
     fetchData: fetchDashboardData,
-    component: ResultDashboard,
+    component: MainDashboard,
+  } as ModeType<DashboardDataType>,
+  {
+    id: "candidates-dashboard",
+    title: "Démographie des candidats",
+    icon: <GrGroup />,
+    fetchData: fetchDashboardData,
+    component: CandidatesDashboard,
   } as ModeType<DashboardDataType>,
 ];

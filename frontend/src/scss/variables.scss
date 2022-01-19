@@ -4,7 +4,9 @@ $highlight: #7c7b7b;
 $header-height: 80px;
 $footer_height: 40px;
 $font-family-base: arial;
-
-$viz-color-primary: coral;
-$viz-color-secondary: khaki;
-$vis-color-neutral: grey;
+// VIZ
+$viz-color-profession-foi: rgb(228, 75, 20);
+$viz-color-profession-foi-secondary: adjust-color($viz-color-profession-foi, $lightness: 30%);
+$viz-color-candidates: #2795b9;
+$viz-color-candidates-secondary: adjust-color($viz-color-candidates, $lightness: 30%);
+$viz-bar-height: 30px;

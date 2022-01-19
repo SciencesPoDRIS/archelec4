@@ -1,21 +1,41 @@
 .barchart {
-  display: grid;
-  grid-template-columns: [bars]1fr [labels]minmax(auto, 65%);
-  grid-template-rows: min-content;
-  align-items: center;
-  row-gap: 0.5em;
-  label {
+  > div {
+    margin-bottom: 0.5em;
+  }
+  :last-child {
     margin-bottom: 0;
-    font-size: 1.5rem;
+  }
+  label {
+    margin-bottom: 2px;
   }
   .bar-container {
+    display: flex;
+    justify-content: start;
+    align-items: center;
     grid-column: bars / labels;
-    height: 40px;
+    height: $viz-bar-height;
     .bar {
-      background-color: $viz-color-primary;
+      background-color: $viz-color-candidates;
+      height: 100%;
+      display: flex;
+      justify-content: end;
+      align-items: center;
     }
   }
-  .label {
-    grid-column: labels / auto;
+
+  .value-label {
+    padding: 0.5rem;
+  }
+}
+
+.candidates {
+  .bar {
+    background-color: $viz-color-candidates;
+  }
+}
+
+.professions-fois {
+  .bar {
+    background-color: $viz-color-profession-foi;
   }
 }
