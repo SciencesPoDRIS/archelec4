@@ -285,6 +285,7 @@ export async function fetchDashboardData(
               { field: "contexte-tour.raw" },
               { field: "contexte-election.raw" },
             ],
+            order: { _key: "asc" },
           },
         },
       },
