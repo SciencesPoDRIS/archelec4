@@ -1,6 +1,10 @@
 #dashboard-timeline {
   flex-wrap: nowrap;
   height: 150px;
+  // set width to 0 to use flex grow set the width entirely and not on top of native width
+  > div {
+    width: 0px;
+  }
   .value-label {
     height: 15%;
     font-size: 0.8rem;

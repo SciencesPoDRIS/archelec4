@@ -11,7 +11,7 @@ export const YearBar: FC<{
   return (
     <div
       className="d-flex flex-column align-items-center justify-content-end ml-1 h-100"
-      style={{ flexGrow: 3 }} // election year width will be third time empty year's width
+      style={{ flexGrow: 2 }} // election year width will be third time empty year's width
     >
       <div className="value-label">{data.doc_count}</div>
       <div
@@ -60,7 +60,7 @@ export interface NoElectrionPeriodData {
 export const NoElectionsPeriod: FC<NoElectrionPeriodData> = (props) => (
   <div
     className={`d-flex justify-content-between align-items-end`}
-    style={{ flexGrow: props.endYear - props.startYear }}
+    style={{ flexGrow: props.endYear - props.startYear + 1 }}
   >
     {range(0, props.endYear - props.startYear + 1).map((y) => (
       <div className="flex-grow-1 d-flex justify-content-center align-items-center year-label">
