@@ -121,18 +121,21 @@
 }
 
 .active-filters-phrase {
-  font-size: 1rem;
+  //font-size: 1.2rem;
+  color: $gray-500;
 
   .group-label {
-    font-size: 1.5rem;
+    color: $body-color;
   }
   .filter-value,
   .filter-label-in-phrase {
-    font-size: 1.2rem !important;
+    color: $body-color;
   }
   button.filter-value {
     vertical-align: baseline;
     padding: 0;
+    color: $primary;
+    font-size: unset;
   }
   .filter-group-glue {
     padding: 0 0.5rem 0 0.5rem;

@@ -105,8 +105,8 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
-      label: "Candidat⋅e",
-      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat⋅e", "ayant un⋅e "),
+      label: "Candidat-e",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat-e", "ayant un-e "),
       filters: [
         {
           id: "candidats.prenom-nom",
@@ -205,8 +205,8 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
-      label: "Candidat⋅e titulair⋅e",
-      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat⋅e titulair⋅e", "ayant un⋅e "),
+      label: "Candidat-e titulaire",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat-e titulaire", "ayant un-e "),
       filters: [
         {
           id: "titulaire.prenom-nom",
@@ -317,8 +317,8 @@ export const professionSearch: SearchTypeDefinition = {
       ],
     },
     {
-      label: "Candidat⋅e suppléant⋅e",
-      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat⋅e suppléant⋅e", "ayant un⋅e "),
+      label: "Candidat-e suppléant-e",
+      activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat-e suppléant-e", "ayant un-e "),
       filters: [
         {
           id: "suppleant.prenom-nom",

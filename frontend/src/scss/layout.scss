@@ -52,7 +52,7 @@ main {
   height: calc(100vh - #{$header-height} - #{$footer_height});
 }
 .highlight {
-  color: $highlight;
+  color: $primary;
   font-style: italic;
 }
 .panel-header {

@@ -24,20 +24,22 @@ export const ResultHeader: FC<ResultHeaderProps> = ({ esContext, nbProfession, s
         <ActiveFiltersPhrase filtersState={esContext.filters} />
       </div>
 
-      <div>
+      <div className="d-flex align-items-center">
         <ProfessionDownload esContext={esContext} />
-        <div className="btn-group" role="group">
-          {modes.map((mode) => (
-            <button
-              key={mode.id}
-              className={`btn btn-outline-primary ${mode.id === selectedMode ? "active" : ""}`}
-              title={mode.title}
-              onClick={() => onModeChange(mode.id)}
-            >
-              {mode.icon}
-            </button>
-          ))}
-        </div>
+        <span>
+          <div className="btn-group" role="group">
+            {modes.map((mode) => (
+              <button
+                key={mode.id}
+                className={`btn btn-outline-primary ${mode.id === selectedMode ? "active" : ""}`}
+                title={mode.title}
+                onClick={() => onModeChange(mode.id)}
+              >
+                {mode.icon}
+              </button>
+            ))}
+          </div>
+        </span>
       </div>
     </div>
   );

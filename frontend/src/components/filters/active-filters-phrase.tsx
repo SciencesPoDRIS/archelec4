@@ -31,6 +31,7 @@ const FilterValue: FC<{ filterState: FilterState; value: string; label?: string 
   label,
 }) => {
   const [, setTermsUrl] = useStateUrl<string>(filterState.spec.id, "");
+  const buttonLabel = label !== undefined ? label : isWildcardSpecialValue(value) ? wildcardSpecialLabel(value) : value;
   return (
     <button
       className="filter-value btn btn-link"
@@ -42,7 +43,7 @@ const FilterValue: FC<{ filterState: FilterState; value: string; label?: string 
         )
       }
     >
-      {label || isWildcardSpecialValue(value) ? wildcardSpecialLabel(value) : value} <IoMdCloseCircleOutline />
+      {buttonLabel} <IoMdCloseCircleOutline />
     </button>
   );
 };
@@ -69,6 +70,7 @@ const CommaSeparatedFilterValues: FC<{ filter: FilterState; labelfactory?: (valu
 };
 
 export const ElectionGroupPhrase: FC<{ filters: FiltersState }> = ({ filters }) => {
+  console.log(filters);
   if (filters["contexte-election"] || filters["contexte-tour"] || filters.annee)
     return (
       <span>
@@ -136,7 +138,7 @@ export const GenericFilterGroupPhraseFactory: (label: string, prefix?: string) =
         {activeFilters
           .map<React.ReactNode>((f) => (
             <span key={f.spec.id}>
-              de <span className="filter-label-in-phrase">{f.spec.label}</span>{" "}
+              de <span className="filter-label-in-phrase">{f.spec.label.toLowerCase()}</span>{" "}
               <CommaSeparatedFilterValues key={f.spec.id} filter={f} />
             </span>
           ))
