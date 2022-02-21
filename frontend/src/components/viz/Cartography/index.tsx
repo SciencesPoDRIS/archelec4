@@ -1,6 +1,7 @@
 import { FC, useEffect, useState, useRef } from "react";
-import { keyBy, max } from "lodash";
-import chroma from "chroma-js";
+import { keyBy, max, min, range } from "lodash";
+
+import { scaleLinear } from "d3-scale";
 
 import { DashboardDataType } from "../../../types/viz";
 import { useStateUrl } from "../../../hooks/state-url";
@@ -17,7 +18,10 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
 
   // prepare data
   const dataByINSEEDep = keyBy(data, (d) => d.departement);
-  const maxCount = max(data.map((d) => d.doc_count)) || 1;
+  const docCounts = data.map((d) => d.doc_count);
+  const maxCount = max(docCounts) || 0;
+  const minCount = min(docCounts) || 0;
+  const colorScale = scaleLinear().domain([minCount, maxCount]).range([0.1, 1]);
 
   /**
    * Sync the map selected state with the corresponding url parameter.
@@ -46,7 +50,12 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       <h2 className="h4">Par département</h2>
 
       <div className=" d-flex align-items-center mb-3">
-        Nombre de Profession de foi: 0 <div className="mx-2 cartography-legend" />
+        Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
+        <div className="mx-2 cartography-legend">
+          {range(minCount, maxCount, (maxCount - minCount) / 100).map((v) => (
+            <div style={{ width: "1px", opacity: colorScale(v) }} />
+          ))}
+        </div>
         {numberFormat.format(maxCount)}
       </div>
       <div className="mt-4">
@@ -77,7 +86,11 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
                 key={p.insee_dep}
                 id={p.insee_dep}
                 stroke="black"
-                fillOpacity={(dataByINSEEDep[p.insee_dep]?.doc_count || 0) / maxCount}
+                fillOpacity={
+                  dataByINSEEDep[p.insee_dep]?.doc_count && dataByINSEEDep[p.insee_dep]?.doc_count > 0
+                    ? colorScale(dataByINSEEDep[p.insee_dep].doc_count)
+                    : 0
+                }
                 // fill={
                 //   termsUrl === "" || selected
                 //     ? colorScale((dataByINSEEDep[p.insee_dep]?.doc_count || 0) / maxCount).hex()

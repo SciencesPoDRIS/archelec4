@@ -1,8 +1,11 @@
 .cartography-legend {
-  display: inline-block;
+  display: flex;
   height: 20px;
   width: 100px;
-  background: linear-gradient(to right, white, $viz-color-profession-foi);
+  div {
+    width: 1px;
+    background-color: $viz-color-profession-foi;
+  }
 }
 #cartography {
   path {
