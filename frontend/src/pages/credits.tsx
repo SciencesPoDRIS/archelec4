@@ -90,7 +90,7 @@ export const Credits: React.FC<Props> = (props: Props) => {
       <div className="row mt-3">
         <p>
           <h2>Prestataire de développement informatique</h2>
-          <a href="htps://ouestware.com" title="OuestWare">
+          <a href="https://ouestware.com" title="OuestWare">
             Société OuestWare
           </a>{" "}
           : Paul Girard, Alexis Jacomy et Benoît Simard

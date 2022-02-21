@@ -9,7 +9,7 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
   return (
     <div className="w-100">
       <h2 className="h4">{title}</h2>
-      <div className="mb-3 h5">Classement des {data.tops.length} occurences les plus grandes</div>
+      <div className="mb-3 h5">Les {data.tops.length} occurrences les plus fréquentes.</div>
 
       <div className="w-100 mt-2 barchart">
         {data.tops.map((value, i) => {

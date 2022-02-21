@@ -44,8 +44,7 @@ export const FAQ: React.FC<Props> = (props: Props) => {
         <div className="question">
           <h2>Comment signaler une erreur dans les données ?</h2>
           <p>
-            {" "}
-            <a href="mailto:archelec.cevipof@sciencespo.fr">Contactez-nous</a>
+            Écrivez-nous à <a href="mailto:archelec.cevipof@sciencespo.fr">archelec.cevipof@sciencespo.fr</a>
           </p>
         </div>
         <div className="question">
@@ -53,7 +52,8 @@ export const FAQ: React.FC<Props> = (props: Props) => {
           <p>
             {" "}
             Les critères ont été établis en fonction d’informations disponibles sur les archives électorales. Essayez la
-            recherche dans le texte intégral ou <a href="mailto:archelec.cevipof@sciencespo.fr">contactez-nous</a>.
+            recherche dans le texte intégral ou écrivez-nous à{" "}
+            <a href="mailto:archelec.cevipof@sciencespo.fr">archelec.cevipof@sciencespo.fr</a>.
           </p>
         </div>
         <div className="question">
@@ -74,7 +74,7 @@ export const FAQ: React.FC<Props> = (props: Props) => {
             <a href="https://archive.org/details/archiveselectoralesducevipof?tab=about">
               Voir la page de la collection sur Internet Archive
             </a>{" "}
-            ou <a href="mailto:archelec.cevipof@sciencespo.fr">contactez-nous</a>.
+            ou écrivez-nous à <a href="mailto:archelec.cevipof@sciencespo.fr">archelec.cevipof@sciencespo.fr</a>.
           </p>
         </div>
       </div>
