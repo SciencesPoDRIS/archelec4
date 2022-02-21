@@ -1,6 +1,7 @@
 import { range, max } from "lodash";
 import { FC, ReactElement } from "react";
 import { TimelineDataItemType } from "../../../types/viz";
+import { numberFormat } from "../utils";
 
 export const YearBar: FC<{
   data: TimelineDataItemType;
@@ -13,7 +14,7 @@ export const YearBar: FC<{
       className="d-flex flex-column align-items-center justify-content-end ml-1 h-100"
       style={{ flexGrow: 2 }} // election year width will be third time empty year's width
     >
-      <div className="value-label">{data.doc_count}</div>
+      <div className="value-label">{numberFormat.format(data.doc_count)}</div>
       <div
         className="w-100 d-flex value-bar"
         style={{ boxSizing: "border-box", height: `${(max([0.05, data.doc_count / maxValue]) || 0) * 75}%` }}
@@ -28,7 +29,7 @@ export const YearBar: FC<{
             onMouseEnter={(e) => {
               setTooltipMessage(
                 <div className="d-flex flex-column">
-                  <div>{d.doc_count} Professions de foi</div>
+                  <div>{numberFormat.format(d.doc_count)} Professions de foi</div>
                   <div>
                     {d.election} {d.date.toLocaleDateString("fr-FR")}
                   </div>

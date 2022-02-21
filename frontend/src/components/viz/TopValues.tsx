@@ -2,6 +2,7 @@ import { max } from "lodash";
 import { FC } from "react";
 
 import { TopValuesDataType } from "../../types/viz";
+import { numberFormat } from "./utils";
 
 export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ title, data }) => {
   const maxValue = max(data.tops.map((d) => d.count)) || 0;
@@ -22,9 +23,13 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
               </label>
               <div id={id} key={`${id}-bar`} className="bar-container">
                 <div className="bar" style={{ height: "100%", width: `${widthPercentage}%` }}>
-                  {widthPercentage > 90 && <span className="value-label">{value.count}</span>}
+                  {widthPercentage > 90 && (
+                    <span className="value-label text-white">
+                      <b>{numberFormat.format(value.count)}</b>
+                    </span>
+                  )}
                 </div>
-                {widthPercentage <= 90 && <span className="value-label">{value.count}</span>}
+                {widthPercentage <= 90 && <span className="value-label">{numberFormat.format(value.count)}</span>}
               </div>
             </div>
           );

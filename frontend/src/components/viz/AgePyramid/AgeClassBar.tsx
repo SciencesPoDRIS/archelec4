@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { numberFormat } from "../utils";
 
 export const AgeClassBar: FC<{
   count: number;
@@ -9,7 +10,7 @@ export const AgeClassBar: FC<{
   const widthRatio = max !== 0 ? (count / max) * 100 : 0;
   const label = notKnownCount
     ? `${count}/${count + notKnownCount} (${Math.round((count / (count + notKnownCount)) * 100)}%)`
-    : count;
+    : numberFormat.format(count);
   const items = [
     //label
     widthRatio <= 90 ? <div className="value-label">{label}</div> : null,

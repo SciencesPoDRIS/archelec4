@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { numberFormat } from "../utils";
 import { AgeClassBar } from "./AgeClassBar";
 
 export const AgeHeaders: FC = () => (
@@ -20,7 +21,7 @@ const BarLabel: FC<{ label: string; total: number; notKnown?: number }> = ({ lab
   <div className="labels-column d-flex flex-column mx-2 justify-content-center align-items-center">
     <div>{label}</div>
     <div className="sub-label">
-      {total} <span title="candidats">cand.</span>{" "}
+      {numberFormat.format(total)} <span title="candidats">cand.</span>{" "}
       {notKnown ? (
         <>
           {" "}

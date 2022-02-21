@@ -3,6 +3,7 @@ import { modes } from "./config";
 import { ESSearchQueryContext } from "../../types";
 import { ActiveFiltersPhrase } from "../../components/filters/active-filters-phrase";
 import { ProfessionDownload } from "../../components/profession-download";
+import { numberFormat } from "../../components/viz/utils";
 
 interface ResultHeaderProps {
   esContext: ESSearchQueryContext;
@@ -19,7 +20,7 @@ export const ResultHeader: FC<ResultHeaderProps> = ({ esContext, nbProfession, s
     <div className="panel-header">
       <div>
         <span aria-level={2} role="heading">
-          <span className="highlight">{nbProfession}</span> professions de foi
+          <span className="highlight">{nbProfession ? numberFormat.format(nbProfession) : 0}</span> professions de foi
         </span>
         <ActiveFiltersPhrase filtersState={esContext.filters} />
       </div>

@@ -7,6 +7,7 @@ import { useStateUrl } from "../../../hooks/state-url";
 import { tooltipPosition } from "../../../utils";
 import { SEPARATOR } from "../../filters/utils";
 import FranceSVGParts from "./france_DOM_COM_hexagonal.json";
+import { numberFormat } from "../utils";
 
 export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +47,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
 
       <div className=" d-flex align-items-center mb-3">
         Nombre de Profession de foi: 0 <div className="mx-2 cartography-legend" />
-        {maxCount}
+        {numberFormat.format(maxCount)}
       </div>
       <div className="mt-4">
         <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +90,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       </div>
       {hovered && (
         <div className="tooltip" ref={tooltipRef}>
-          {hovered["departement-insee"]} - {hovered.doc_count}
+          {hovered["departement-insee"]} : {numberFormat.format(hovered.doc_count)}
         </div>
       )}
     </div>
