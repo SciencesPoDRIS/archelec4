@@ -70,7 +70,6 @@ const CommaSeparatedFilterValues: FC<{ filter: FilterState; labelfactory?: (valu
 };
 
 export const ElectionGroupPhrase: FC<{ filters: FiltersState }> = ({ filters }) => {
-  console.log(filters);
   if (filters["contexte-election"] || filters["contexte-tour"] || filters.annee)
     return (
       <span>
