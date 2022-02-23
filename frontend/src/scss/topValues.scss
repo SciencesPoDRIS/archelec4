@@ -29,6 +29,9 @@
     line-height: $viz-bar-height;
   }
 }
+.bar {
+  background-color: $viz-color-candidates;
+}
 
 .candidates {
   .bar {

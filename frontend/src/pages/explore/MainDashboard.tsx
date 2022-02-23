@@ -25,12 +25,12 @@ export const MainDashboard: FC<ResultDashboardProps> = ({ result }) => {
       <hr />
 
       <div className="row">
-        <div className="col-6">
+        <div className="col" />
+        <div className="col-10">
           <Cartography data={result.data.carto} />
         </div>
-        <div className="col-6">
-          <TopValues title="Soutiens" data={result.data.topSoutiens} />
-        </div>
+
+        <div className="col" />
       </div>
     </div>
   );
