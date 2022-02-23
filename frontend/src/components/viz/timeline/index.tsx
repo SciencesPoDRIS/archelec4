@@ -45,6 +45,7 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
                 maxValue={maxDocCount}
                 setTooltipMessage={setTooltipMessage}
                 displayToolTip={displayToolTip}
+                className={nextYear && +nextYear.annee === +currentYear.annee + 1 ? "mr-2" : undefined}
               />
               {nextYear && +nextYear.annee > +currentYear.annee + 1 && (
                 <NoElectionsPeriod startYear={+currentYear.annee + 1} endYear={+nextYear.annee - 1} />

@@ -8,10 +8,11 @@ export const YearBar: FC<{
   maxValue: number;
   setTooltipMessage: (message: ReactElement | null) => void;
   displayToolTip: (x: number, y: number) => void;
-}> = ({ data, maxValue, setTooltipMessage, displayToolTip }) => {
+  className?: string;
+}> = ({ data, maxValue, setTooltipMessage, displayToolTip, className }) => {
   return (
     <div
-      className="d-flex flex-column align-items-center justify-content-end ml-1 h-100"
+      className={`d-flex flex-column align-items-center justify-content-end h-100 ${className ? className : ""}`}
       style={{ flexGrow: 2 }} // election year width will be third time empty year's width
     >
       <div className="value-label">{numberFormat.format(data.doc_count)}</div>
