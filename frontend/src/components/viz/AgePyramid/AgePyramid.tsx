@@ -11,7 +11,7 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
   const dataByAgeClass: AgeBarData[] = sortBy(
     values(
       groupBy(
-        data.filter((d) => d["age-tranche"] !== "Indéterminé"),
+        data.filter((d) => d["age-tranche"] !== "non mentionné"),
         (d) => d["age-tranche"],
       ),
     ).map(
@@ -19,9 +19,9 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
         maxNbCandidatByAgeClass = max([maxNbCandidatByAgeClass, ...group.map((g) => g.candidat_count)]) || 0;
         return {
           ageClass: group[0]["age-tranche"],
-          women: group.find((g) => g.sexe === "Femme")?.candidat_count,
-          men: group.find((g) => g.sexe === "Homme")?.candidat_count,
-          notKnown: group.find((g) => g.sexe === "Non déterminé")?.candidat_count,
+          women: group.find((g) => g.sexe === "femme")?.candidat_count,
+          men: group.find((g) => g.sexe === "homme")?.candidat_count,
+          notKnown: group.find((g) => g.sexe === "non déterminé")?.candidat_count,
         };
       },
     ),
@@ -37,13 +37,12 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
 
   data.forEach((d) => {
     let gender: "women" | "men" | "notKnown" = "notKnown";
-    if (d.sexe === "Femme") gender = "women";
-    if (d.sexe === "Homme") gender = "men";
-    if (d["age-tranche"] !== "Indéterminé") totals[gender].count = (totals[gender]?.count || 0) + d.candidat_count;
+    if (d.sexe === "femme") gender = "women";
+    if (d.sexe === "homme") gender = "men";
+    if (d["age-tranche"] !== "non mentionné") totals[gender].count = (totals[gender]?.count || 0) + d.candidat_count;
     else totals[gender].notKnown = (totals[gender]?.notKnown || 0) + d.candidat_count;
   });
   const maxTotals = max(flatten(values(totals).map((t) => [t.count || 0, t.notKnown || 0]))) || 0;
-
   return (
     <div className="container-fluid">
       <div className="row d-flex justify-content-center mb-2">

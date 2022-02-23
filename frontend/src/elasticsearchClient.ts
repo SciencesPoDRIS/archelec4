@@ -345,7 +345,7 @@ export async function fetchDashboardData(
       aggs: {
         listes: {
           terms: {
-            exclude: "non|renseigné",
+            exclude: "non|mentionné",
             field: "candidats.liste",
             size: 12,
           },
@@ -385,7 +385,7 @@ export async function fetchDashboardData(
       aggs: {
         professions: {
           terms: {
-            exclude: "non|renseigné",
+            exclude: "non|mentionné",
             field: "candidats.profession",
             size: 12,
           },
