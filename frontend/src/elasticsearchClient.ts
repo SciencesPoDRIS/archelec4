@@ -149,14 +149,19 @@ export async function getTerms(
       query: getESQueryBody(
         context.filters,
         // create a temporaru filterState with a wildcardValue to trigger options suggestions the same way a wildcard choice would do
-        value !== undefined ? { spec: filter, value: [wildcardSpecialValue(value)], type: "terms" } : undefined,
+        value !== undefined && value !== ""
+          ? { spec: filter, value: [wildcardSpecialValue(value)], type: "terms" }
+          : undefined,
       ),
       aggs: {
         termsList: {
           terms: {
             field: `${field}.raw`,
             size: count || 15,
-            order: filter.order === "key_asc" ? { _key: "asc" } : { _count: "desc" },
+            order:
+              filter.order === "key_asc"
+                ? { [filter.extraQueryField ? "extra.key" : "_key"]: "asc" }
+                : { [filter.extraQueryField ? "extra.doc_count" : "_count"]: "desc" },
             include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
           },
         },

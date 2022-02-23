@@ -29,7 +29,7 @@ function asyncOptionsFactory(
             },
           ]
         : []),
-      ...terms.map(({ term, count }) => ({ label: `${term} (${count})`, value: term })),
+      ...terms.map(({ term, count: c }) => ({ label: `${term} (${c})`, value: term })),
       ...(terms.length > count
         ? [
             {
