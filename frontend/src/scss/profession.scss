@@ -7,6 +7,20 @@
   }
   .metadata-group {
     padding-bottom: 0.8em;
+    .metadata-line {
+      display: flex;
+      justify-content: space-between;
+      .metadata-field {
+        flex-shrink: 0;
+        margin-right: 1rem;
+      }
+      .metadata-value {
+        text-align: right;
+      }
+    }
+    .metadata-unknown {
+      color: $gray-400;
+    }
   }
   .licenses {
     img {

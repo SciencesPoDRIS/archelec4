@@ -104,7 +104,7 @@ export function esCastArchiveElectoralProfessionDeFoi(item: any): ArchiveElector
  */
 function computeAgeRange(age: number): string {
   const decade = Math.trunc(age / 10) * 10;
-  return `Entre ${decade} et ${decade + 9} ans`;
+  return `entre ${decade} et ${decade + 9} ans`;
 }
 
 /**
@@ -118,9 +118,9 @@ function computeAgeRange(age: number): string {
  * @returns An object with the computed age and range
  */
 export function computeAge(dateElection: Date, age: string): { age: string; range: string } | null {
-  let result = { age: "Imprécis", range: "Indéterminé" };
+  const result = { age: "non mentionné", range: "non mentionné" };
   if (age === "NR") {
-    result = null;
+    // nothing to do (default value)
   } else if (/^[0-9]{2}$/.test(age)) {
     result.age = age;
     result.range = computeAgeRange(Number.parseInt(age));

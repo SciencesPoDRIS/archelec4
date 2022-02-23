@@ -96,8 +96,8 @@ export const config: Configuration = {
     "circonscription",
   ],
   missing_value_tag: {
-    sexe: "Non déterminé",
-    default: "Non renseigné",
+    sexe: "non déterminé",
+    default: "non mentionné",
   },
   elastic_index_configuration: {
     settings: {

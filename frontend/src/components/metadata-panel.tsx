@@ -13,10 +13,11 @@ interface Props {
 
 const MetadataList: React.FC<{ list: string[]; label?: string }> = (props: { list: string[]; label?: string }) => {
   const { list, label } = props;
+  console.log(list);
   return (
     <>
       {list && list.length > 0 && (
-        <div className="metadata-line">
+        <div className={`metadata-line ${list.includes("non mentionné") ? "metadata-unknown" : ""}`}>
           <span className="metadata-field">{label && `${label} : `}</span>
           <span className="metadata-value">{list.join(", ")}</span>
         </div>
@@ -34,16 +35,16 @@ const CandidatMetadata: React.FC<{ candidat: Candidat }> = (props: { candidat: C
       </h3>
       {candidat.age && (
         <div className="metadata-group">
-          <div>
+          <div className={`metadata-line ${["non mentionné"].includes(candidat.age) ? "metadata-unknown" : ""}`}>
             <span className="metadata-field">Âge déclaré : </span>
             <span className="metadata-value">
               {candidat.age || "aucun"}{" "}
-              {candidat.age !== "Non renseigné" && candidat["age-calcule"] !== candidat.age && (
+              {!["non mentionné"].includes(candidat.age) && candidat["age-calcule"] !== candidat.age && (
                 <span>(calculé : {candidat["age-calcule"]})</span>
               )}
             </span>
           </div>
-          <div>
+          <div className="metadata-line">
             <span className="metadata-field">Sexe : </span>
             <span className="metadata-value">{candidat.sexe}</span>
           </div>
@@ -56,7 +57,12 @@ const CandidatMetadata: React.FC<{ candidat: Candidat }> = (props: { candidat: C
         <MetadataList list={candidat["mandat-passe"]} label="Mandat passé" />
         <MetadataList list={candidat.associations} label="Association" />
         <MetadataList list={candidat["autres-statuts"]} label="Autre statut" />
-        {candidat.decorations && candidat.decorations !== "non" && <div>Décorations : {candidat.decorations}</div>}
+        {candidat.decorations && candidat.decorations !== "non" && (
+          <div className="metadata-line">
+            <span className="metadata-field">Décorations : </span>
+            <span className="metadata-value">{candidat.decorations}</span>
+          </div>
+        )}
       </div>
       <div className="metadata-group">
         <MetadataList list={candidat.liste} label="Liste" />

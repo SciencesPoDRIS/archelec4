@@ -307,7 +307,7 @@ export class Import {
     }
     if (candidate["sexe"]) {
       modifiedCandidate["sexe"] =
-        candidate["sexe"] === "F" ? "Femme" : candidate["sexe"] === "H" ? "Homme" : config.missing_value_tag.sexe;
+        candidate["sexe"] === "F" ? "femme" : candidate["sexe"] === "H" ? "homme" : config.missing_value_tag.sexe;
     }
     // create a special field which stores  "prenom nom" to ease search
     const prenomNom = ["prenom", "nom"]
