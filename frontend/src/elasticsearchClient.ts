@@ -15,7 +15,11 @@ import {
   TermsFilterState,
   TermsFilterType,
 } from "./types";
-import { QueryDslQueryContainer, SearchRequest } from "@elastic/elasticsearch/api/types";
+import {
+  AggregationsTermsAggregationOrder,
+  QueryDslQueryContainer,
+  SearchRequest,
+} from "@elastic/elasticsearch/api/types";
 
 function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQueryContainer {
   let query: QueryDslQueryContainer | null = null;
@@ -143,6 +147,23 @@ export async function getTerms(
   const isNested = field.includes(".");
   const nestedPath = isNested ? field.split(".")[0] : null;
 
+  let order: AggregationsTermsAggregationOrder | undefined = undefined;
+  switch (filter.order) {
+    case "key_asc":
+      order = { [filter.extraQueryField ? "extra.key" : "_key"]: "asc" };
+      break;
+    case "count_desc":
+      order = { [filter.extraQueryField ? "extra.doc_count" : "_count"]: "desc" };
+      break;
+    case "departement-order":
+      order = {
+        "departement-order": "asc",
+      };
+      break;
+    default:
+      order = { _count: "desc" };
+  }
+
   const searchQuery: SearchRequest = {
     body: {
       size: 0,
@@ -158,10 +179,7 @@ export async function getTerms(
           terms: {
             field: `${field}.raw`,
             size: count || 15,
-            order:
-              filter.order === "key_asc"
-                ? { [filter.extraQueryField ? "extra.key" : "_key"]: "asc" }
-                : { [filter.extraQueryField ? "extra.doc_count" : "_count"]: "desc" },
+            order,
             include: value ? `.*${getESIncludeRegexp(value)}.*` : undefined,
           },
         },
@@ -174,6 +192,12 @@ export async function getTerms(
       extra: {
         filter: filter.extraQueryField,
       },
+    };
+  }
+  // departement-order special case
+  if (filter.order === "departement-order" && searchQuery.body?.aggs?.termsList) {
+    searchQuery.body.aggs.termsList.aggs = {
+      "departement-order": { min: { field: "departement-order" } },
     };
   }
 

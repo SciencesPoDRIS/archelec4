@@ -68,7 +68,7 @@ export const professionSearch: SearchTypeDefinition = {
           type: "terms",
           label: "Département",
           isMulti: true,
-          order: "key_asc",
+          order: "departement-order",
           wildcardSearch: false,
         },
         {

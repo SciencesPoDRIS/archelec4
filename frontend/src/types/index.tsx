@@ -78,7 +78,7 @@ export type TermsFilterType = {
   field: string;
   type: "terms";
   label: string;
-  order: "count_desc" | "key_asc";
+  order: "count_desc" | "key_asc" | "departement-order";
   extraQueryField?: QueryDslQueryContainer;
   wildcardSearch?: boolean;
   isMulti?: boolean;

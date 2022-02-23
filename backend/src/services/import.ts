@@ -8,7 +8,7 @@ import { chunck, computeAge, makeHttpCall, taskInSeries } from "../utils";
 import { getLogger } from "./logger";
 import { config } from "../config";
 import { GetMetadataResponse } from "./internet-archive";
-import { departments } from "../config/departments";
+import { departementSpecialOrders, departments } from "../config/departments";
 
 /**
  * Error object for import report.
@@ -351,6 +351,7 @@ export class Import {
         } else if (newKey === "departement") {
           result[newKey] = value.padStart(2, "0");
           result["departement-insee"] = departments[value];
+          result["departement-order"] = departementSpecialOrders[value] || +value;
         } else if (newKey === "date") {
           result[newKey] = value;
           // compute year of election for search facet

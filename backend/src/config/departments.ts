@@ -106,3 +106,7 @@ export const departments = {
   "987": "987 - Polynésie-française",
   "988": "988 - Nouvelle-Calédonie",
 };
+export const departementSpecialOrders = {
+  "2A": 20.1,
+  "2B": 20.2,
+};
