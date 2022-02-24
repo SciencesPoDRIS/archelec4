@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "geojson2svg": "^1.2.9"
+  }
+}
