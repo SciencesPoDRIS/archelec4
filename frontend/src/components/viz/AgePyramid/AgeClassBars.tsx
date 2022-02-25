@@ -1,4 +1,7 @@
 import { FC } from "react";
+import { Link } from "react-router-dom";
+import { useStateUrl } from "../../../hooks/state-url";
+import { SEPARATOR } from "../../filters/utils";
 import { numberFormat } from "../utils";
 import { AgeClassBar } from "./AgeClassBar";
 
@@ -35,11 +38,43 @@ const BarLabel: FC<{ label: string; total: number; notKnown?: number }> = ({ lab
 );
 
 export const AgeClassBars: FC<{ data: AgeBarData; max: number }> = ({ data, max }) => {
+  const [sexeFilter, ,] = useStateUrl<string>("candidats.sexe", "");
+  const [ageFilter, , getAgeFilterURL] = useStateUrl<string>("candidats.age-tranche", "");
+
+  const getFilterLink = (sexe: string, age_classe: string): Partial<Location> => {
+    const selectedAges = ageFilter.split(SEPARATOR).filter((e) => e !== "");
+    const selectedSexe = sexeFilter.split(SEPARATOR).filter((e) => e !== "");
+
+    let newAgeFilter = ageFilter;
+    let newSexeFilter = sexeFilter;
+
+    if (selectedAges.includes(age_classe) && selectedSexe.includes(sexe)) {
+      newAgeFilter = selectedAges.filter((a) => a !== age_classe).join(SEPARATOR);
+      newSexeFilter = selectedSexe.filter((a) => a !== sexe).join(SEPARATOR);
+    } else {
+      if (!selectedAges.includes(age_classe)) newAgeFilter = [...selectedAges, age_classe].join(SEPARATOR);
+      if (!selectedSexe.includes(sexe)) newSexeFilter = [...selectedSexe, sexe].join(SEPARATOR);
+    }
+
+    const ageLocation = getAgeFilterURL(newAgeFilter);
+
+    const search = new URLSearchParams(ageLocation?.search || "");
+    if (newAgeFilter === "") search.delete("candidats.age-tranche");
+    else search.set("candidats.age-tranche", newAgeFilter);
+    if (newSexeFilter === "") search.delete("candidats.sexe");
+    else search.set("candidats.sexe", newSexeFilter);
+
+    return { ...ageLocation, search: search.toString() };
+  };
   return (
     <>
-      <div className="women-column">{data.women && <AgeClassBar count={data.women} max={max} anchored="right" />}</div>
+      <Link to={getFilterLink("femme", data.ageClass)} className="women-column">
+        {data.women && <AgeClassBar count={data.women} max={max} anchored="right" />}
+      </Link>
       <BarLabel label={data.ageClass} total={(data.women || 0) + (data.men || 0)} notKnown={data.notKnown} />
-      <div className="men-column">{data.men && <AgeClassBar count={data.men} max={max} anchored="left" />}</div>
+      <Link to={getFilterLink("homme", data.ageClass)} className="men-column">
+        {data.men && <AgeClassBar count={data.men} max={max} anchored="left" />}
+      </Link>
     </>
   );
 };

@@ -91,7 +91,7 @@ export function useStateUrl<T>(
         }
         return { ...location, search: urlQueryParams.toString() };
       }
-      return null;
+      return location;
     };
   }
 
