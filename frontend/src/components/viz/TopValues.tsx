@@ -1,12 +1,20 @@
 import { max } from "lodash";
 import { FC } from "react";
+import { Link } from "react-router-dom";
+import { useStateUrl } from "../../hooks/state-url";
 
 import { TopValuesDataType } from "../../types/viz";
+import { wildcardSpecialValue } from "../filters/utils";
 import { numberFormat } from "./utils";
 
-export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ title, data }) => {
+export const TopValues: FC<{
+  title: string;
+  data: TopValuesDataType;
+}> = ({ title, data }) => {
   const maxValue = max(data.tops.map((d) => d.count)) || 0;
+  const [, , getFilterURL] = useStateUrl<string>(data.field, "");
 
+  const scaleUnit = maxValue > 1000 ? 1000 : 100;
   return (
     <div className="w-100">
       <h2 className="h4">{title}</h2>
@@ -14,9 +22,9 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
         Les {data.tops.length} occurrences les plus fréquentes.
         <br />
         <div className="w-100 d-flex align-items-center">
-          <div style={{ width: `${(1000 / maxValue) * 100}%`, height: "5px" }} className=" bar" />
+          <div style={{ width: `${(scaleUnit / maxValue) * 100}%`, height: "5px" }} className=" bar" />
           <div style={{ fontSize: "0.8rem" }} className="ml-1">
-            {numberFormat.format(1000)} candidat(e)s
+            {numberFormat.format(scaleUnit)} candidat(e)s
           </div>
         </div>
       </div>
@@ -26,7 +34,11 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
           const widthPercentage = (value.count / maxValue) * 100;
           const id = `${data.field}-${value.key}`;
           return (
-            <div>
+            <Link
+              to={
+                getFilterURL(data.wildcardSpecialValue ? wildcardSpecialValue(value.key) : value.key) || window.location
+              }
+            >
               <label htmlFor={id} key={`${id}-label`} className="label text-truncate d-block">
                 {value.key}
               </label>
@@ -40,7 +52,7 @@ export const TopValues: FC<{ title: string; data: TopValuesDataType }> = ({ titl
                 </div>
                 {widthPercentage <= 90 && <span className="value-label">{numberFormat.format(value.count)}</span>}
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

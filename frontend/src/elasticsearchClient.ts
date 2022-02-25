@@ -433,19 +433,22 @@ export async function fetchDashboardData(
         doc_count: e.doc_count,
       })),
       topListes: {
-        field: "liste",
+        field: "candidats.liste",
+
+        wildcardSpecialValue: true,
         tops: data.aggregations.topListes.listes.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
       },
       topSoutiens: {
-        field: "soutiens",
+        field: "candidats.soutien",
         tops: data.aggregations.topSoutiens.soutiens.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
       },
       topMandats: {
-        field: "mandats",
+        field: "candidats.mandat-en-cours",
         tops: data.aggregations.topMandats.mandats.buckets.map((e: any) => ({ key: e.key, count: e.doc_count })),
       },
       topProfessions: {
-        field: "profession",
+        field: "candidats.profession",
+        wildcardSpecialValue: true,
         tops: data.aggregations.topProfessions.professions.buckets.map((e: any) => ({
           key: e.key,
           count: e.doc_count,

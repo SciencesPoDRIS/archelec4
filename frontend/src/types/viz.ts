@@ -47,6 +47,7 @@ export type AgePyramidDataItemType = {
 
 export type TopValuesDataType = {
   field: string;
+  wildcardSpecialValue?: boolean;
   tops: Array<{
     key: string;
     count: number;
