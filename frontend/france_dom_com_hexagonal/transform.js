@@ -1,5 +1,6 @@
 var geojson2svg = require("geojson2svg");
 var fs = require("fs");
+const departments = require("./departmentLabels.json");
 
 var viewportSize = { width: 1000, height: 1000 };
 var converter = geojson2svg({
@@ -19,9 +20,7 @@ var converter = geojson2svg({
   },
 });
 
-var geo = JSON.parse(
-  fs.readFileSync("./france_dom_com_hexagonal.geojson").toString()
-);
+var geo = JSON.parse(fs.readFileSync("./france_dom_com_hexagonal.geojson").toString());
 
 var svgStr = converter.convert(geo);
 
@@ -32,17 +31,19 @@ fs.writeFileSync(
 width="${viewportSize.width}" height="${viewportSize.height}"
 xmlns="http://www.w3.org/2000/svg">
 ${svgStr.join("\n")}
-</svg>`
+</svg>`,
 );
 
 // JSON export to later render SVG from REACT
 fs.writeFileSync(
   "./france_DOM_COM_hexagonal.json",
   JSON.stringify(
-    converter
-      .convert(geo, { output: "path" })
-      .map((d, i) => ({ ...geo.features[i].properties, d })),
+    converter.convert(geo, { output: "path" }).map((d, i) => ({
+      ...geo.features[i].properties,
+      "departement-insee": departments[geo.features[i].properties.insee_dep],
+      d,
+    })),
     null,
-    2
-  )
+    2,
+  ),
 );

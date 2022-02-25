@@ -1,9 +1,9 @@
-/frontend/node_modules
+/**/node_modules
+
 /frontend/build
 /frontend/.eslintcache
 
 /backend/src/routes.ts
-/backend/node_modules
 /backend/build
 /backend/*.log
 /backend/*.log.gz
