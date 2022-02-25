@@ -1,4 +1,4 @@
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 type SetterInputFunction<Z> = (prev: Z) => Z;
 
@@ -33,8 +33,10 @@ export function useStateUrl<T>(
   key: string,
   defaultValue: T,
   replace = false,
-): [T, (value: T | SetterInputFunction<T>) => void] {
+): [T, (value: T | SetterInputFunction<T>) => void, (value: T | SetterInputFunction<T>) => Partial<Location> | null] {
   const history = useHistory();
+
+  const location = useLocation();
 
   /**
    * Retrieve the value of the given parameter.
@@ -73,5 +75,25 @@ export function useStateUrl<T>(
     };
   }
 
-  return [getQueryParam(key), getSetQueryParam(key)];
+  /**
+   * returns the new state as a URL to be used in direct link
+   */
+  function getLinkURL(key: string): (value: T | SetterInputFunction<T>) => Partial<Location> | null {
+    return (value: T | SetterInputFunction<T>): Partial<Location> | null => {
+      const urlQueryParams = new URLSearchParams(location.search);
+      const prevValue = getQueryParam(key);
+      const computedValue = typeof value === "function" ? (value as SetterInputFunction<T>)(prevValue) : value;
+      if (computedValue !== prevValue) {
+        if (computedValue !== defaultValue) {
+          urlQueryParams.set(key, computedValue + "");
+        } else {
+          urlQueryParams.delete(key);
+        }
+        return { ...location, search: urlQueryParams.toString() };
+      }
+      return null;
+    };
+  }
+
+  return [getQueryParam(key), getSetQueryParam(key), getLinkURL(key)];
 }
