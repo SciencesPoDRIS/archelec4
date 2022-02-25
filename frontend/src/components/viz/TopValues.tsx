@@ -14,7 +14,7 @@ export const TopValues: FC<{
   const maxValue = max(data.tops.map((d) => d.count)) || 0;
   const [, , getFilterURL] = useStateUrl<string>(data.field, "");
 
-  const scaleUnit = maxValue > 1000 ? 1000 : 100;
+  const scaleUnit = maxValue >= 1000 ? 1000 : maxValue >= 100 ? 100 : maxValue >= 10 ? 10 : 1;
   return (
     <div className="w-100">
       <h2 className="h4">{title}</h2>
