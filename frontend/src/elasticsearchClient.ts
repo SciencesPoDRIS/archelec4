@@ -170,9 +170,7 @@ export async function getTerms(
       query: getESQueryBody(
         context.filters,
         // create a temporaru filterState with a wildcardValue to trigger options suggestions the same way a wildcard choice would do
-        value !== undefined && value !== ""
-          ? { spec: filter, value: [wildcardSpecialValue(value)], type: "terms" }
-          : undefined,
+        value !== undefined ? { spec: filter, value: [wildcardSpecialValue(value)], type: "terms" } : undefined,
       ),
       aggs: {
         termsList: {
