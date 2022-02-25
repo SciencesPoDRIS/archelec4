@@ -9,11 +9,12 @@ import { tooltipPosition } from "../../../utils";
 import { SEPARATOR } from "../../filters/utils";
 import FranceSVGParts from "./france_DOM_COM_hexagonal.json";
 import { numberFormat } from "../utils";
+import { Link } from "react-router-dom";
 
 export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
-  const [hovered, setHovered] = useState<DashboardDataType["carto"][0] | null>(null);
-  const [termsUrl, setTermsUrl] = useStateUrl<string>("departement-insee", "");
+  const [hovered, setHovered] = useState<{ label: string; data: DashboardDataType["carto"][0] | null } | null>(null);
+  const [termsUrl, , getDepartementLink] = useStateUrl<string>("departement-insee", "");
   const [selectedDepartements, setSelectedDepartements] = useState<string[]>([]);
 
   // prepare data
@@ -44,7 +45,8 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       tooltipPosition([x, y], tooltipRef.current);
     }
   }
-
+  const legendValues =
+    minCount !== maxCount ? range(minCount, maxCount, (maxCount - minCount) / 100) : range(0, 100).map((_) => minCount);
   return (
     <div className="w-100">
       <h2 className="h4">Par département</h2>
@@ -52,7 +54,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       <div className=" d-flex align-items-center mb-3">
         Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
         <div className="mx-2 cartography-legend">
-          {range(minCount, maxCount, (maxCount - minCount) / 100).map((v) => (
+          {legendValues.map((v) => (
             <div style={{ width: "1px", opacity: colorScale(v) }} />
           ))}
         </div>
@@ -61,19 +63,17 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       <div className="mt-4">
         <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
           {FranceSVGParts.map((p) => {
-            const depFilterKey = dataByINSEEDep[p.insee_dep]?.["departement-insee"];
+            const depFilterKey = p["departement-insee"];
             const selected = selectedDepartements.includes(depFilterKey);
-            return (
+            const newDepartementList = selected
+              ? selectedDepartements.filter((e) => e !== depFilterKey).join(SEPARATOR)
+              : selectedDepartements.concat(depFilterKey).join(SEPARATOR);
+            const newLocationOnClick = getDepartementLink(newDepartementList);
+            const path = (
               <path
                 className={`${termsUrl === "" || selected ? "active" : "disabled"}`}
-                onClick={() => {
-                  // TODO: refine the selection or add "code - name" key in cartographic data (json)
-                  if (depFilterKey)
-                    if (selected) setTermsUrl(selectedDepartements.filter((e) => e !== depFilterKey).join(SEPARATOR));
-                    else setTermsUrl(selectedDepartements.concat(depFilterKey).join(SEPARATOR));
-                }}
                 onMouseEnter={(e) => {
-                  setHovered(dataByINSEEDep[p.insee_dep]);
+                  setHovered({ label: p["departement-insee"], data: dataByINSEEDep[p.insee_dep] });
                   displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
                 }}
                 onMouseLeave={() => {
@@ -98,12 +98,14 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
                 // }
               />
             );
+            if (newLocationOnClick) return <Link to={newLocationOnClick}>{path}</Link>;
+            else return path;
           })}
         </svg>
       </div>
       {hovered && (
         <div className="tooltip" ref={tooltipRef}>
-          {hovered["departement-insee"]} : {numberFormat.format(hovered.doc_count)}
+          {hovered.label} : {hovered && hovered.data ? numberFormat.format(hovered.data.doc_count) : 0}
         </div>
       )}
     </div>
