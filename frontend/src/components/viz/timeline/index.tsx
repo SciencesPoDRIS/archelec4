@@ -1,13 +1,17 @@
-import { max } from "lodash";
+import { max, sortBy } from "lodash";
 import { FC, ReactElement, useEffect, useRef, useState } from "react";
 
 import { DashboardDataType } from "../../../types/viz";
 import { NoElectionsPeriod, YearBar } from "./year-bar";
 import { tooltipPosition } from "../../../utils";
+import { useStateUrl } from "../../../hooks/state-url";
+import { Link } from "react-router-dom";
+import { SEPARATOR } from "../../filters/utils";
 
 export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [tooltipMessage, setTooltipMessage] = useState<ReactElement | null>(null);
+  const [selectedYears, , getYearLink] = useStateUrl<string>("annee", "");
 
   /**
    * WHen data changed, we reset the state
@@ -38,15 +42,27 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
       <div className="row d-flex " id="dashboard-timeline">
         {data.map((currentYear: DashboardDataType["timeline"][0], i: number) => {
           const nextYear = data[i + 1];
+          const bar = (
+            <YearBar
+              data={currentYear}
+              maxValue={maxDocCount}
+              setTooltipMessage={setTooltipMessage}
+              displayToolTip={displayToolTip}
+              className={nextYear && +nextYear.annee === +currentYear.annee + 1 ? "mr-2" : undefined}
+            />
+          );
+          const yearLink = getYearLink(
+            selectedYears.includes(currentYear.annee)
+              ? selectedYears
+                  .split(SEPARATOR)
+                  .filter((y) => y !== currentYear.annee)
+                  .join(SEPARATOR)
+              : sortBy(selectedYears.split(SEPARATOR).concat(currentYear.annee)).join(SEPARATOR),
+          );
           return (
             <>
-              <YearBar
-                data={currentYear}
-                maxValue={maxDocCount}
-                setTooltipMessage={setTooltipMessage}
-                displayToolTip={displayToolTip}
-                className={nextYear && +nextYear.annee === +currentYear.annee + 1 ? "mr-2" : undefined}
-              />
+              {yearLink && <Link to={yearLink}>{bar}</Link>}
+              {!yearLink && bar}
               {nextYear && +nextYear.annee > +currentYear.annee + 1 && (
                 <NoElectionsPeriod startYear={+currentYear.annee + 1} endYear={+nextYear.annee - 1} />
               )}
