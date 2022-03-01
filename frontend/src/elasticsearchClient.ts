@@ -52,7 +52,7 @@ function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQuery
       };
       break;
     case "query":
-      query = { simple_query_string: { query: filter.value, fields: ["ocr.search"] } };
+      query = { simple_query_string: { query: filter.value, fields: [filter.spec.field], default_operator: "and" } };
   }
   // add extraQueryField if specified
   if (filterSpec && "extraQueryField" in filterSpec && filterSpec.extraQueryField) {
@@ -63,7 +63,7 @@ function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQuery
     };
   }
   // special case of nested
-  if (field.includes(".")) {
+  if ("nested" in filter.spec && filter.spec.nested) {
     query = {
       nested: {
         path: field.split(".")[0],
@@ -102,8 +102,8 @@ function getESHighlight(filters: FiltersState, suggestFilter?: { field: string; 
   // TODO: add highlight conf into filter specs
   return {
     fields: toPairs(filters)
-      .map(([field, filter]) => {
-        if (filter.type === "query") return { [field]: { number_of_fragments: 2, fragment_size: 50 } };
+      .map(([, filter]) => {
+        if (filter.type === "query") return { [filter.spec.field]: { number_of_fragments: 2, fragment_size: 50 } };
         return null;
       })
       .filter(identity),
@@ -144,7 +144,7 @@ export async function getTerms(
 ): Promise<{ term: string; count: number }[]> {
   const field = filter.field;
   //nested
-  const isNested = field.includes(".");
+  const isNested = filter.nested;
   const nestedPath = isNested ? field.split(".")[0] : null;
 
   let order: AggregationsTermsAggregationOrder | undefined = undefined;

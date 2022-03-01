@@ -89,6 +89,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.liste",
           field: "candidats.liste",
+          nested: true,
           type: "terms",
           label: "Liste",
           isMulti: true,
@@ -97,6 +98,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.soutien",
           field: "candidats.soutien",
+          nested: true,
           type: "terms",
           label: "Soutien",
           isMulti: true,
@@ -111,6 +113,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.prenom-nom",
           field: "candidats.prenom-nom",
+          nested: true,
           type: "terms",
           label: "Prénom Nom",
           isMulti: true,
@@ -120,6 +123,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.nom",
           field: "candidats.nom",
+          nested: true,
           type: "terms",
           label: "Nom",
           isMulti: true,
@@ -128,6 +132,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.prenom",
           field: "candidats.prenom",
+          nested: true,
           type: "terms",
           label: "Prénom",
           isMulti: true,
@@ -136,6 +141,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.sexe",
           field: "candidats.sexe",
+          nested: true,
           type: "terms",
           label: "Sexe",
           order: "count_desc",
@@ -143,6 +149,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.age-tranche",
           field: "candidats.age-tranche",
+          nested: true,
           type: "terms",
           label: "Tranche d'âge",
           isMulti: true,
@@ -151,6 +158,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.profession",
           field: "candidats.profession",
+          nested: true,
           type: "terms",
           label: "Profession",
           isMulti: true,
@@ -160,6 +168,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.mandat-en-cours",
           field: "candidats.mandat-en-cours",
+          nested: true,
           type: "terms",
           label: "Mandat en cours",
           isMulti: true,
@@ -169,6 +178,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.mandat-passe",
           field: "candidats.mandat-passe",
+          nested: true,
           type: "terms",
           label: "Mandat passé",
           isMulti: true,
@@ -178,6 +188,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.associations",
           field: "candidats.associations",
+          nested: true,
           type: "terms",
           label: "Association",
           isMulti: true,
@@ -187,6 +198,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.autres-statuts",
           field: "candidats.autres-statuts",
+          nested: true,
           type: "terms",
           label: "Autre statut",
           isMulti: true,
@@ -196,6 +208,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "candidats.decorations",
           field: "candidats.decorations",
+          nested: true,
           type: "terms",
           label: "Décoration",
           isMulti: true,
@@ -211,6 +224,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.prenom-nom",
           field: "candidats.prenom-nom",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Prénom Nom",
@@ -221,6 +235,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.nom",
           field: "candidats.nom",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Nom",
@@ -230,6 +245,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.prenom",
           field: "candidats.prenom",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Prénom",
@@ -239,6 +255,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.sexe",
           field: "candidats.sexe",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Sexe",
@@ -248,6 +265,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.age-tranche",
           field: "candidats.age-tranche",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Tranche d'âge",
@@ -257,6 +275,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.profession",
           field: "candidats.profession",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Profession",
@@ -267,6 +286,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.mandat-en-cours",
           field: "candidats.mandat-en-cours",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Mandat en cours",
@@ -277,6 +297,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.mandat-passe",
           field: "candidats.mandat-passe",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Mandat passé",
@@ -287,6 +308,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.associations",
           field: "candidats.associations",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Association",
@@ -297,6 +319,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.autres-statuts",
           field: "candidats.autres-statuts",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Autre statut",
@@ -307,6 +330,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "titulaire.decorations",
           field: "candidats.decorations",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Décoration",
@@ -323,6 +347,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.prenom-nom",
           field: "candidats.prenom-nom",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Prénom Nom",
@@ -333,6 +358,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.nom",
           field: "candidats.nom",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Nom",
@@ -342,6 +368,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.prenom",
           field: "candidats.prenom",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Prénom",
@@ -351,6 +378,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.sexe",
           field: "candidats.sexe",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Sexe",
@@ -360,6 +388,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.age-tranche",
           field: "candidats.age-tranche",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Tranche d'âge",
@@ -369,6 +398,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.profession",
           field: "candidats.profession",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Profession",
@@ -379,6 +409,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.mandat-en-cours",
           field: "candidats.mandat-en-cours",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Mandat en cours",
@@ -389,6 +420,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.mandat-passe",
           field: "candidats.mandat-passe",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Mandat passé",
@@ -399,6 +431,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.associations",
           field: "candidats.associations",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Association",
@@ -409,6 +442,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.autres-statuts",
           field: "candidats.autres-statuts",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Autre statut",
@@ -419,6 +453,7 @@ export const professionSearch: SearchTypeDefinition = {
         {
           id: "suppleant.decorations",
           field: "candidats.decorations",
+          nested: true,
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Décoration",
@@ -435,6 +470,7 @@ export const professionSearch: SearchTypeDefinition = {
       filters: [
         {
           id: "ocr",
+          field: "ocr.search",
           type: "query",
           label: "Transcription (OCR)",
         },

@@ -76,6 +76,7 @@ export type ESSearchQueryContext = {
 export type TermsFilterType = {
   id: string;
   field: string;
+  nested?: boolean;
   type: "terms";
   label: string;
   order: "count_desc" | "key_asc" | "departement-order";
@@ -94,6 +95,7 @@ export type DatesFilterType = {
 };
 export type QueryFilterType = {
   id: string;
+  field: string;
   type: "query";
   label: string;
 };
