@@ -37,35 +37,11 @@ const BarLabel: FC<{ label: string; total: number; notKnown?: number }> = ({ lab
   </div>
 );
 
-export const AgeClassBars: FC<{ data: AgeBarData; max: number }> = ({ data, max }) => {
-  const [sexeFilter, ,] = useStateUrl<string>("candidats.sexe", "");
-  const [ageFilter, , getAgeFilterURL] = useStateUrl<string>("candidats.age-tranche", "");
-
-  const getFilterLink = (sexe: string, age_classe: string): Partial<Location> => {
-    const selectedAges = ageFilter.split(SEPARATOR).filter((e) => e !== "");
-    const selectedSexe = sexeFilter.split(SEPARATOR).filter((e) => e !== "");
-
-    let newAgeFilter = ageFilter;
-    let newSexeFilter = sexeFilter;
-
-    if (selectedAges.includes(age_classe) && selectedSexe.includes(sexe)) {
-      newAgeFilter = selectedAges.filter((a) => a !== age_classe).join(SEPARATOR);
-      newSexeFilter = selectedSexe.filter((a) => a !== sexe).join(SEPARATOR);
-    } else {
-      if (!selectedAges.includes(age_classe)) newAgeFilter = [...selectedAges, age_classe].join(SEPARATOR);
-      if (!selectedSexe.includes(sexe)) newSexeFilter = [...selectedSexe, sexe].join(SEPARATOR);
-    }
-
-    const ageLocation = getAgeFilterURL(newAgeFilter);
-
-    const search = new URLSearchParams(ageLocation?.search || "");
-    if (newAgeFilter === "") search.delete("candidats.age-tranche");
-    else search.set("candidats.age-tranche", newAgeFilter);
-    if (newSexeFilter === "") search.delete("candidats.sexe");
-    else search.set("candidats.sexe", newSexeFilter);
-
-    return { ...ageLocation, search: search.toString() };
-  };
+export const AgeClassBars: FC<{
+  data: AgeBarData;
+  max: number;
+  getFilterLink: (sexe: string, age_classe: string) => Partial<Location>;
+}> = ({ data, max, getFilterLink }) => {
   return (
     <>
       <Link to={getFilterLink("femme", data.ageClass)} className="women-column">
@@ -89,7 +65,11 @@ export interface AgePyramidTotals {
   notKnown: TotalBarData;
 }
 
-export const AgeTotalsBars: FC<{ totals: AgePyramidTotals; max: number }> = ({ totals, max }) => (
+export const AgeTotalsBars: FC<{
+  totals: AgePyramidTotals;
+  max: number;
+  getFilterLink: (sexe: string, age_classe: string) => Partial<Location>;
+}> = ({ totals, max, getFilterLink }) => (
   <>
     <div className="w-100 my-3 border-top separator"></div>
     <div className="totals women-column text-right">
@@ -109,23 +89,23 @@ export const AgeTotalsBars: FC<{ totals: AgePyramidTotals; max: number }> = ({ t
       {" "}
       <AgeClassBar count={totals.men.count || 0} max={max} anchored="left" />
     </div>
-    <div className=" totals women-column text-right">
+    <Link className=" totals women-column text-right" to={getFilterLink("femme", "non mentionné")}>
       <AgeClassBar
         count={totals.women.notKnown || 0}
         // notKnownCount={totals.women.notKnown}
         max={max}
         anchored="right"
       />
-    </div>
+    </Link>
     <BarLabel
-      label="Indéterminé"
+      label="Non mentionné"
       total={(totals.women.notKnown || 0) + (totals.men.notKnown || 0)}
       notKnown={totals.notKnown.notKnown || 0}
     />
 
-    <div className="totals men-column">
+    <Link className="totals men-column" to={getFilterLink("homme", "non mentionné")}>
       {" "}
       <AgeClassBar count={totals.men.notKnown || 0} max={max} anchored="left" />
-    </div>
+    </Link>
   </>
 );

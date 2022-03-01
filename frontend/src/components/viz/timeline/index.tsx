@@ -55,9 +55,14 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
             selectedYears.includes(currentYear.annee)
               ? selectedYears
                   .split(SEPARATOR)
-                  .filter((y) => y !== currentYear.annee)
+                  .filter((y) => y !== "" && y !== currentYear.annee)
                   .join(SEPARATOR)
-              : sortBy(selectedYears.split(SEPARATOR).concat(currentYear.annee)).join(SEPARATOR),
+              : sortBy(
+                  selectedYears
+                    .split(SEPARATOR)
+                    .filter((y) => y !== "")
+                    .concat(currentYear.annee),
+                ).join(SEPARATOR),
           );
           return (
             <>
