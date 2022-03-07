@@ -49,11 +49,9 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
   // filter link  factory
   const [sexeFilter, ,] = useStateUrl<string>("candidats.sexe", "");
   const [ageFilter, , getAgeFilterURL] = useStateUrl<string>("candidats.age-tranche", "");
-
+  const selectedAges = ageFilter.split(SEPARATOR).filter((e) => e !== "");
+  const selectedSexe = sexeFilter.split(SEPARATOR).filter((e) => e !== "");
   const getFilterLink = (sexe: string, age_classe: string): Partial<Location> => {
-    const selectedAges = ageFilter.split(SEPARATOR).filter((e) => e !== "");
-    const selectedSexe = sexeFilter.split(SEPARATOR).filter((e) => e !== "");
-
     let newAgeFilter = ageFilter;
     let newSexeFilter = sexeFilter;
 
@@ -89,10 +87,18 @@ export const AgePyramid: FC<{ data: DashboardDataType["agePyramid"] }> = ({ data
             data={ageBarData}
             max={maxNbCandidatByAgeClass}
             getFilterLink={getFilterLink}
+            selectedAges={selectedAges}
+            selectedSexe={selectedSexe}
           />
         ))}
 
-        <AgeTotalsBars totals={totals} max={maxTotals} getFilterLink={getFilterLink} />
+        <AgeTotalsBars
+          totals={totals}
+          max={maxTotals}
+          getFilterLink={getFilterLink}
+          selectedAges={selectedAges}
+          selectedSexe={selectedSexe}
+        />
       </div>
     </div>
   );

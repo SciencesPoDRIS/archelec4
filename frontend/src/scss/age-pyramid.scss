@@ -16,6 +16,22 @@
     line-height: $viz-bar-height;
   }
 
+  .selected {
+    .value-label {
+      font-weight: 600;
+    }
+    &.women-column {
+      .bar {
+        border-right: 3px black solid !important;
+      }
+    }
+    &.men-column {
+      .bar {
+        border-left: 3px black solid !important;
+      }
+    }
+  }
+
   .women-column {
     grid-column: women/labels;
     .bar {

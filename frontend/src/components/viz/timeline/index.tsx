@@ -66,7 +66,11 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
           );
           return (
             <>
-              {yearLink && <Link to={yearLink}>{bar}</Link>}
+              {yearLink && (
+                <Link to={yearLink} className={selectedYears.includes(currentYear.annee) ? "selected" : ""}>
+                  {bar}
+                </Link>
+              )}
               {!yearLink && bar}
               {nextYear && +nextYear.annee > +currentYear.annee + 1 && (
                 <NoElectionsPeriod startYear={+currentYear.annee + 1} endYear={+nextYear.annee - 1} />

@@ -13,7 +13,11 @@ import { Link } from "react-router-dom";
 
 export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
-  const [hovered, setHovered] = useState<{ label: string; data: DashboardDataType["carto"][0] | null } | null>(null);
+  const [hovered, setHovered] = useState<{
+    label: string;
+    data: DashboardDataType["carto"][0] | null;
+    selected: boolean;
+  } | null>(null);
   const [termsUrl, , getDepartementLink] = useStateUrl<string>("departement-insee", "");
   const [selectedDepartements, setSelectedDepartements] = useState<string[]>([]);
 
@@ -73,7 +77,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
               <path
                 className={`${termsUrl === "" || selected ? "active" : "disabled"}`}
                 onMouseEnter={(e) => {
-                  setHovered({ label: p["departement-insee"], data: dataByINSEEDep[p.insee_dep] });
+                  setHovered({ label: p["departement-insee"], data: dataByINSEEDep[p.insee_dep], selected });
                   displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
                 }}
                 onMouseLeave={() => {
@@ -86,6 +90,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
                 key={p.insee_dep}
                 id={p.insee_dep}
                 stroke="black"
+                strokeWidth={selected ? 3 : 1}
                 fillOpacity={
                   dataByINSEEDep[p.insee_dep]?.doc_count && dataByINSEEDep[p.insee_dep]?.doc_count > 0
                     ? colorScale(dataByINSEEDep[p.insee_dep].doc_count)
@@ -105,7 +110,12 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
       </div>
       {hovered && (
         <div className="tooltip" ref={tooltipRef}>
-          {hovered.label} : {hovered && hovered.data ? numberFormat.format(hovered.data.doc_count) : 0}
+          {hovered.label}
+          {selectedDepartements.length === 0 || hovered.selected
+            ? hovered.data
+              ? ` : ${numberFormat.format(hovered.data.doc_count)}`
+              : " : 0"
+            : ""}
         </div>
       )}
     </div>

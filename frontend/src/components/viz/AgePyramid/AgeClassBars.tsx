@@ -41,14 +41,26 @@ export const AgeClassBars: FC<{
   data: AgeBarData;
   max: number;
   getFilterLink: (sexe: string, age_classe: string) => Partial<Location>;
-}> = ({ data, max, getFilterLink }) => {
+  selectedAges: string[];
+  selectedSexe: string[];
+}> = ({ data, max, getFilterLink, selectedAges, selectedSexe }) => {
   return (
     <>
-      <Link to={getFilterLink("femme", data.ageClass)} className="women-column">
+      <Link
+        to={getFilterLink("femme", data.ageClass)}
+        className={`women-column ${
+          selectedAges.includes(data.ageClass) && selectedSexe.includes("femme") ? "selected" : ""
+        }`}
+      >
         {data.women && <AgeClassBar count={data.women} max={max} anchored="right" />}
       </Link>
       <BarLabel label={data.ageClass} total={(data.women || 0) + (data.men || 0)} notKnown={data.notKnown} />
-      <Link to={getFilterLink("homme", data.ageClass)} className="men-column">
+      <Link
+        to={getFilterLink("homme", data.ageClass)}
+        className={`men-column ${
+          selectedAges.includes(data.ageClass) && selectedSexe.includes("homme") ? "selected" : ""
+        }`}
+      >
         {data.men && <AgeClassBar count={data.men} max={max} anchored="left" />}
       </Link>
     </>
@@ -69,7 +81,9 @@ export const AgeTotalsBars: FC<{
   totals: AgePyramidTotals;
   max: number;
   getFilterLink: (sexe: string, age_classe: string) => Partial<Location>;
-}> = ({ totals, max, getFilterLink }) => (
+  selectedAges: string[];
+  selectedSexe: string[];
+}> = ({ totals, max, getFilterLink, selectedAges, selectedSexe }) => (
   <>
     <div className="w-100 my-3 border-top separator"></div>
     <div className="totals women-column text-right">
@@ -89,7 +103,12 @@ export const AgeTotalsBars: FC<{
       {" "}
       <AgeClassBar count={totals.men.count || 0} max={max} anchored="left" />
     </div>
-    <Link className=" totals women-column text-right" to={getFilterLink("femme", "non mentionné")}>
+    <Link
+      className={`totals women-column text-right ${
+        selectedAges.includes("non mentionné") && selectedSexe.includes("femme") ? "selected" : ""
+      }`}
+      to={getFilterLink("femme", "non mentionné")}
+    >
       <AgeClassBar
         count={totals.women.notKnown || 0}
         // notKnownCount={totals.women.notKnown}
@@ -103,7 +122,12 @@ export const AgeTotalsBars: FC<{
       notKnown={totals.notKnown.notKnown || 0}
     />
 
-    <Link className="totals men-column" to={getFilterLink("homme", "non mentionné")}>
+    <Link
+      className={`totals men-column ${
+        selectedAges.includes("non mentionné") && selectedSexe.includes("homme") ? "selected" : ""
+      }`}
+      to={getFilterLink("homme", "non mentionné")}
+    >
       {" "}
       <AgeClassBar count={totals.men.notKnown || 0} max={max} anchored="left" />
     </Link>

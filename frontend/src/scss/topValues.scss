@@ -28,7 +28,17 @@
     padding: 0.2rem 0.4rem;
     line-height: $viz-bar-height;
   }
+  .selected {
+    .bar {
+      border-left: 3px black solid;
+    }
+    .value-label,
+    label {
+      font-weight: 600;
+    }
+  }
 }
+
 .bar {
   background-color: $viz-color-candidates;
 }

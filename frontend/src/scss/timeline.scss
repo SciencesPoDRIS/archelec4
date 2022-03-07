@@ -5,6 +5,7 @@
   > div {
     width: 0px;
   }
+
   .value-label {
     height: 15%;
     font-size: 0.8rem;
@@ -20,6 +21,16 @@
 
     :last-child {
       margin-right: 0;
+    }
+  }
+
+  .selected {
+    .value-label,
+    .year-label {
+      font-weight: 600;
+    }
+    .value-bar {
+      border-bottom: 3px black solid;
     }
   }
 }
