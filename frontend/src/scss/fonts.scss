@@ -3,3 +3,14 @@
 body {
   font-family: Arial, sans-serif;
 }
+
+#dashboard-timeline,
+.age-pyramid,
+.barchart {
+  a {
+    color: #444;
+    label {
+      cursor: pointer;
+    }
+  }
+}

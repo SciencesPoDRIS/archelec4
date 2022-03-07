@@ -33,9 +33,21 @@
   background-color: $viz-color-candidates;
 }
 
+.occupation {
+  .bar {
+    background-color: $viz-color-occupation !important;
+  }
+}
+
+.politic {
+  .bar {
+    background-color: $viz-color-politic !important;
+  }
+}
+
 .candidates {
   .bar {
-    background-color: $viz-color-candidates;
+    background-color: $viz-color-candidates !important;
   }
 }
 

@@ -28,20 +28,20 @@ export const CandidatesDashboard: FC<ResultDashboardProps> = ({ result }) => {
           <AgePyramid data={result.data.agePyramid} />
         </div>
         <div className="col-4 ">
-          <TopValues title="Mots des professions" data={result.data.topProfessions} />
+          <TopValues title="Mots des professions" data={result.data.topProfessions} className="occupation" />
         </div>
       </div>
 
       <div className="row mb-1">
         <div className="col-4 border-right">
-          <TopValues title="Soutiens" data={result.data.topSoutiens} />
+          <TopValues title="Soutiens" data={result.data.topSoutiens} className="politic" />
         </div>
         <div className="col-4 border-right">
-          <TopValues title="Mandats" data={result.data.topMandats} />
-        </div>
-        <div className="col-4">
           {" "}
-          <TopValues title="Mots des listes" data={result.data.topListes} />
+          <TopValues title="Mots des listes" data={result.data.topListes} className="politic" />
+        </div>
+        <div className="col-4 ">
+          <TopValues title="Mandats" data={result.data.topMandats} className="occupation" />
         </div>
       </div>
     </div>
