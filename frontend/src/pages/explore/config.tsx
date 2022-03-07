@@ -31,7 +31,7 @@ export type ModeType<T> = {
 export const modes = [
   {
     id: "list",
-    title: "Affichage en liste des professions de foi",
+    title: "Liste des professions de foi",
     icon: <FaRegListAlt />,
     fetchData: (context: ESSearchQueryContext, signal) => {
       return search<ProfessionDeFoi>(
@@ -46,14 +46,14 @@ export const modes = [
   } as ModeType<Array<ProfessionDeFoi>>,
   {
     id: "main-dashboard",
-    title: "Dashboard",
+    title: "Visualisations des professions de foi",
     icon: <FaChartArea />,
     fetchData: fetchDashboardData,
     component: MainDashboard,
   } as ModeType<DashboardDataType>,
   {
     id: "candidates-dashboard",
-    title: "Démographie des candidats",
+    title: "Visualisations des candidats",
     icon: <BiGroup />,
     fetchData: fetchDashboardData,
     component: CandidatesDashboard,
