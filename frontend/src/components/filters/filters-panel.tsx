@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import { FC, ReactElement, useEffect, useRef, useState } from "react";
 
 import { OptionType } from "../custom-select";
 import { ESSearchQueryContext, FiltersState, SearchTypeDefinition, TermsFilterType } from "../../types";
@@ -9,6 +9,7 @@ import { TermsFilter } from "./term-filter";
 import { QueryFilter } from "./query-filter";
 import { values } from "lodash";
 import { wildcardSpecialLabel, wildcardSpecialValue } from "./utils";
+import { tooltipPosition } from "../../utils";
 
 /**
  * Helper to get the properly typed function to retrieve options for a given
@@ -58,6 +59,19 @@ export const FiltersPanel: FC<{
     .map((g) => g.label);
   const [openedAsList, setOpenedAsList] = useState<string[]>(openedByDefault);
 
+  // TOOLTIP
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const [tooltipMessage, setTooltipMessage] = useState<{ element: ReactElement; x: number; y: number } | null>(null);
+  // Helper function to display the tooltip
+  useEffect(() => {
+    if (tooltipRef.current) {
+      if (tooltipMessage) {
+        tooltipRef.current.style.display = "block";
+        tooltipPosition([tooltipMessage.x, tooltipMessage.y], tooltipRef.current);
+      } else tooltipRef.current.style.display = "none";
+    }
+  }, [tooltipMessage]);
+
   return (
     <div className="filters">
       {props.searchTypeDefinition.filtersGroups.map((group, gi) => (
@@ -93,6 +107,7 @@ export const FiltersPanel: FC<{
                     asyncOptions: asyncOptionsFactory(filter),
                   }}
                   context={context}
+                  setTooltipMessage={setTooltipMessage}
                 />
               );
             if (filter.type === "dates") return <DatesFilter key={i} filter={filter} />;
@@ -101,6 +116,11 @@ export const FiltersPanel: FC<{
           })}
         </details>
       ))}
+      {tooltipMessage && (
+        <div className="tooltip" ref={tooltipRef} style={{ visibility: "visible", display: "none", opacity: 1 }}>
+          {tooltipMessage.element}
+        </div>
+      )}
     </div>
   );
 };

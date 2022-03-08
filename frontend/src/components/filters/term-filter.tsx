@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, ReactElement, useEffect, useState } from "react";
 
 import {
   OptionType,
@@ -10,12 +10,14 @@ import {
 import { TermsFilterType, ESSearchQueryContext } from "../../types";
 
 import { useStateUrl } from "../../hooks/state-url";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const SEPARATOR = "|";
 export const TermsFilter: FC<{
   filter: TermsFilterType;
   context: ESSearchQueryContext;
-}> = ({ filter, context }) => {
+  setTooltipMessage: (message: { element: ReactElement; x: number; y: number } | null) => void;
+}> = ({ filter, context, setTooltipMessage }) => {
   // const remainingCount = histogram ? histogram.total - histogram.values.length : 0;
   // const valuesDict: PlainObject<boolean> = mapValues(keyBy(getArrayValue(state.value)), constant(true));
 
@@ -26,6 +28,9 @@ export const TermsFilter: FC<{
     setTerms(termsUrl && termsUrl !== "" ? termsUrl.split(SEPARATOR) : []);
   }, [termsUrl]);
 
+  const showDescription: React.MouseEventHandler<SVGElement> = (e) =>
+    setTooltipMessage({ element: <span>{filter.description}</span>, x: e.nativeEvent.x, y: e.nativeEvent.y });
+
   // TODO:
   // Find a better way to invalidate cache.
   // Indeed, here, the cache must be invalidated when the given context
@@ -33,10 +38,20 @@ export const TermsFilter: FC<{
   // **the current input**, only on previous/upcoming inputs.
   return (
     <div className="filter-block" role="search">
-      <label htmlFor={filter.id} className="filter-label">
-        {filter.label}
-      </label>
-
+      <div className="d-flex justify-content-between align-items-center">
+        <label htmlFor={filter.id} className="filter-label">
+          {filter.label}
+        </label>
+        {filter.description && (
+          <IoMdInformationCircleOutline
+            className="ml-3"
+            title={filter.description}
+            size={"1.2rem"}
+            onMouseEnter={showDescription}
+            onMouseLeave={() => setTooltipMessage(null)}
+          />
+        )}
+      </div>
       <div>
         {filter.asyncOptions ? (
           <AsyncCreatableSelect

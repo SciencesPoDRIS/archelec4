@@ -67,6 +67,8 @@ export const professionSearch: SearchTypeDefinition = {
           field: "departement-insee",
           type: "terms",
           label: "Département",
+          description:
+            "Les dénominations anciennes sont associées aux appellations actuelles. Il n'est pas tenu compte des modifications de périmètre des territoires concernés.",
           isMulti: true,
           order: "departement-order",
           wildcardSearch: false,
@@ -92,6 +94,8 @@ export const professionSearch: SearchTypeDefinition = {
           nested: true,
           type: "terms",
           label: "Liste",
+          description:
+            "Titre donnée à la profession de foi quand celui-ci est distinct d'un nom d'organisation, mouvement, parti, couleur politique, etc. Ce titre peut inclure ou non le mot 'liste'",
           isMulti: true,
           order: "count_desc",
         },
@@ -101,6 +105,7 @@ export const professionSearch: SearchTypeDefinition = {
           nested: true,
           type: "terms",
           label: "Soutien",
+          description: "Toute organisation constituée citée dans la profession de foi comme soutenant la candidature",
           isMulti: true,
           order: "count_desc",
         },
@@ -191,6 +196,8 @@ export const professionSearch: SearchTypeDefinition = {
           nested: true,
           type: "terms",
           label: "Association",
+          description:
+            "activité(s) de nature associative citée(s) par le candidat dans la profession de foi et classée(s) en une vingtaine de thématiques, de animaux (protection, élevage...) à syndicat.",
           isMulti: true,
           wildcardSearch: true,
           order: "count_desc",
@@ -201,6 +208,8 @@ export const professionSearch: SearchTypeDefinition = {
           nested: true,
           type: "terms",
           label: "Autre statut",
+          description:
+            "toute information personnelle mentionnée sur la profession de foi : passé militaire, situation de famille, situation vis-à-vis de l’emploi.",
           isMulti: true,
           wildcardSearch: true,
           order: "count_desc",
@@ -211,12 +220,15 @@ export const professionSearch: SearchTypeDefinition = {
           nested: true,
           type: "terms",
           label: "Décoration",
+          description:
+            "mention dans la profession de foi de décoration, prix ou récompense décerné(es) au(x) candidats.",
           isMulti: true,
           order: "count_desc",
           wildcardSearch: false,
         },
       ],
     },
+    // TODO: refacto filters definition to avoid duplication
     {
       label: "Candidat-e titulaire",
       activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat-e titulaire", "ayant un-e "),
@@ -312,6 +324,8 @@ export const professionSearch: SearchTypeDefinition = {
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Association",
+          description:
+            "activité(s) de nature associative citée(s) par le candidat dans la profession de foi et classée(s) en une vingtaine de thématiques, de animaux (protection, élevage...) à syndicat.",
           isMulti: true,
           wildcardSearch: true,
           order: "count_desc",
@@ -323,6 +337,8 @@ export const professionSearch: SearchTypeDefinition = {
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Autre statut",
+          description:
+            "toute information personnelle mentionnée sur la profession de foi : passé militaire, situation de famille, situation vis-à-vis de l’emploi.",
           isMulti: true,
           wildcardSearch: true,
           order: "count_desc",
@@ -334,12 +350,15 @@ export const professionSearch: SearchTypeDefinition = {
           extraQueryField: { term: { "candidats.type.raw": "titulaire" } },
           type: "terms",
           label: "Décoration",
+          description:
+            "mention dans la profession de foi de décoration, prix ou récompense décerné(es) au(x) candidats.",
           isMulti: true,
           order: "count_desc",
           wildcardSearch: false,
         },
       ],
     },
+    // TODO: refacto filters definition to avoid duplication
     {
       label: "Candidat-e suppléant-e",
       activeFiltersPhrase: GenericFilterGroupPhraseFactory("Candidat-e suppléant-e", "ayant un-e "),
@@ -435,6 +454,8 @@ export const professionSearch: SearchTypeDefinition = {
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Association",
+          description:
+            "activité(s) de nature associative citée(s) par le candidat dans la profession de foi et classée(s) en une vingtaine de thématiques, de animaux (protection, élevage...) à syndicat.",
           isMulti: true,
           wildcardSearch: true,
           order: "count_desc",
@@ -446,6 +467,8 @@ export const professionSearch: SearchTypeDefinition = {
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Autre statut",
+          description:
+            "toute information personnelle mentionnée sur la profession de foi : passé militaire, situation de famille, situation vis-à-vis de l’emploi.",
           isMulti: true,
           wildcardSearch: true,
           order: "count_desc",
@@ -457,6 +480,8 @@ export const professionSearch: SearchTypeDefinition = {
           extraQueryField: { term: { "candidats.type.raw": "suppléant" } },
           type: "terms",
           label: "Décoration",
+          description:
+            "mention dans la profession de foi de décoration, prix ou récompense décerné(es) au(x) candidats.",
           isMulti: true,
           order: "count_desc",
           wildcardSearch: false,
