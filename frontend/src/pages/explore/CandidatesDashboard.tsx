@@ -23,24 +23,24 @@ export const CandidatesDashboard: FC<ResultDashboardProps> = ({ result }) => {
           </i>
         </div>
       </div>
-      <div className="row mb-5">
-        <div className="col-8">
+      <div className="row mb-5 row-cols-1 row-cols-md-2">
+        <div className="col col-md-8">
           <AgePyramid data={result.data.agePyramid} />
         </div>
-        <div className="col-4 ">
+        <div className="col col-md-4">
           <TopValues title="Mots des professions" data={result.data.topProfessions} className="occupation" />
         </div>
       </div>
 
-      <div className="row mb-1">
-        <div className="col-4 border-right">
+      <div className="row mb-1 row-cols-1 row-cols-md-3">
+        <div className="col border-right">
           <TopValues title="Soutiens" data={result.data.topSoutiens} className="politic" />
         </div>
-        <div className="col-4 border-right">
+        <div className="col border-right">
           {" "}
           <TopValues title="Mots des listes" data={result.data.topListes} className="politic" />
         </div>
-        <div className="col-4 ">
+        <div className="col ">
           <TopValues title="Mandats" data={result.data.topMandats} className="occupation" />
         </div>
       </div>

@@ -9,4 +9,7 @@
   padding: $spacer;
   visibility: hidden;
   z-index: 999;
+  @include media-breakpoint-down(xs) {
+    max-width: 50vw;
+  }
 }

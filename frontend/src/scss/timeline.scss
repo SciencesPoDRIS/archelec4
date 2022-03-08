@@ -1,5 +1,17 @@
 #dashboard-timeline {
   flex-wrap: nowrap;
+
+  @include media-breakpoint-down(sm) {
+    // remove empty year and allow wrapping
+    justify-content: start;
+    flex-wrap: wrap;
+    .election-year {
+      margin-right: 5px;
+    }
+    .empty-year {
+      display: none !important;
+    }
+  }
   height: 150px;
   // set width to 0 to use flex grow set the width entirely and not on top of native width
   > div {
@@ -7,7 +19,6 @@
   }
 
   .value-label {
-    height: 15%;
     font-size: 0.8rem;
   }
   .year-label {

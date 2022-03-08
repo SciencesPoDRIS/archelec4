@@ -19,7 +19,7 @@ header .navbar {
   .navbar-navigation {
     //text-transform: uppercase;
     font-size: 2em;
-    @media (max-height: 500px), (max-width: 400px) {
+    @include media-breakpoint-down(xs) {
       font-size: 1em;
     }
     font-weight: 600;
@@ -33,6 +33,7 @@ header .navbar {
     margin-right: 0.2em;
     height: 24px;
     vertical-align: baseline;
+
     @media (max-height: 500px), (max-width: 400px) {
       height: 12px;
     }
@@ -50,16 +51,24 @@ main {
 .full-height {
   // TODO: remove - 6 px when debugged profession iframe height
   height: calc(100vh - #{$header-height} - #{$footer_height});
+  @include media-breakpoint-down(xs) {
+    height: calc(100vh - #{$header-height} - #{$footer_height} - #{$filter-menu-xs-screen});
+  }
 }
 .highlight {
   color: $primary;
   font-style: italic;
 }
 .panel-header {
-  font-size: 1.75em;
+  font-size: 1.75rem;
   position: sticky;
-  @media (max-height: 500px), (max-width: 400px) {
+  @media (max-height: 800px), (max-width: 1000px) {
     position: relative;
+    flex-direction: column;
+    align-items: start;
+    .actions {
+      align-self: flex-end;
+    }
   }
   z-index: 1;
   background-color: white;

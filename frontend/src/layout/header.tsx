@@ -5,7 +5,7 @@ import ScPoLogo from "../assets/ScPo-logo-rouge-400.png";
 export const Header: React.FC = () => {
   return (
     <header>
-      <nav className="navbar navbar-expand-lg navbar-fixed">
+      <nav className="navbar navbar-fixed">
         <div className="navbar-navigation" role="navigation">
           <span>
             <Link to="/" title="Page d'accueil">

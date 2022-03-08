@@ -10,6 +10,7 @@ import { getSortDefinition } from "../../components/filters/utils";
 import { Loader } from "../../components/loader";
 import { ResultHeader } from "./ResultHeader";
 import { modes, ModeType, ModeTypeData } from "./config";
+import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 
 const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
 
@@ -77,6 +78,9 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
   const [modeUrlParam, setModeUrlParam] = useStateUrl<string>("mode", "list");
   const [selectedMode, setSelectedMode] = useState<ModeType<any>>(modes[0]);
 
+  // show/hide filters in small screens
+  const [showFilters, setShowFilters] = useState<boolean>(true);
+
   // TODO : enable changing sort ?
   const [sort] = useStateUrl<string>("sort", getSortDefinition(professionSearch).label);
 
@@ -117,21 +121,27 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
       abortController.abort();
     };
   }, [location.search, selectedMode]); // eslint-disable-line
-
+  const FiltersToggleIcon = showFilters ? FaToggleOn : FaToggleOff;
   return (
     <div className="home container-fluid">
-      <div className="row">
+      <div className="row row-cols-1 row-sm-cols-2">
         {/*  Filters panel */}
-        <div className="col-xl-3 col-sm-4">
+        <div className="col-xs-12 col-xl-3 col-sm-4 pr-0">
           <div className="side-bar full-height">
             <div className="panel-header" aria-level={2} role="heading">
-              Filtrer
+              <div className="d-flex align-items-center">
+                <button className="btn btn-link" onClick={() => setShowFilters(!showFilters)}>
+                  {" "}
+                  <FiltersToggleIcon className="mr-1 d-sm-none" size={"1.3rem"} />
+                </button>
+                <div>Filtrer</div>
+              </div>
             </div>
-            <FiltersPanel state={filtersState} searchTypeDefinition={professionSearch} />
+            {showFilters && <FiltersPanel state={filtersState} searchTypeDefinition={professionSearch} />}
           </div>
         </div>
         {/*  Result panel */}
-        <div ref={containerRef} className="col-xl-9 col-sm-8 full-height result-column">
+        <div ref={containerRef} className="col-xs-12 col-xl-9 col-sm-8  full-height result-column">
           <ResultHeader
             esContext={{
               index: professionSearch.index,

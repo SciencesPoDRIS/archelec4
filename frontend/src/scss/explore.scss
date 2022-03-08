@@ -1,4 +1,7 @@
 .home {
+  @include media-breakpoint-down(xs) {
+    height: 100%;
+  }
   .side-bar {
     flex-shrink: 0;
     padding: 0;
@@ -7,10 +10,20 @@
     top: 0;
     align-self: flex-start;
     overflow-y: auto;
+    z-index: 2;
     border-right: 2px solid $secondary;
+    @include media-breakpoint-down(xs) {
+      border-right: none;
+      height: auto;
+      padding: 0;
+    }
   }
   .filters {
     margin-bottom: 2em;
+    @include media-breakpoint-down(xs) {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
     .filters-group {
       padding-bottom: 0.5em;
       margin-bottom: 0.5em;
@@ -138,5 +151,10 @@
   }
   .filter-group-glue {
     padding: 0 0.5rem 0 0.5rem;
+  }
+
+  @include media-breakpoint-down(md) {
+    display: block;
+    font-size: 1rem;
   }
 }

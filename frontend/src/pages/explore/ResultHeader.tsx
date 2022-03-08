@@ -25,7 +25,7 @@ export const ResultHeader: FC<ResultHeaderProps> = ({ esContext, nbProfession, s
         <ActiveFiltersPhrase filtersState={esContext.filters} />
       </div>
 
-      <div className="d-flex align-items-center">
+      <div className="d-flex actions" role="navigation">
         <ProfessionDownload esContext={esContext} />
         <span>
           <div className="btn-group" role="group">
