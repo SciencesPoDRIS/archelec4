@@ -1,4 +1,4 @@
-import { flatten, groupBy, max, min, sortBy, values } from "lodash";
+import { flatten, groupBy, max, sortBy, values } from "lodash";
 import { FC } from "react";
 import { useStateUrl } from "../../../hooks/state-url";
 

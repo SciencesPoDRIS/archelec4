@@ -3,7 +3,7 @@
 
   @include media-breakpoint-down(sm) {
     // remove empty year and allow wrapping
-    justify-content: start;
+    justify-content: flex-start;
     flex-wrap: wrap;
     .election-year {
       margin-right: 5px;

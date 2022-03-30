@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useRef } from "react";
+import { FC, useEffect, useState, useRef, Fragment } from "react";
 import { keyBy, max, min, range } from "lodash";
 
 import { scaleLinear } from "d3-scale";
@@ -59,7 +59,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
         Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
         <div className="mx-2 cartography-legend">
           {legendValues.map((v) => (
-            <div style={{ width: "1px", opacity: colorScale(v) }} />
+            <div key={v} style={{ width: "1px", opacity: colorScale(v) }} />
           ))}
         </div>
         {numberFormat.format(maxCount)}
@@ -103,8 +103,22 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
                 // }
               />
             );
-            if (newLocationOnClick) return <Link to={newLocationOnClick}>{path}</Link>;
-            else return path;
+            return (
+              <Fragment key={p["departement-insee"]}>
+                {newLocationOnClick && (
+                  <Link
+                    key={`${p["departement-insee"]}-link`}
+                    to={newLocationOnClick}
+                    title={`${selected ? "désactiver" : "activer"} le filtre département de la circonscription est ${
+                      p["departement-insee"]
+                    }`}
+                  >
+                    {path}
+                  </Link>
+                )}
+                {!newLocationOnClick && path}
+              </Fragment>
+            );
           })}
         </svg>
       </div>

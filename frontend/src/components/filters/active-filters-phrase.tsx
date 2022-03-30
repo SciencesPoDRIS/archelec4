@@ -1,5 +1,5 @@
 import { flatten, identity } from "lodash";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { professionSearch } from "../../config/searchDefinitions";
 import { FiltersState, FilterState } from "../../types";
 import { IoMdCloseCircleOutline } from "react-icons/io";
@@ -19,7 +19,17 @@ export const ActiveFiltersPhrase: FC<{ filtersState: FiltersState }> = ({ filter
     return (
       <span className="active-filters-phrase">
         {" "}
-        {phraseParts.reduce((joinedList, el) => [joinedList, <span className="filter-group-glue"> et </span>, el])}
+        {phraseParts.reduce(
+          (joinedList, el, i) => [
+            joinedList,
+            <span key={i} className="filter-group-glue">
+              {" "}
+              et{" "}
+            </span>,
+            <Fragment key={`group-${i}`}>{el}</Fragment>,
+          ],
+          [],
+        )}
       </span>
     );
   else return null;

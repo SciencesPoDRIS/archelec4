@@ -19,7 +19,7 @@ export const ResultHeader: FC<ResultHeaderProps> = ({ esContext, nbProfession, s
   return (
     <div className="panel-header">
       <div>
-        <span aria-level={2} role="heading">
+        <span aria-level={1} role="heading">
           <span className="highlight">{nbProfession ? numberFormat.format(nbProfession) : 0}</span> professions de foi
         </span>
         <ActiveFiltersPhrase filtersState={esContext.filters} />

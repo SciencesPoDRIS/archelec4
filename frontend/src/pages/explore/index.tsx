@@ -126,13 +126,13 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
     <div className="home container-fluid">
       <div className="row row-cols-1 row-sm-cols-2">
         {/*  Filters panel */}
-        <div className="col-xs-12 col-xl-3 col-sm-4 pr-0">
+        <div className="col-xs-12 col-xl-3 col-sm-4 pr-0" role="toolbar">
           <div className="side-bar full-height">
-            <div className="panel-header" aria-level={2} role="heading">
+            <div className="panel-header">
               <div className="d-flex align-items-center">
-                <button className="btn btn-link" onClick={() => setShowFilters(!showFilters)}>
+                <button className="btn btn-link  p-1" onClick={() => setShowFilters(!showFilters)}>
                   {" "}
-                  <FiltersToggleIcon className="mr-1 d-sm-none" size={"1.3rem"} />
+                  <FiltersToggleIcon className="mr-1 d-sm-none" size={20} />
                 </button>
                 <div>Filtrer</div>
               </div>

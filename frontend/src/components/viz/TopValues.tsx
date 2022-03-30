@@ -44,7 +44,13 @@ export const TopValues: FC<{
               .filter((v) => v !== "" && v !== stateValue)
               .join(SEPARATOR);
           return (
-            <Link to={getFilterURL(clickNewStateValue) || window.location} className={`${selected ? "selected" : ""}`}>
+            <Link
+              to={getFilterURL(clickNewStateValue) || window.location}
+              className={`${selected ? "selected" : ""}`}
+              title={`${selected ? "désactiver" : "ajouter"} le filtre ${title} ${
+                data.wildcardSpecialValue ? "contient" : "a pour valeur"
+              } '${value.key}'`}
+            >
               <label htmlFor={id} key={`${id}-label`} className="label text-truncate d-block">
                 {value.key}
               </label>

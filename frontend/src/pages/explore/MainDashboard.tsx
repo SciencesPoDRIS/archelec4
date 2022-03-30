@@ -4,7 +4,6 @@ import { ESSearchQueryContext } from "../../types";
 import { DashboardDataType } from "../../types/viz";
 import { Cartography } from "../../components/viz/Cartography";
 import { Timeline } from "../../components/viz/timeline";
-import { TopValues } from "../../components/viz/TopValues";
 
 interface ResultDashboardProps {
   context: ESSearchQueryContext;

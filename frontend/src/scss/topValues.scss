@@ -10,7 +10,7 @@
   }
   .bar-container {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     grid-column: bars / labels;
     height: $viz-bar-height;
@@ -18,7 +18,7 @@
       background-color: $viz-color-candidates;
       height: 100%;
       display: flex;
-      justify-content: end;
+      justify-content: flex-end;
       align-items: center;
     }
   }

@@ -24,6 +24,7 @@ export const YearBar: FC<{
       >
         {(data.dates_tours || []).map((d) => (
           <div
+            key={d.tour}
             className={`h-100 tour-${d.tour}`}
             style={{ width: `${(d.doc_count / data.doc_count) * 100}%` }}
             aria-label={`${d.doc_count} Professions de foi - ${d.election} ${d.date.toLocaleDateString(
@@ -67,7 +68,7 @@ export const NoElectionsPeriod: FC<NoElectrionPeriodData> = (props) => (
     style={{ flexGrow: props.endYear - props.startYear + 1 }}
   >
     {range(0, props.endYear - props.startYear + 1).map((y) => (
-      <div className="flex-grow-1 d-flex justify-content-center align-items-center year-label">
+      <div key={`${y}-noelection`} className="flex-grow-1 d-flex justify-content-center align-items-center year-label">
         <span style={{ fontSize: "0.5rem" }}>|</span>
       </div>
     ))}

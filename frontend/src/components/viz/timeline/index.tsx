@@ -1,5 +1,5 @@
 import { max, sortBy } from "lodash";
-import { FC, ReactElement, useEffect, useRef, useState } from "react";
+import { FC, Fragment, ReactElement, useEffect, useRef, useState } from "react";
 
 import { DashboardDataType } from "../../../types/viz";
 import { NoElectionsPeriod, YearBar } from "./year-bar";
@@ -44,6 +44,7 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
           const nextYear = data[i + 1];
           const bar = (
             <YearBar
+              key={`${currentYear}-bar`}
               data={currentYear}
               maxValue={maxDocCount}
               setTooltipMessage={setTooltipMessage}
@@ -64,10 +65,16 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
                     .concat(currentYear.annee),
                 ).join(SEPARATOR),
           );
+          const selected = selectedYears.includes(currentYear.annee);
           return (
-            <>
+            <Fragment key={currentYear.annee}>
               {yearLink && (
-                <Link to={yearLink} className={selectedYears.includes(currentYear.annee) ? "selected" : ""}>
+                <Link
+                  key={`${currentYear}-link`}
+                  to={yearLink}
+                  className={selected ? "selected" : ""}
+                  title={`${selected ? "désactiver" : "activer"} le filtre année d'élection est ${currentYear.annee} `}
+                >
                   {bar}
                 </Link>
               )}
@@ -75,7 +82,7 @@ export const Timeline: FC<{ data: DashboardDataType["timeline"] }> = ({ data }) 
               {nextYear && +nextYear.annee > +currentYear.annee + 1 && (
                 <NoElectionsPeriod startYear={+currentYear.annee + 1} endYear={+nextYear.annee - 1} />
               )}
-            </>
+            </Fragment>
           );
         })}
       </div>

@@ -39,14 +39,13 @@ export const TermsFilter: FC<{
   return (
     <div className="filter-block" role="search">
       <div className="d-flex justify-content-between align-items-center">
-        <label htmlFor={filter.id} className="filter-label">
+        <label id={`${filter.id}-label`} htmlFor={filter.id} className="filter-label">
           {filter.label}
         </label>
         {filter.description && (
           <IoMdInformationCircleOutline
             className="ml-3"
             title={filter.description}
-            size={"1.2rem"}
             onMouseEnter={showDescription}
             onMouseLeave={() => setTooltipMessage(null)}
           />
@@ -55,6 +54,8 @@ export const TermsFilter: FC<{
       <div>
         {filter.asyncOptions ? (
           <AsyncCreatableSelect
+            aria-labelledby={`${filter.id}-label`}
+            aria-label={filter.label}
             key={JSON.stringify(context)}
             inputId={filter.id}
             loadOptions={(inputValue: string) => filter.asyncOptions && filter.asyncOptions(inputValue, context)}

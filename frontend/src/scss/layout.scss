@@ -65,7 +65,7 @@ main {
   @media (max-height: 800px), (max-width: 1000px) {
     position: relative;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     .actions {
       align-self: flex-end;
     }

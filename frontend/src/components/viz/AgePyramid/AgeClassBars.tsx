@@ -1,7 +1,5 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import { useStateUrl } from "../../../hooks/state-url";
-import { SEPARATOR } from "../../filters/utils";
 import { numberFormat } from "../utils";
 import { AgeClassBar } from "./AgeClassBar";
 
@@ -47,6 +45,9 @@ export const AgeClassBars: FC<{
   return (
     <>
       <Link
+        title={`${
+          selectedAges.includes(data.ageClass) && selectedSexe.includes("femme") ? "enlever" : "ajouter"
+        } le filtre 'une des candidates est une femme ${data.ageClass}'`}
         to={getFilterLink("femme", data.ageClass)}
         className={`women-column ${
           selectedAges.includes(data.ageClass) && selectedSexe.includes("femme") ? "selected" : ""
@@ -56,6 +57,9 @@ export const AgeClassBars: FC<{
       </Link>
       <BarLabel label={data.ageClass} total={(data.women || 0) + (data.men || 0)} notKnown={data.notKnown} />
       <Link
+        title={`${
+          selectedAges.includes(data.ageClass) && selectedSexe.includes("homme") ? "enlever" : "ajouter"
+        } le filtre 'un des candidats est un homme ${data.ageClass}'`}
         to={getFilterLink("homme", data.ageClass)}
         className={`men-column ${
           selectedAges.includes(data.ageClass) && selectedSexe.includes("homme") ? "selected" : ""
@@ -108,6 +112,9 @@ export const AgeTotalsBars: FC<{
         selectedAges.includes("non mentionné") && selectedSexe.includes("femme") ? "selected" : ""
       }`}
       to={getFilterLink("femme", "non mentionné")}
+      title={`${
+        selectedAges.includes("non mentionné") && selectedSexe.includes("femme") ? "enlever" : "ajouter"
+      } le filtre 'une des candidates est une femme  dont l'âge n'est pas mentionné'`}
     >
       <AgeClassBar
         count={totals.women.notKnown || 0}
@@ -127,6 +134,9 @@ export const AgeTotalsBars: FC<{
         selectedAges.includes("non mentionné") && selectedSexe.includes("homme") ? "selected" : ""
       }`}
       to={getFilterLink("homme", "non mentionné")}
+      title={`${
+        selectedAges.includes("non mentionné") && selectedSexe.includes("homme") ? "enlever" : "ajouter"
+      } le filtre 'un des candidats est un homme dont l'âge n'est pas mentionné'`}
     >
       {" "}
       <AgeClassBar count={totals.men.notKnown || 0} max={max} anchored="left" />
