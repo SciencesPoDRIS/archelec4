@@ -19,17 +19,14 @@ export const ActiveFiltersPhrase: FC<{ filtersState: FiltersState }> = ({ filter
     return (
       <span className="active-filters-phrase">
         {" "}
-        {phraseParts.reduce(
-          (joinedList, el, i) => [
-            joinedList,
-            <span key={i} className="filter-group-glue">
-              {" "}
-              et{" "}
-            </span>,
-            <Fragment key={`group-${i}`}>{el}</Fragment>,
-          ],
-          [],
-        )}
+        {phraseParts.reduce((joinedList, el, i) => [
+          joinedList,
+          <span key={i} className="filter-group-glue">
+            {" "}
+            et{" "}
+          </span>,
+          <Fragment key={`group-${i}`}>{el}</Fragment>,
+        ])}
       </span>
     );
   else return null;
