@@ -33,7 +33,7 @@ export const FAQ: React.FC<Props> = (props: Props) => {
         </div>
         <div className="question">
           <h2>
-            Peut-on télécharger les documents, les images, les données descriptives, l’OCR depuis cette interface ?
+            Peut-on télécharger les documents, les images, les données descriptives ou l’OCR depuis cette interface ?
           </h2>
           <p></p>
         </div>
