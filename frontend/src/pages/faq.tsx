@@ -9,7 +9,7 @@ export const FAQ: React.FC<Props> = (props: Props) => {
       </div>
       <div className="row mt-3">
         <div className="question">
-          <h2>Dans quels documents s’effectue la recherche avec Archelec Explore ?</h2>
+          <h2>Dans quels documents s’effectue la recherche avec Archelec Explorer ?</h2>
           <p>
             Les professions de foi des élections législatives de 1958 à 1993. D’autres documents sont disponibles sur
             Internet Archive (+ lien) et sur la Bibliothèque numérique (+ lien), mais ils ne sont pas encore versés sur
