@@ -27,7 +27,7 @@ export const FAQ: React.FC<Props> = (props: Props) => {
         <div className="question">
           <h2>A-t-on accès à l’ensemble des données disponibles ?</h2>
           <p>
-            Les données interrogées par Archelec Explore sont disponibles au téléchargement en format csv sur l’entrepôt
+            Les données interrogées par Archelec Explorer sont disponibles au téléchargement en format csv sur l’entrepôt
             de données de Sciences Po (+ lien vers entrepôt de données).
           </p>
         </div>
