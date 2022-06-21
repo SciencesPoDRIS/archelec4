@@ -21,8 +21,8 @@ export const LegalNotice: React.FC<Props> = (props: Props) => {
           <br /> IEP de Paris : 197534316
         </p>
         <p>
-          La directrice de la publication de la Plateforme est Bénédicte Durand, administratrice provisoire de
-          l'Institut d'études politiques de Paris et de la Fondation nationale des sciences politiques.
+          Le directeur de la publication de la plateforme est Mathias Vicherat, administrateur de la Fondation nationale des sciences politiques 
+          et directeur de l’Institut d’études politiques de Paris.
         </p>
         <p>
           Sciences Po agit en tant que responsable du traitement de données personnelles confiées par l'utilisateur de
