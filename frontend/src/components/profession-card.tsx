@@ -42,8 +42,8 @@ export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
           <div>
             {capitalize(profession["contexte-election"])} {profession.annee}
             <br />
-            {profession.circonscription}
-            <sup>{profession.circonscription === "1" ? "er" : "e"}</sup> circ. {profession["departement-nom"]}
+            {profession.circonscription} circ.
+            {profession["departement-nom"]}
             <br />
             {profession["contexte-tour"] === "1" ? "Premier tour" : "Second tour"}
           </div>

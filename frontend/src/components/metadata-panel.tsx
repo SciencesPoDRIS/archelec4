@@ -85,9 +85,8 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
             Élections {professionDeFoi["contexte-election"]} de {professionDeFoi.annee}
           </div>
           <h4>
-            {professionDeFoi.circonscription}
-            <sup>{professionDeFoi.circonscription === "1" ? "er" : "e"}</sup> circ. {professionDeFoi["departement-nom"]}{" "}
-            ({professionDeFoi.departement})
+            {professionDeFoi.circonscription} circ.
+            {professionDeFoi["departement-nom"]} ({professionDeFoi.departement})
           </h4>
           <div className="metadata-group">
             <h5>
