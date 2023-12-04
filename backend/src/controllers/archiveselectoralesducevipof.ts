@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Path, Post, Route, Request, Query, Response, Tags } from "tsoa";
+import { Body, Controller, Get, Path, Post, Route, Query, Response, Tags } from "tsoa";
 import { Inject } from "typescript-ioc";
 import * as Boom from "@hapi/boom";
-import * as express from "express";
-import { Transform, Readable } from "stream";
-import { getLogger, Logger } from "../services/logger";
-import { ElasticSearch, SearchRequest, SearchResponse } from "../services/elasticsearch";
-import { ArchiveElectoralProfessionDeFoi } from "../services/import";
+import { Readable } from "stream";
+
 import { config } from "../config";
+import { ElasticSearch, SearchRequest, SearchResponse } from "../services/elasticsearch";
+import { getLogger, Logger } from "../services/logger";
+import { ArchiveElectoralProfessionDeFoi } from "../services/import";
 import {
   archiveElectoralProfessionDeFoiToCsvLine,
   esCastArchiveElectoralProfessionDeFoi,
@@ -33,6 +33,7 @@ export class ProfessionDeFoiController extends Controller {
   @Response("404", "Not found")
   @Response("500", "Internal Error")
   public async proxy(@Path("id") id: string): Promise<ArchiveElectoralProfessionDeFoi> {
+    this.log.debug("ES proxy", id);
     try {
       const item = await this.es.get<ArchiveElectoralProfessionDeFoi>(
         config.elasticsearch_alias_name,
@@ -41,7 +42,8 @@ export class ProfessionDeFoiController extends Controller {
       );
       return item;
     } catch (e) {
-      if (e.meta.statusCode === 404) throw Boom.notFound(`Document ${id} not found`);
+      // eslint-disable-next-line
+      if ((e as any).meta.statusCode === 404) throw Boom.notFound(`Document ${id} not found`);
       throw e;
     }
   }

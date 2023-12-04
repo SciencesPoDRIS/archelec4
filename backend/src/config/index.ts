@@ -45,7 +45,7 @@ export interface Configuration {
   // elastic alias name
   elasticsearch_alias_name: string;
   // Configuration of the es index
-  elastic_index_configuration: any;
+  elastic_index_configuration: Record<string, unknown>;
   // batch size for the import
   import_batch_size: number;
   // max nb of concurrent request we do to IA

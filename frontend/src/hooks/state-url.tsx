@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type SetterInputFunction<Z> = (prev: Z) => Z;
 
@@ -12,7 +12,7 @@ type SetterInputFunction<Z> = (prev: Z) => Z;
  */
 export function stringGuessCast(value: string): any {
   if (value !== null && value !== "") {
-    if (isNaN((value as unknown) as number) === false) {
+    if (isNaN(value as unknown as number) === false) {
       return parseFloat(value) % 1 === 0 ? parseInt(value) : (parseFloat(value) as unknown);
     }
     if (value === "false" || value === "true") {
@@ -34,8 +34,7 @@ export function useStateUrl<T>(
   defaultValue: T,
   replace = false,
 ): [T, (value: T | SetterInputFunction<T>) => void, (value: T | SetterInputFunction<T>) => Partial<Location> | null] {
-  const history = useHistory();
-
+  const navigate = useNavigate();
   const location = useLocation();
 
   /**
@@ -48,7 +47,7 @@ export function useStateUrl<T>(
     if (value === null) {
       return defaultValue;
     } else {
-      return (value as unknown) as T;
+      return value as unknown as T;
     }
   }
 
@@ -66,11 +65,7 @@ export function useStateUrl<T>(
         } else {
           urlQueryParams.delete(key);
         }
-        if (replace) {
-          history.replace({ search: `?${urlQueryParams.toString()}` });
-        } else {
-          history.push({ search: `?${urlQueryParams.toString()}` });
-        }
+        navigate(`${window.location.pathname.split("?")[0]}?${urlQueryParams.toString()}`, { replace });
       }
     };
   }

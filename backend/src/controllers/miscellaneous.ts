@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Post, Route, Tags } from "tsoa";
+
 import { getLogger, Logger } from "../services/logger";
 
 @Tags("Miscellaneous")
@@ -12,6 +13,7 @@ export class MiscellaneousController extends Controller {
    */
   @Get("ping")
   public async ping(): Promise<string> {
+    this.log.debug("ping");
     return "pong";
   }
 
@@ -21,6 +23,7 @@ export class MiscellaneousController extends Controller {
    */
   @Post("echo")
   public async echo(@Body() body: unknown): Promise<unknown> {
+    this.log.debug("echo", body);
     return body;
   }
 }

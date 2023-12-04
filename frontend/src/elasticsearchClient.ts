@@ -31,18 +31,16 @@ function getESQueryFromFilter(field: string, filter: FilterState): QueryDslQuery
     case "terms":
       query = {
         bool: {
-          should: filter.value.map(
-            (v): QueryDslQueryContainer => {
-              if (isWildcardSpecialValue(v))
-                // special value prefixed with WILDCARD to be used in a wildcard query
-                return {
-                  wildcard: {
-                    [`${field}.raw`]: { value: `*${valueFromWildcardSpecialValue(v)}*`, case_insensitive: true },
-                  },
-                };
-              else return { terms: { [`${field}.raw`]: [v] } };
-            },
-          ),
+          should: filter.value.map((v): QueryDslQueryContainer => {
+            if (isWildcardSpecialValue(v))
+              // special value prefixed with WILDCARD to be used in a wildcard query
+              return {
+                wildcard: {
+                  [`${field}.raw`]: { value: `*${valueFromWildcardSpecialValue(v)}*`, case_insensitive: true },
+                },
+              };
+            else return { terms: { [`${field}.raw`]: [v] } };
+          }),
         },
       };
       break;
@@ -98,7 +96,7 @@ function getESQueryBody(filters: FiltersState, suggestFilter?: TermsFilterState)
   return esQuery;
 }
 
-function getESHighlight(filters: FiltersState, suggestFilter?: { field: string; value: string | undefined }) {
+function getESHighlight(filters: FiltersState, _suggestFilter?: { field: string; value: string | undefined }) {
   // TODO: add highlight conf into filter specs
   return {
     fields: toPairs(filters)

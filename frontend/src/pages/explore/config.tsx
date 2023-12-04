@@ -1,6 +1,7 @@
 import { RefObject } from "react";
 import { FaChartArea, FaRegListAlt } from "react-icons/fa";
 import { BiGroup } from "react-icons/bi";
+
 import { config } from "../../config";
 import { DashboardDataType } from "../../types/viz";
 import { ESSearchQueryContext, ProfessionDeFoi, PlainObject } from "../../types";

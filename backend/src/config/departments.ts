@@ -1,4 +1,4 @@
-export const departments = {
+export const departments: Record<string, string> = {
   "1": "01 - Ain",
   "2": "02 - Aisne",
   "3": "03 - Allier",
@@ -106,7 +106,7 @@ export const departments = {
   "987": "987 - Polynésie-française",
   "988": "988 - Nouvelle-Calédonie",
 };
-export const departementSpecialOrders = {
+export const departementSpecialOrders: Record<string, number> = {
   "2A": 20.1,
   "2B": 20.2,
 };

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 
 export const Loader: FC<{ message?: string; className?: string; tag?: keyof JSX.IntrinsicElements }> = ({
   className,

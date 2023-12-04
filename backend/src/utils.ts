@@ -1,8 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { isArray, isString } from "lodash";
-import { getLogger } from "./services/logger";
-import { ArchiveElectoralProfessionDeFoi, ArchiveElectoralCandidat } from "./services/import";
 import { config } from "./config";
+import { ArchiveElectoralProfessionDeFoi, ArchiveElectoralCandidat } from "./services/import";
+import { getLogger } from "./services/logger";
 
 /**
  * Logger instance for this module.
@@ -26,12 +26,15 @@ export async function makeHttpCall<T>(request: AxiosRequestConfig, retry = confi
       LOG.info(`Retry request ${JSON.stringify(request, null, 2)}`);
       return makeHttpCall(request, retry--);
     } else {
-      let error = `Failed to retrieve data for ${request.url} : `;
-      if (e.response) error += `response status is ${e.response.status} - ${e.response.data}`;
-      else if (e.request) {
-        error += `no response from the server -> ${e.message}`;
-      } else error += e.message;
-      throw new Error(error);
+      let message = `Failed to retrieve data for ${request.url} : `;
+      const error = e as AxiosError;
+      if (error.isAxiosError) {
+        if (error.response) message += `response status is ${error.response.status} - ${error.response.data}`;
+        else if (error.request) {
+          message += `no response from the server -> ${error.message}`;
+        } else message += error.message;
+      }
+      throw new Error(message);
     }
   }
 }
@@ -75,6 +78,7 @@ export function chunck<T>(items: Array<T>, size: number): Array<Array<T>> {
  * NB: This method was mainly created to handle arrays, ES has no array type so it returns a string or a string[]
  *
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function esCastArchiveElectoralProfessionDeFoi(item: any): ArchiveElectoralProfessionDeFoi {
   const result = item as ArchiveElectoralProfessionDeFoi;
   if (!isArray(item.subject)) result.subject = item.subject ? [item.subject] : [];
@@ -117,45 +121,47 @@ function computeAgeRange(age: number): string {
  * @param age The age input
  * @returns An object with the computed age and range
  */
-export function computeAge(dateElection: Date, age: string): { age: string; range: string } | null {
+export function computeAge(dateElection: Date, age?: string): { age: string; range: string } | null {
   const result = { age: "non mentionné", range: "non mentionné" };
-  if (age === "NR") {
-    // nothing to do (default value)
-  } else if (/^[0-9]{2}$/.test(age)) {
-    result.age = age;
-    result.range = computeAgeRange(Number.parseInt(age));
-  } else if (/^[0-9]{4}$/.test(age)) {
-    const computedAge = dateElection.getFullYear() - Number.parseInt(age);
-    result.age = `${computedAge}`;
-    result.range = computeAgeRange(computedAge);
-  } else if (age === "192X") {
-    // nothing to do (default value)
-  } else if (age === "23 et demi") {
-    result.range = "entre 20 et 29 ans";
-  } else if (age === "29 ou 28") {
-    result.range = "entre 20 et 29 ans";
-  } else if (age === "30 ou 29") {
-    result.range = "entre 30 et 39 ans";
-  } else if (age === "33 ou 30") {
-    result.range = "entre 30 et 39 ans";
-  } else if (age === "37 ou 36") {
-    result.range = "entre 30 et 39 ans";
-  } else if (age === "38 ou 37") {
-    result.range = "entre 30 et 39 ans";
-  } else if (age === "40 ou 39") {
-    result.range = "entre 40 et 49 ans";
-  } else if (age === "41 ou 40") {
-    result.range = "entre 40 et 49 ans";
-  } else if (age === "60 au moins") {
-    result.range = "entre 60 et 69 ans";
-  } else if (age === "doyen") {
-    // nothing to do (default value)
-  } else if (age === "moins de 30") {
-    result.range = "entre 20 et 29 ans";
-  } else if (age === "moins de 40") {
-    result.range = "entre 30 et 39 ans";
-  } else if (age === "quarantaine") {
-    result.range = "entre 40 et 49 ans";
+  if (age) {
+    if (age === "NR") {
+      // nothing to do (default value)
+    } else if (/^[0-9]{2}$/.test(age)) {
+      result.age = age;
+      result.range = computeAgeRange(Number.parseInt(age));
+    } else if (/^[0-9]{4}$/.test(age)) {
+      const computedAge = dateElection.getFullYear() - Number.parseInt(age);
+      result.age = `${computedAge}`;
+      result.range = computeAgeRange(computedAge);
+    } else if (age === "192X") {
+      // nothing to do (default value)
+    } else if (age === "23 et demi") {
+      result.range = "entre 20 et 29 ans";
+    } else if (age === "29 ou 28") {
+      result.range = "entre 20 et 29 ans";
+    } else if (age === "30 ou 29") {
+      result.range = "entre 30 et 39 ans";
+    } else if (age === "33 ou 30") {
+      result.range = "entre 30 et 39 ans";
+    } else if (age === "37 ou 36") {
+      result.range = "entre 30 et 39 ans";
+    } else if (age === "38 ou 37") {
+      result.range = "entre 30 et 39 ans";
+    } else if (age === "40 ou 39") {
+      result.range = "entre 40 et 49 ans";
+    } else if (age === "41 ou 40") {
+      result.range = "entre 40 et 49 ans";
+    } else if (age === "60 au moins") {
+      result.range = "entre 60 et 69 ans";
+    } else if (age === "doyen") {
+      // nothing to do (default value)
+    } else if (age === "moins de 30") {
+      result.range = "entre 20 et 29 ans";
+    } else if (age === "moins de 40") {
+      result.range = "entre 30 et 39 ans";
+    } else if (age === "quarantaine") {
+      result.range = "entre 40 et 49 ans";
+    }
   }
 
   return result;
@@ -163,12 +169,12 @@ export function computeAge(dateElection: Date, age: string): { age: string; rang
 
 export function archiveElectoralCandidatToArrayFields(candidat: Partial<ArchiveElectoralCandidat>): Array<string> {
   return [
-    candidat.nom,
-    candidat.prenom,
-    candidat.sexe,
-    candidat.age,
-    candidat["age-calcule"],
-    candidat["age-tranche"],
+    `${candidat.nom}`,
+    `${candidat.prenom}`,
+    `${candidat.sexe}`,
+    `${candidat.age}`,
+    `${candidat["age-calcule"]}`,
+    `${candidat["age-tranche"]}`,
     (candidat.profession || []).join(";"),
     (candidat["mandat-en-cours"] || []).join(";"),
     (candidat["mandat-passe"] || []).join(";"),
@@ -176,7 +182,7 @@ export function archiveElectoralCandidatToArrayFields(candidat: Partial<ArchiveE
     (candidat["autres-statuts"] || []).join(";"),
     (candidat.soutien || []).join(";"),
     (candidat.liste || []).join(";"),
-    candidat.decorations,
+    `${candidat.decorations}`,
   ];
 }
 
@@ -264,3 +270,8 @@ export const ArchiveElectoralProfessionDeFoiCsvHeader = [
   "suppleant-liste",
   "suppleant-decorations",
 ];
+
+export function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
+  if (value === null || value === undefined) return false;
+  return true;
+}

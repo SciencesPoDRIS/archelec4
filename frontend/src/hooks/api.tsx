@@ -47,7 +47,7 @@ export function useGet<R>(
         });
         setData(response.data as R);
       } catch (e) {
-        setError(e);
+        setError(e as AxiosError);
       } finally {
         setLoading(false);
       }
@@ -77,7 +77,7 @@ export function useLazyGet<R>(path: string): APIResult<R> & { fetch: (params?: {
       setData(response.data as R);
       return response.data as R;
     } catch (e) {
-      setError(e);
+      setError(e as AxiosError);
       throw e;
     } finally {
       setLoading(false);

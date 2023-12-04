@@ -9,18 +9,21 @@ services:
       - ${PROJECT_PATH}/docker/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
       - ES_JAVA_OPTS
-      - TAKE_FILE_OWNERSHIP=1
 
   # Backend
   backend:
     build:
       context: ./backend
       dockerfile: ./Dockerfile
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
     restart: ${RESTART_POLICY}
     depends_on:
       - elasticsearch
     volumes:
       - ${PROJECT_PATH}/backend:/backend
+      - ${PROJECT_PATH}/tsconfig.base.json:/tsconfig.base.json
     environment:
       - MODE
       - LOG_CONSOLE_LEVEL
@@ -33,6 +36,9 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
     restart: ${RESTART_POLICY}
     depends_on:
       - backend
@@ -41,5 +47,6 @@ services:
     volumes:
       - ${PROJECT_PATH}/docker/frontend/nginx.${MODE}.conf:/etc/nginx/nginx.conf
       - ${PROJECT_PATH}/frontend:/frontend
+      - ${PROJECT_PATH}/tsconfig.base.json:/tsconfig.base.json
     environment:
       - MODE

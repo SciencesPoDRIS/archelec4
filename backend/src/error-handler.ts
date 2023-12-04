@@ -1,6 +1,7 @@
 import * as httpStatusCodes from "http-status-codes";
 import * as Boom from "@hapi/boom";
 import * as express from "express";
+
 import { getLogger, Logger } from "./services/logger";
 import { config } from "./config";
 

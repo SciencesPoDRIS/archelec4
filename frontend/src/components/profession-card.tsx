@@ -1,5 +1,5 @@
-import { capitalize, uniq } from "lodash";
-import React, { FC } from "react";
+import { capitalize, isObject, uniq } from "lodash";
+import { FC } from "react";
 import { Link } from "react-router-dom";
 
 import { ProfessionDeFoi } from "../types";
@@ -53,13 +53,13 @@ export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
           </div>
         </div>
       </Link>
-      {profession.highlight && (
+      {profession.highlight && isObject(profession.highlight) ? (
         <blockquote>
-          {(profession.highlight["ocr.search"] || []).map((h: string, i: number) => (
+          {((profession.highlight as { ["ocr.search"]?: string[] })["ocr.search"] || []).map((h: string, i: number) => (
             <span key={i} dangerouslySetInnerHTML={{ __html: h }}></span>
           ))}
         </blockquote>
-      )}
+      ) : null}
     </div>
   );
 };

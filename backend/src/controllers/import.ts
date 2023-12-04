@@ -1,5 +1,6 @@
 import { Body, Controller, Post, Response, Route, Tags } from "tsoa";
 import { Inject } from "typescript-ioc";
+
 import { getLogger, Logger } from "../services/logger";
 import { Import, ImportOptions, ImportReport } from "../services/import";
 
@@ -32,10 +33,13 @@ export class ImportController extends Controller {
   @Response("206", "Partial import")
   @Response("200", "OK")
   public async import(@Body() options?: ImportOptions): Promise<ImportReport> {
+    this.log.info("Import", options);
+
     const result = await this.proc.execution(options);
     if (result.errors && result.errors.length > 0) {
       this.setStatus(206);
     }
+
     return result;
   }
 }

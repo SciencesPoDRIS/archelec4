@@ -1,18 +1,18 @@
-import * as bodyParser from "body-parser";
-import * as express from "express";
-import * as swaggerUi from "swagger-ui-express";
-import { RegisterRoutes } from "./routes";
-import { getLogger, Logger } from "./services/logger";
-import { errorFilter } from "./error-handler";
+import bodyParser from "body-parser";
+import express from "express";
+import swaggerUi from "swagger-ui-express";
+
 import { config } from "./config";
+import { RegisterRoutes } from "./routes";
+import { errorFilter } from "./error-handler";
 // project's services & controllers
-import "./controllers/elasticsearch";
-import "./controllers/import";
-import "./controllers/miscellaneous";
-import "./services/logger";
+import { getLogger, Logger } from "./services/logger";
 import "./services/elasticsearch";
 import "./services/import";
 import "./services/internet-archive";
+import "./controllers/elasticsearch";
+import "./controllers/import";
+import "./controllers/miscellaneous";
 
 // logger
 const log: Logger = getLogger("Server");
@@ -29,10 +29,10 @@ const app = express()
 
 // Swagger
 app
-  .use("/api/swagger.json", (req, res) => {
+  .use("/api/swagger.json", (_req, res) => {
     res.sendFile(__dirname + "/swagger.json");
   })
-  .use("/api/docs", swaggerUi.serve, swaggerUi.setup(null, { swaggerOptions: { url: "/api/swagger.json" } }));
+  .use("/api/docs", swaggerUi.serve, swaggerUi.setup(undefined, {}, {}, undefined, undefined, "/api/swagger.json"));
 
 // Register the route of the api
 RegisterRoutes(app);

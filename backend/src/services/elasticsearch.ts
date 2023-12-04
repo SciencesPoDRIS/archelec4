@@ -1,7 +1,7 @@
 import { Singleton } from "typescript-ioc";
 import { Client } from "@elastic/elasticsearch";
-import { Transform, Readable } from "stream";
-import { Logger, getLogger } from "./logger";
+import { Readable } from "stream";
+import { getLogger } from "./logger";
 import { config } from "../config";
 
 export interface BulkError {
@@ -11,7 +11,7 @@ export interface BulkError {
 }
 type BulkErrorReport = Array<BulkError>;
 
-export type SearchRequest = { body: any; index: string; scroll?: string };
+export type SearchRequest = { body: Record<string, unknown>; index: string; scroll?: string };
 export type SearchResponse<T> = {
   _scroll_id?: string;
   hits: {
@@ -55,7 +55,7 @@ export class ElasticSearch {
    * @param id The id of the element to search
    * @param cast (optional) A function that can be used to cast an ES object to a business object
    */
-  async get<T>(index: string, id: string, cast?: (e: any) => T): Promise<T> {
+  async get<T>(index: string, id: string, cast?: (e: Record<string, unknown>) => T): Promise<T> {
     const result = await this.client.get({ index, id });
     return cast ? cast(result.body._source) : (result.body._source as T);
   }
@@ -66,9 +66,10 @@ export class ElasticSearch {
    * @param request The search request to send to ES
    * @param cast (optional) A function that can be used to cast an ES object to a business object
    */
-  async search<T>(request: SearchRequest, cast?: (e: any) => T): Promise<SearchResponse<T>> {
+  async search<T>(request: SearchRequest, cast?: (e: Record<string, unknown>) => T): Promise<SearchResponse<T>> {
     const { body } = await this.client.search(request);
     if (cast) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       body.hits.hits = body.hits.hits.map((hit: any) => {
         hit._source = cast(hit._source);
         return hit;
@@ -96,7 +97,7 @@ export class ElasticSearch {
    * @returns {boolean} <code>true</code> if the index has been created, <code>false</code> otherwise.
    * @throws {Error} When an ES call failed
    */
-  async createIndex(index: string, config?: any): Promise<boolean> {
+  async createIndex(index: string, config?: Record<string, unknown>): Promise<boolean> {
     this.log.info(`Create index ${index}`);
 
     // Check if the index already exists
@@ -151,6 +152,7 @@ export class ElasticSearch {
    * @returns {string[] | null} The list of the previous index of the alias if it has been deleted, null otherwise.
    * @throws {Error} When an ES call failed
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async createIndexAlias(name: string, index: string, body?: any): Promise<string[] | null> {
     let previousIndex: string[] | null = null;
     let needToBeCreated = true;
@@ -187,16 +189,17 @@ export class ElasticSearch {
    * @param {string} index The index where to import the data
    * @param {Array<object>} the data to import
    */
-  async bulkImport(index: string, data: Array<any>): Promise<BulkErrorReport> {
+  async bulkImport<T extends { id: string }>(index: string, data: Array<T>): Promise<BulkErrorReport> {
     if (data.length === 0) {
       this.log.warn("There is no data to index");
       return [];
     }
+
     this.log.info(`ES Bulk import on index ${index} with ${data.length} documents`);
     const body = data.flatMap((doc) => [{ index: { _index: index, _id: doc.id } }, doc]);
     this.log.info(`Indexing ${data.length} documents in index ${index}`);
 
-    const response: any = await this.client.bulk({
+    const response = await this.client.bulk({
       refresh: true,
       body,
     });
@@ -209,7 +212,8 @@ export class ElasticSearch {
       // The items array has the same order of the dataset we just indexed.
       // The presence of the `error` key indicates that the operation
       // that we did for the document has failed.
-      response.body.items.forEach((action, i) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      response.body.items.forEach((action: any) => {
         const operation = Object.keys(action)[0];
         if (action[operation].error) {
           erroredDocuments.push({
@@ -224,6 +228,8 @@ export class ElasticSearch {
       });
       return erroredDocuments;
     }
+
+    return [];
   }
 }
 
@@ -248,12 +254,12 @@ class ElasticSearchReadable<T> extends Readable {
     this.options = options;
     console.log(options);
   }
-  _read(size: number) {
+  _read() {
     this.service.log.debug(`Streaming from ${this.nbParsedDocument}`);
 
     if (this.nbParsedDocument > 0) {
       this.service.client
-        .scroll({ scrollId: this.scroll_id, scroll: "30s" } as any)
+        .scroll({ scroll_id: this.scroll_id, scroll: "30s" })
         .then((r) => this._parseEsResponse(r.body as SearchResponse<T>))
         .catch((e) => {
           this.service.log.error(`Fail to compute chunk for stream`, e);
@@ -277,7 +283,7 @@ class ElasticSearchReadable<T> extends Readable {
   _parseEsResponse(result: SearchResponse<T>, prefix?: string): void {
     const items = result.hits.hits || [];
     this.nbParsedDocument += items.length;
-    this.scroll_id = result._scroll_id;
+    this.scroll_id = `${result._scroll_id}`;
     // if result is empty, so we reach the end
     if (items.length === 0) this.push(null);
     // TODO cast

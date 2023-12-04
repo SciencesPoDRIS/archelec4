@@ -31,7 +31,7 @@ export const TopValues: FC<{
       </div>
 
       <div className="w-100 mt-2 barchart">
-        {data.tops.map((value, i) => {
+        {data.tops.map((value) => {
           const widthPercentage = (value.count / maxValue) * 100;
           const id = `${data.field}-${value.key}`;
           const stateValue = data.wildcardSpecialValue ? wildcardSpecialValue(value.key) : value.key;

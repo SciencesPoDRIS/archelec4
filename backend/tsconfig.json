@@ -1,14 +1,15 @@
 {
+  "extends": "../tsconfig.base.json",
+  "include": ["./src/**/*.ts", "./src/**/*.json"],
+  "type":"module",
   "compilerOptions": {
-    "outDir": "./build",
     "rootDir": "./src",
-    "sourceMap": true,
-    "module": "commonjs",
-    "target": "es6",
-    "experimentalDecorators": true,
+    "outDir": "./build",
+    "declarationDir": "./build",
     "emitDecoratorMetadata": true,
-    "resolveJsonModule": true,
-    "lib": ["es2019"]
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
   },
   "exclude": ["test/**/*.ts"]
 }

@@ -2,13 +2,14 @@ import { Inject, Singleton } from "typescript-ioc";
 import * as fs from "fs";
 import * as path from "path";
 import pLimit from "p-limit";
+
+import { config } from "../config";
+import { departementSpecialOrders, departments } from "../config/departments";
+import { chunck, computeAge, makeHttpCall, taskInSeries, notEmpty } from "../utils";
 import { InternetArchive } from "./internet-archive";
 import { BulkError, ElasticSearch } from "./elasticsearch";
-import { chunck, computeAge, makeHttpCall, taskInSeries } from "../utils";
-import { getLogger } from "./logger";
-import { config } from "../config";
 import { GetMetadataResponse } from "./internet-archive";
-import { departementSpecialOrders, departments } from "../config/departments";
+import { getLogger } from "./logger";
 
 /**
  * Error object for import report.
@@ -66,7 +67,7 @@ export interface ImportReport extends Report {
   /**
    * Settings used for the import
    */
-  settings: { from: Date; to: Date; index: string };
+  settings: { from?: Date; to?: Date; index: string };
 }
 
 export interface ArchiveElectoralCandidat {
@@ -86,6 +87,14 @@ export interface ArchiveElectoralCandidat {
   liste: string[];
   decorations: string;
 }
+export type CandidatArrayFieldsType =
+  | "profession"
+  | "mandat-en-cours"
+  | "mandat-passe"
+  | "associations"
+  | "autres-statuts"
+  | "soutien"
+  | "liste";
 
 export interface ArchiveElectoralProfessionDeFoi {
   id: string;
@@ -101,6 +110,7 @@ export interface ArchiveElectoralProfessionDeFoi {
   departement: string;
   "departement-insee": string;
   "departement-nom": string;
+  "departement-order"?: number;
   circonscription: string;
   // custom field
   images: Array<{ url: string; thumb?: string }>;
@@ -146,7 +156,7 @@ export class Import {
       lastImportData || options ? { ...(lastImportData || {}), ...(options || {}) } : null;
 
     const indexName = settings && settings.index ? settings.index : `${config.elasticsearch_alias_name}_${Date.now()}`;
-    const period: { from: Date; to: Date } | null = settings.date
+    const period: { from: Date; to: Date } | null = settings?.date
       ? {
           from: settings.date,
           to: settings.to ? settings.to : new Date(),
@@ -157,7 +167,7 @@ export class Import {
 
     // Make calls to IA get collection ids
     const collectionIds = (
-      await (settings.ids
+      await (settings?.ids
         ? Promise.resolve(settings.ids)
         : this.ia.getCollectionIds(config.internet_archive_collection, config.internet_archive_collection_type, period))
     ).filter((id) => !id.endsWith("Pdfmasterocr"));
@@ -179,11 +189,6 @@ export class Import {
       }),
     );
 
-    // Only save import data if it was a period import
-    // So users are able to import a list of ids without to change the last date import
-    // Question : do we need save only if the date is higher than the one stored ??
-    if (!settings.ids) this.saveLastExecution(period ? period.to : new Date(now), indexName);
-
     // Change / create the alias if needed.
     // If the alias already points to the index, nothing is done.
     // If the alias doesn't point to the index, it is changed, and the previous pointed index is deleted
@@ -191,6 +196,11 @@ export class Import {
     if (prevIndices) {
       await Promise.all(prevIndices.map((i) => this.es.deleteIndex(i)));
     }
+
+    // Only save import data if it was a period import
+    // So users are able to import a list of ids without to change the last date import
+    // Question : do we need save only if the date is higher than the one stored ??
+    if (!settings?.ids) this.saveLastExecution(period ? period.to : new Date(now), indexName);
 
     const report = {
       settings: { ...period, index: indexName },
@@ -236,7 +246,7 @@ export class Import {
         const json = JSON.parse(txt);
         result = { date: new Date(json.date), index: json.index };
       } catch (e) {
-        throw new Error("Fail to retrieve last update date from the file system : " + e.message);
+        throw new Error("Fail to retrieve last update date from the file system : " + (e as Error).message);
       }
     }
     this.log.debug(`Last execution data`, result);
@@ -266,7 +276,7 @@ export class Import {
               const item = await this.ia.getMetadata(id);
               return await this.postProcessItem(item);
             } catch (e) {
-              errors.push({ name: `Failed to build object ${id}`, items: [id], message: e.message });
+              errors.push({ name: `Failed to build object ${id}`, items: [id], message: (e as Error).message });
               return null;
             }
           });
@@ -274,15 +284,12 @@ export class Import {
       );
 
       // Send the (available) data to ES
-      const esErrors = await this.es.bulkImport(
-        index,
-        data.filter((i) => i !== null),
-      );
+      const esErrors = await this.es.bulkImport(index, data.filter(notEmpty));
       (esErrors ? esErrors : []).forEach((error: BulkError) =>
         errors.push({ name: error.status, message: error.error, items: [error.doc] }),
       );
     } catch (e) {
-      errors.push({ name: `Unknown error on ids import for list`, items: ids, message: e.message });
+      errors.push({ name: `Unknown error on ids import for list`, items: ids, message: (e as Error).message });
     }
 
     return {
@@ -299,7 +306,7 @@ export class Import {
    */
 
   private processFieldsInCandidate(candidate: ArchiveElectoralCandidat, electionDate: Date): ArchiveElectoralCandidat {
-    const modifiedCandidate = { ...candidate };
+    const modifiedCandidate: ArchiveElectoralCandidat & Record<string, unknown> = { ...candidate };
     const ageObject = computeAge(electionDate, candidate["age"]);
     if (ageObject) {
       modifiedCandidate["age-calcule"] = ageObject.age;
@@ -310,16 +317,25 @@ export class Import {
         candidate["sexe"] === "F" ? "femme" : candidate["sexe"] === "H" ? "homme" : config.missing_value_tag.sexe;
     }
     // create a special field which stores  "prenom nom" to ease search
-    const prenomNom = ["prenom", "nom"]
+    const prenomNom = (["prenom", "nom"] as Array<keyof ArchiveElectoralCandidat>)
       .map((n) => (candidate[n] && candidate[n] !== config.missing_value_tag.default ? candidate[n] : ""))
       .filter((n) => n != "");
     modifiedCandidate["prenom-nom"] = prenomNom.length > 0 ? prenomNom.join(" ") : config.missing_value_tag.default;
-    //multivalued fields
-    ["profession", "mandat-en-cours", "mandat-passe", "associations", "autres-statuts", "soutien", "liste"].forEach(
-      (f) => {
-        if (modifiedCandidate[f]) modifiedCandidate[f] = modifiedCandidate[f].split(" / ");
-      },
-    );
+
+    // Multivalued fields
+    (
+      [
+        "profession",
+        "mandat-en-cours",
+        "mandat-passe",
+        "associations",
+        "autres-statuts",
+        "soutien",
+        "liste",
+      ] as Array<CandidatArrayFieldsType>
+    ).forEach((f) => {
+      if (modifiedCandidate[f]) modifiedCandidate[f] = `${modifiedCandidate[f]}`.split(" / ");
+    });
     return modifiedCandidate;
   }
 
@@ -335,17 +351,19 @@ export class Import {
     Object.keys(item.metadata).forEach((key: string) => {
       // Check if the key validate the spec
       if (config.internet_archive_collection_metadata_filters.find((e) => key.endsWith(e))) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const value: any = key.endsWith("date")
-          ? new Date(item.metadata[key] as any)
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            new Date(item.metadata[key] as any)
           : item.metadata[key] === "NR" || item.metadata[key] === ""
           ? config.missing_value_tag.default
           : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
         if (key.endsWith("-titulaire")) {
-          titulaire[newKey.replace("-titulaire", "")] = value;
+          titulaire[newKey.replace("-titulaire", "") as keyof ArchiveElectoralCandidat] = value;
         } else if (key.endsWith("-suppleant")) {
-          suppleant[newKey.replace("-suppleant", "")] = value;
+          suppleant[newKey.replace("-suppleant", "") as keyof ArchiveElectoralCandidat] = value;
         } else if (newKey === "subject") {
           result[newKey] = typeof value === "string" ? value.split(";") : value;
         } else if (newKey === "departement") {
@@ -356,16 +374,20 @@ export class Import {
           result[newKey] = value;
           // compute year of election for search facet
           result["annee"] = new Date(value).getFullYear() + "";
-        } else result[newKey] = value;
+        } else result[newKey as keyof ArchiveElectoralImportProfessionDeFoi] = value;
       }
     });
 
     result.candidats = [];
     if (Object.keys(titulaire).length > 1) {
-      result.candidats.push(this.processFieldsInCandidate(titulaire as ArchiveElectoralCandidat, result["date"]));
+      result.candidats.push(
+        this.processFieldsInCandidate(titulaire as ArchiveElectoralCandidat, result["date"] as Date),
+      );
     }
     if (Object.keys(suppleant).length > 1) {
-      result.candidats.push(this.processFieldsInCandidate(suppleant as ArchiveElectoralCandidat, result["date"]));
+      result.candidats.push(
+        this.processFieldsInCandidate(suppleant as ArchiveElectoralCandidat, result["date"] as Date),
+      );
     }
 
     // PDF Files
@@ -386,7 +408,7 @@ export class Import {
         const thumb = item.files.find((f2) => f2.original === f.name && f2.format === "JPEG Thumb");
         return {
           url: f.url,
-          thumb: thumb ? thumb.url : null,
+          thumb: thumb ? thumb.url : undefined,
         };
       });
 

@@ -1,9 +1,9 @@
-import React from "react";
 import { compact } from "lodash";
-import ReactSelect, { Props as ReactSelectProps } from "react-select";
-import ReactAsyncSelect, { Props as ReactAsyncSelectProps } from "react-select/async";
-import ReactCreatableSelect, { Props as ReactCreatableSelectProps } from "react-select/creatable";
-import ReactAsyncCreatableSelect, { Props as ReactAsyncCreatableSelectProps } from "react-select/async-creatable";
+import ReactAsyncSelect, { AsyncProps } from "react-select/async";
+import ReactAsyncCreatableSelect, { AsyncCreatableProps } from "react-select/async-creatable";
+import ReactSelect, { GroupBase, Props } from "react-select";
+import ReactCreatableSelect, { CreatableProps } from "react-select/creatable";
+
 import { isWildcardSpecialValue, wildcardSpecialLabel } from "./filters/utils";
 
 const CLASS_NAME = "react-select";
@@ -48,13 +48,16 @@ export function objectToStringValue(value?: OptionType | OptionType[]): string[]
   return [value.value];
 }
 
-export const Select = (props: ReactSelectProps<OptionType>) => <ReactSelect {...{ ...COMMON_PROPS, ...props }} />;
-export const AsyncSelect = (props: ReactAsyncSelectProps<OptionType, boolean>) => (
-  <ReactAsyncSelect {...{ ...COMMON_PROPS, ...props }} />
+export const Select = (props: Props<OptionType, boolean, GroupBase<OptionType>>) => (
+  <ReactSelect {...{ ...COMMON_PROPS, ...props }} />
 );
-export const CreatableSelect = (props: ReactCreatableSelectProps<OptionType, boolean>) => (
+export const CreatableSelect = (props: CreatableProps<OptionType, boolean, GroupBase<OptionType>>) => (
   <ReactCreatableSelect {...{ ...COMMON_PROPS, ...props }} />
 );
-export const AsyncCreatableSelect = (props: ReactAsyncCreatableSelectProps<OptionType, boolean>) => (
-  <ReactAsyncCreatableSelect {...{ ...COMMON_PROPS, ...props }} />
+
+export const AsyncSelect = (props: AsyncProps<OptionType, boolean, GroupBase<OptionType>>) => (
+  <ReactAsyncSelect {...{ ...COMMON_PROPS, ...props }} />
+);
+export const AsyncCreatableSelect = (props: AsyncCreatableProps<OptionType, boolean, GroupBase<OptionType>>) => (
+  <ReactAsyncCreatableSelect {...{ ...COMMON_PROPS, ...props }} isClearable />
 );

@@ -55,7 +55,7 @@ export const TermsFilter: FC<{
           <AsyncCreatableSelect
             aria-labelledby={`${filter.id}-label`}
             aria-label={filter.label}
-            key={JSON.stringify(context)}
+            aria-multiselectable={true}
             inputId={filter.id}
             loadOptions={(inputValue: string) => filter.asyncOptions && filter.asyncOptions(inputValue, context)}
             value={stringToObjectValue(terms)}
@@ -73,7 +73,6 @@ export const TermsFilter: FC<{
                 neutral50: "rgb(0,0,0,0.7)", // Placeholder color
               },
             })}
-            aria-multiselectable={true}
           />
         ) : (
           <CreatableSelect options={filter.options} value={stringToObjectValue(terms)} isMulti={filter.isMulti} />

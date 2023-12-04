@@ -1,23 +1,22 @@
-import React, { useEffect } from "react";
+import { FC, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 import { Loader } from "../components/loader";
 import { MetadataPanel } from "../components/metadata-panel";
-
 import { useGet } from "../hooks/api";
 import { useStateUrl } from "../hooks/state-url";
 import { ProfessionDeFoi } from "../types";
 
-interface Props {
-  id: string;
-}
-export const Profession: React.FC<Props> = (props: Props) => {
-  const { id } = props;
-
-  const { data: professionDeFoi, loading } = useGet<ProfessionDeFoi>(`/professiondefoi/${id}`);
+export const Profession: FC = () => {
+  const { id } = useParams<string>();
   const [viewMode, setViewMode] = useStateUrl<string>("view", "original");
+  const { data: professionDeFoi, loading } = useGet<ProfessionDeFoi>(`/professiondefoi/${id}`);
+
   useEffect(() => {
     if (professionDeFoi && professionDeFoi.title) document.title = professionDeFoi.title;
     else document.title = `Profession de foi ${id}`;
   }, [id, professionDeFoi]);
+
   return (
     <div className="container-fluid">
       <div className="row">

@@ -1,8 +1,9 @@
 import { Singleton } from "typescript-ioc";
 import { AxiosRequestConfig } from "axios";
-import { getLogger } from "./logger";
+
 import { config } from "../config";
 import { makeHttpCall } from "../utils";
+import { getLogger } from "./logger";
 
 /**
  * The response type for scrapping API of internet archive
@@ -61,7 +62,6 @@ export class InternetArchive {
     const url = `${config.internet_archive_url}/metadata/${key}`;
     const result = await makeHttpCall<IAMetadataResponse>({ url, responseType: "json" }, config.axios.nb_retry);
     return {
-      id: key,
       ...result,
       files: result.files.map((file) => {
         return { ...file, url: `https://${result.server}${result.dir}/${file.name}` };

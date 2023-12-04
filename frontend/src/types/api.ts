@@ -3,17 +3,18 @@
  * Do not make direct changes to the file.
  */
 
+
 export interface paths {
   "/professiondefoi/{id}": {
     /**
-     * Returns the corresponding "ArchiveElectoralProfessionDeFoi" object.
+     * @description Returns the corresponding "ArchiveElectoralProfessionDeFoi" object.
      * It's just a do a GET /archiveselectoralesducevipof/id on ElasticSearch and returns the underlying source object.
      */
     get: operations["Proxy"];
   };
   "/professiondefoi/search": {
     /**
-     * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
+     * @description This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
      * The body will be passed to elasticsearch.
      * Example : {
      *   "query": {
@@ -28,7 +29,7 @@ export interface paths {
   };
   "/professiondefoi/search/csv": {
     /**
-     * Given an ES search query, this method will create a CSV file in a stream way of the entire result.
+     * @description Given an ES search query, this method will create a CSV file in a stream way of the entire result.
      * Example : {
      *   "query": {
      *     "simple_query_string": {
@@ -42,14 +43,14 @@ export interface paths {
   };
   "/elasticsearch/proxy_search": {
     /**
-     * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof' per default, but you can specify it.
+     * @description This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof' per default, but you can specify it.
      * The body will be passed to elasticsearch.
      */
     post: operations["Proxy"];
   };
   "/import": {
     /**
-     * Execute the import.
+     * @description Execute the import.
      *
      * Errors don't block the import process. So the process should never fails,
      * instead it returns the list of errors that the processus has encountered.
@@ -64,17 +65,19 @@ export interface paths {
     post: operations["Import"];
   };
   "/misc/ping": {
-    /** Just a ping endpoint that respond "pong" to see if the service is alive. */
+    /** @description Just a ping endpoint that respond "pong" to see if the service is alive. */
     get: operations["Ping"];
   };
   "/misc/echo": {
     /**
-     * This echo endpoint respond to you what you give it.
+     * @description This echo endpoint respond to you what you give it.
      * It can be usefull to see if the service is alive.
      */
     post: operations["Echo"];
   };
 }
+
+export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
@@ -94,10 +97,12 @@ export interface components {
       soutien: string[];
       liste: string[];
       decorations: string;
-    } & { [key: string]: any };
+      [key: string]: unknown;
+    };
     ArchiveElectoralProfessionDeFoi: {
       id: string;
       candidats: components["schemas"]["ArchiveElectoralCandidat"][];
+      /** Format: date-time */
       date: string;
       annee: string;
       subject: string[];
@@ -109,116 +114,156 @@ export interface components {
       departement: string;
       "departement-insee": string;
       "departement-nom": string;
+      /** Format: double */
+      "departement-order"?: number;
       circonscription: string;
       images: {
-        thumb?: string;
-        url: string;
-      }[];
+          thumb?: string;
+          url: string;
+        }[];
       pdf: string;
       ocr_url: string;
-    } & { [key: string]: any };
+      [key: string]: unknown;
+    };
     SearchResponse_ArchiveElectoralProfessionDeFoi_: {
       hits: {
         hits: {
-          _source: components["schemas"]["ArchiveElectoralProfessionDeFoi"];
-          _score: number;
-          _id: string;
-          _type: string;
-          _index: string;
-        }[];
+            _source: components["schemas"]["ArchiveElectoralProfessionDeFoi"];
+            /** Format: double */
+            _score: number;
+            _id: string;
+            _type: string;
+            _index: string;
+          }[];
+        /** Format: double */
         max_score: number;
         total: {
           relation: string;
+          /** Format: double */
           value: number;
         };
       };
       _scroll_id?: string;
     };
-    SearchResponse_any_: {
+    /** @description Construct a type with a set of properties K of type T */
+    "Record_string.unknown_": Record<string, never>;
+    SearchResponse_unknown_: {
       hits: {
         hits: {
-          _source: { [key: string]: any };
-          _score: number;
-          _id: string;
-          _type: string;
-          _index: string;
-        }[];
+            _source: unknown;
+            /** Format: double */
+            _score: number;
+            _id: string;
+            _type: string;
+            _index: string;
+          }[];
+        /** Format: double */
         max_score: number;
         total: {
           relation: string;
+          /** Format: double */
           value: number;
         };
       };
       _scroll_id?: string;
     };
-    /** Error object for import report. */
+    /** @description Error object for import report. */
     ReportError: {
       name: string;
       message: string;
       items: string[];
-    } & { [key: string]: any };
-    /** Import report */
+      [key: string]: unknown;
+    };
+    /** @description Import report */
     ImportReport: {
-      /** Duration (in ms) of the import. */
+      /**
+       * Format: double
+       * @description Duration (in ms) of the import.
+       */
       took: number;
-      /** Number of item imported */
+      /**
+       * Format: double
+       * @description Number of item imported
+       */
       total: number;
-      /** List of errors */
+      /** @description List of errors */
       errors: components["schemas"]["ReportError"][];
-      /** Settings used for the import */
+      /** @description Settings used for the import */
       settings: {
         index: string;
-        to: string;
-        from: string;
+        /** Format: date-time */
+        to?: string;
+        /** Format: date-time */
+        from?: string;
       };
-    } & { [key: string]: any };
-    /** Options for the import execution. */
+      [key: string]: unknown;
+    };
+    /** @description Options for the import execution. */
     ImportOptions: {
-      /** (optional if ids is defined) The date from which we need to retrieve the last modified item */
+      /**
+       * Format: date-time
+       * @description (optional if ids is defined) The date from which we need to retrieve the last modified item
+       */
       date?: string;
-      /** (optional) The date to which we need to retrieve the last modified item */
+      /**
+       * Format: date-time
+       * @description (optional) The date to which we need to retrieve the last modified item
+       */
       to?: string;
-      /** (optional) The name of the ES index */
+      /** @description (optional) The name of the ES index */
       index?: string;
-      /** (optional) A list of ids to import */
+      /** @description (optional) A list of ids to import */
       ids?: string[];
-    } & { [key: string]: any };
+      [key: string]: unknown;
+    };
   };
-  responses: {};
-  parameters: {};
-  requestBodies: {};
-  headers: {};
+  responses: {
+  };
+  parameters: {
+  };
+  requestBodies: {
+  };
+  headers: {
+  };
+  pathItems: never;
 }
 
+export type $defs = Record<string, never>;
+
+export type external = Record<string, never>;
+
 export interface operations {
+
   /**
-   * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof' per default, but you can specify it.
+   * @description This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof' per default, but you can specify it.
    * The body will be passed to elasticsearch.
    */
   Proxy: {
     parameters: {
-      query: {
+      query?: {
         index?: string;
       };
     };
-    responses: {
-      /** Ok */
-      200: {
-        content: {
-          "application/json": components["schemas"]["SearchResponse_any_"];
-        };
-      };
-      /** Internal Error */
-      500: unknown;
-    };
     requestBody: {
       content: {
-        "application/json": { [key: string]: any };
+        "application/json": components["schemas"]["Record_string.unknown_"];
+      };
+    };
+    responses: {
+      /** @description Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["SearchResponse_unknown_"];
+        };
+      };
+      /** @description Internal Error */
+      500: {
+        content: never;
       };
     };
   };
   /**
-   * This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
+   * @description This is a proxy method to ElasticSearch "search" on the index 'archiveselectoralesducevipof'.
    * The body will be passed to elasticsearch.
    * Example : {
    *   "query": {
@@ -230,25 +275,26 @@ export interface operations {
    * }
    */
   Search: {
-    parameters: {};
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Record_string.unknown_"];
+      };
+    };
     responses: {
-      /** Ok */
+      /** @description Ok */
       200: {
         content: {
           "application/json": components["schemas"]["SearchResponse_ArchiveElectoralProfessionDeFoi_"];
         };
       };
-      /** Internal Error */
-      500: unknown;
-    };
-    requestBody: {
-      content: {
-        "application/json": { [key: string]: any };
+      /** @description Internal Error */
+      500: {
+        content: never;
       };
     };
   };
   /**
-   * Given an ES search query, this method will create a CSV file in a stream way of the entire result.
+   * @description Given an ES search query, this method will create a CSV file in a stream way of the entire result.
    * Example : {
    *   "query": {
    *     "simple_query_string": {
@@ -264,24 +310,26 @@ export interface operations {
         filename: string;
       };
     };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Record_string.unknown_"];
+      };
+    };
     responses: {
-      /** Ok */
+      /** @description Ok */
       200: {
         content: {
           "application/json": string;
         };
       };
-      /** Internal Error */
-      500: unknown;
-    };
-    requestBody: {
-      content: {
-        "application/json": { [key: string]: any };
+      /** @description Internal Error */
+      500: {
+        content: never;
       };
     };
   };
   /**
-   * Execute the import.
+   * @description Execute the import.
    *
    * Errors don't block the import process. So the process should never fails,
    * instead it returns the list of errors that the processus has encountered.
@@ -294,30 +342,32 @@ export interface operations {
    * on this method. It can be usefull to make an import per party (ex: by week slices).
    */
   Import: {
-    parameters: {};
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["ImportOptions"];
+      };
+    };
     responses: {
-      /** Ok */
+      /** @description Ok */
       200: {
         content: {
           "application/json": components["schemas"]["ImportReport"];
         };
       };
-      /** Partial import */
-      206: unknown;
-      /** Internal Error */
-      500: unknown;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ImportOptions"];
+      /** @description Partial import */
+      206: {
+        content: never;
+      };
+      /** @description Internal Error */
+      500: {
+        content: never;
       };
     };
   };
-  /** Just a ping endpoint that respond "pong" to see if the service is alive. */
+  /** @description Just a ping endpoint that respond "pong" to see if the service is alive. */
   Ping: {
-    parameters: {};
     responses: {
-      /** Ok */
+      /** @description Ok */
       200: {
         content: {
           "application/json": string;
@@ -326,22 +376,21 @@ export interface operations {
     };
   };
   /**
-   * This echo endpoint respond to you what you give it.
+   * @description This echo endpoint respond to you what you give it.
    * It can be usefull to see if the service is alive.
    */
   Echo: {
-    parameters: {};
-    responses: {
-      /** Ok */
-      200: {
-        content: {
-          "application/json": { [key: string]: any };
-        };
-      };
-    };
     requestBody: {
       content: {
-        "application/json": { [key: string]: any };
+        "application/json": unknown;
+      };
+    };
+    responses: {
+      /** @description Ok */
+      200: {
+        content: {
+          "application/json": unknown;
+        };
       };
     };
   };

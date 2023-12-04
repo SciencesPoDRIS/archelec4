@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router";
+import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 
 import { DatesFilterState, FiltersState, FilterType, PageProps, PlainObject } from "../../types";
 import { professionSearch } from "../../config/searchDefinitions";
@@ -10,7 +11,6 @@ import { getSortDefinition } from "../../components/filters/utils";
 import { Loader } from "../../components/loader";
 import { ResultHeader } from "./ResultHeader";
 import { modes, ModeType, ModeTypeData } from "./config";
-import { FaToggleOff, FaToggleOn } from "react-icons/fa";
 
 const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
 
@@ -19,56 +19,56 @@ const filtersDict = filtersDictFromGroups(professionSearch.filtersGroups);
 function getFiltersState(query: URLSearchParams, filtersSpecs: PlainObject<FilterType>): FiltersState {
   const state: FiltersState = {};
 
-  for (const [key, value] of query.entries()) {
-    if (key === SEARCH_QUERY_KEY || key === SEARCH_TYPE_KEY) continue;
+  query.forEach((value, key) => {
+    if (key !== SEARCH_QUERY_KEY && key !== SEARCH_TYPE_KEY) {
+      // Extract field id from key (to deal with `dateEdition.date.min=XXX` for instance):
+      let field = key;
+      let param = null;
+      if (key.endsWith(".min")) {
+        field = key.split(".min")[0];
+        param = "min";
+      }
+      if (key.endsWith(".max")) {
+        field = key.split(".max")[0];
+        param = "max";
+      }
+      const filter = filtersSpecs[field];
+      if (filter) {
+        if (filter.type === "terms") {
+          if (state[key]) {
+            state[key] = {
+              type: "terms",
+              value: (state[key].value as string[]).concat(value.split(SEPARATOR)),
+              spec: filter,
+            };
+          } else {
+            state[key] = { type: "terms", value: value.split(SEPARATOR), spec: filter };
+          }
+        }
 
-    // Extract field id from key (to deal with `dateEdition.date.min=XXX` for instance):
-    let field = key;
-    let param = null;
-    if (key.endsWith(".min")) {
-      field = key.split(".min")[0];
-      param = "min";
-    }
-    if (key.endsWith(".max")) {
-      field = key.split(".max")[0];
-      param = "max";
-    }
-    const filter = filtersSpecs[field];
-    if (!filter) continue;
+        if (filter.type === "dates" && (param === "min" || param === "max") && parseInt(value) + "" === value) {
+          state[field] = {
+            type: "dates",
+            value: { ...(state[field] as DatesFilterState)?.value, [param]: +value },
+            spec: filter,
+          };
+        }
 
-    if (filter.type === "terms") {
-      if (state[key]) {
-        state[key] = {
-          type: "terms",
-          value: (state[key].value as string[]).concat(value.split(SEPARATOR)),
-          spec: filter,
-        };
-      } else {
-        state[key] = { type: "terms", value: value.split(SEPARATOR), spec: filter };
+        if (filter.type === "query") {
+          if (state[key]) {
+            state[key] = { type: "query", value: (state[key].value as string) + value, spec: filter };
+          } else {
+            state[key] = { type: "query", value: value, spec: filter };
+          }
+        }
       }
     }
-
-    if (filter.type === "dates" && (param === "min" || param === "max") && parseInt(value) + "" === value) {
-      state[field] = {
-        type: "dates",
-        value: { ...(state[field] as DatesFilterState)?.value, [param]: +value },
-        spec: filter,
-      };
-    }
-
-    if (filter.type === "query") {
-      if (state[key]) {
-        state[key] = { type: "query", value: (state[key].value as string) + value, spec: filter };
-      } else {
-        state[key] = { type: "query", value: value, spec: filter };
-      }
-    }
-  }
+  });
 
   return state;
 }
 
-export const Explore: React.FC<PageProps> = (props: PageProps) => {
+export const Explore: React.FC<PageProps> = (_props: PageProps) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   // container ref

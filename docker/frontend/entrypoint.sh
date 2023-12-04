@@ -17,6 +17,8 @@ echo
 npm install
 npm rebuild node-sass
 
+ls -la
+
 if [ "$MODE" = "dev" ]; then
   echo
   echo " ~"
