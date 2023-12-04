@@ -179,6 +179,11 @@ export class Import {
       }),
     );
 
+    // Only save import data if it was a period import
+    // So users are able to import a list of ids without to change the last date import
+    // Question : do we need save only if the date is higher than the one stored ??
+    if (!settings.ids) this.saveLastExecution(period ? period.to : new Date(now), indexName);
+
     // Change / create the alias if needed.
     // If the alias already points to the index, nothing is done.
     // If the alias doesn't point to the index, it is changed, and the previous pointed index is deleted
@@ -186,11 +191,6 @@ export class Import {
     if (prevIndices) {
       await Promise.all(prevIndices.map((i) => this.es.deleteIndex(i)));
     }
-
-    // Only save import data if it was a period import
-    // So users are able to import a list of ids without to change the last date import
-    // Question : do we need save only if the date is higher than the one stored ??
-    if (!settings.ids) this.saveLastExecution(period ? period.to : new Date(now), indexName);
 
     const report = {
       settings: { ...period, index: indexName },
@@ -338,8 +338,8 @@ export class Import {
         const value: any = key.endsWith("date")
           ? new Date(item.metadata[key] as any)
           : item.metadata[key] === "NR" || item.metadata[key] === ""
-          ? config.missing_value_tag.default
-          : item.metadata[key];
+            ? config.missing_value_tag.default
+            : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
         if (key.endsWith("-titulaire")) {
@@ -356,8 +356,6 @@ export class Import {
           result[newKey] = value;
           // compute year of election for search facet
           result["annee"] = new Date(value).getFullYear() + "";
-        } else if (newKey === "circonscription") {
-          result[newKey] = value.padStart(2, "0");
         } else result[newKey] = value;
       }
     });

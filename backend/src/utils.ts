@@ -43,15 +43,18 @@ export async function makeHttpCall<T>(request: AxiosRequestConfig, retry = confi
  * @returns An array of result as a promise
  */
 export async function taskInSeries<T>(tasks: Array<() => Promise<T>>): Promise<Array<T>> {
-  return tasks.reduce((promiseChain, currentTask, index) => {
-    return promiseChain.then((chainResults) => {
-      LOG.info(`Task ${index + 1} / ${tasks.length} started`);
-      return currentTask().then((currentResult) => {
-        LOG.info(`Task ${index + 1} / ${tasks.length} completed`);
-        return [...chainResults, currentResult];
+  return tasks.reduce(
+    (promiseChain, currentTask, index) => {
+      return promiseChain.then((chainResults) => {
+        LOG.info(`Task ${index + 1} / ${tasks.length} started`);
+        return currentTask().then((currentResult) => {
+          LOG.info(`Task ${index + 1} / ${tasks.length} completed`);
+          return [...chainResults, currentResult];
+        });
       });
-    });
-  }, Promise.resolve([] as Array<T>));
+    },
+    Promise.resolve([] as Array<T>),
+  );
 }
 
 /**
@@ -223,7 +226,7 @@ export const ArchiveElectoralProfessionDeFoiCsvHeader = [
   "departement",
   "departement-nom",
   "departement-insee",
-  "circonscription",
+  "identifiant de circonscription",
   "images",
   "pdf",
   "ocr_url",
