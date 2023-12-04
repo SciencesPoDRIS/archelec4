@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useRef, Fragment } from "react";
+import { FC, useEffect, useState, useRef, Fragment, useMemo } from "react";
 import { keyBy, max, min, range } from "lodash";
 
 import { scaleLinear } from "d3-scale";
@@ -11,7 +11,7 @@ import FranceSVGParts from "./france_DOM_COM_hexagonal.json";
 import { numberFormat } from "../utils";
 import { Link } from "react-router-dom";
 
-export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) => {
+export const Cartography: FC<{ data: DashboardDataType["carto"]; total: number }> = ({ data, total }) => {
   const tooltipRef = useRef<HTMLDivElement | null>(null);
   const [hovered, setHovered] = useState<{
     label: string;
@@ -27,6 +27,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
   const maxCount = max(docCounts) || 0;
   const minCount = min(docCounts) || 0;
   const colorScale = scaleLinear().domain([minCount, maxCount]).range([0.1, 1]);
+  const nbLocalized = useMemo(() => data.map((e) => e.doc_count).reduce((acc = 0, curr) => acc + curr), [data]);
 
   /**
    * Sync the map selected state with the corresponding url parameter.
@@ -51,18 +52,23 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
   }
   const legendValues =
     minCount !== maxCount ? range(minCount, maxCount, (maxCount - minCount) / 100) : range(0, 100).map((_) => minCount);
-  return (
+  return nbLocalized === 0 ? null : (
     <div className="w-100">
       <h2 className="h4">Par département</h2>
 
-      <div className=" d-flex align-items-center mb-3">
-        Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
-        <div className="mx-2 cartography-legend">
-          {legendValues.map((v) => (
-            <div key={v} style={{ width: "1px", opacity: colorScale(v) }} />
-          ))}
+      <div className="mb-3">
+        <div className=" d-flex align-items-center">
+          Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
+          <div className="mx-2 cartography-legend">
+            {legendValues.map((v) => (
+              <div key={v} style={{ width: "1px", opacity: colorScale(v) }} />
+            ))}
+          </div>
+          {numberFormat.format(maxCount)}
         </div>
-        {numberFormat.format(maxCount)}
+        {nbLocalized !== total && (
+          <span>{total - nbLocalized} Professions de foi ne possèdent pas de donnée géographique</span>
+        )}
       </div>
       <div className="mt-4">
         <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
@@ -96,11 +102,6 @@ export const Cartography: FC<{ data: DashboardDataType["carto"] }> = ({ data }) 
                     ? colorScale(dataByINSEEDep[p.insee_dep].doc_count)
                     : 0
                 }
-                // fill={
-                //   termsUrl === "" || selected
-                //     ? colorScale((dataByINSEEDep[p.insee_dep]?.doc_count || 0) / maxCount).hex()
-                //     : "lightgrey"
-                // }
               />
             );
             return (

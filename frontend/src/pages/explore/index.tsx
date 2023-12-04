@@ -102,7 +102,6 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
     const currentFilterState = getFiltersState(new URLSearchParams(location.search), filtersDict);
     setFiltersState(currentFilterState);
     setLoading(true);
-    console.log(currentFilterState);
     selectedMode
       .fetchData(
         {

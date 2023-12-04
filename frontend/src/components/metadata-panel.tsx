@@ -13,7 +13,6 @@ interface Props {
 
 const MetadataList: React.FC<{ list: string[]; label?: string }> = (props: { list: string[]; label?: string }) => {
   const { list, label } = props;
-  console.log(list);
   return (
     <>
       {list && list.length > 0 && (
