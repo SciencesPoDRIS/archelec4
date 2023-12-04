@@ -76,7 +76,7 @@ export const config: Configuration = {
   },
   internet_archive_url: "https://archive.org",
   internet_archive_collection: "archiveselectoralesducevipof",
-  internet_archive_collection_type: "profession de foi",
+  internet_archive_collection_type: "Profession de foi",
   last_import_date_file_path: ".last_import.txt",
   elasticsearch_alias_name: "professiondefoi",
   import_batch_size: 1000,
