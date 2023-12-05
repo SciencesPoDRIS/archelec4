@@ -1,3 +1,5 @@
+import { toNumber } from "lodash";
+
 export function tooltipPosition(coordinates: [number, number], element: HTMLElement): void {
   // constant
   const offset = 10;
@@ -31,4 +33,11 @@ export function tooltipPosition(coordinates: [number, number], element: HTMLElem
     element.style.top = `${mouseY + offset}px`;
     element.style.left = `${mouseX + offset}px`;
   }
+}
+
+/**
+ * Check if the value is a number or not
+ */
+export function isNumber(value: unknown): boolean {
+  return !Number.isNaN(toNumber(value));
 }

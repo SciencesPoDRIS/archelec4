@@ -1,5 +1,8 @@
 import React from "react";
+
 import { Candidat, ProfessionDeFoi } from "../types";
+import { isNumber } from "../utils";
+
 import byLogo from "../assets/by.png";
 import ccLogo from "../assets/cc.png";
 import ncLogo from "../assets/nc.png";
@@ -74,8 +77,8 @@ const CandidatMetadata: React.FC<{ candidat: Candidat }> = (props: { candidat: C
 export const MetadataPanel: React.FC<Props> = (props: Props) => {
   const { professionDeFoi, viewMode, setViewMode } = props;
   const titulaire = professionDeFoi.candidats.find((c) => c.type === "titulaire");
-
   const suppleant = professionDeFoi.candidats.find((c) => c.type === "suppléant");
+
   return (
     <div className="metadatapanel">
       <>
@@ -84,7 +87,11 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
             Élections {professionDeFoi["contexte-election"]} de {professionDeFoi.annee}
           </div>
           <h4>
-            {professionDeFoi.circonscription} circ.
+            {professionDeFoi.circonscription}
+            {isNumber(professionDeFoi.circonscription) && (
+              <sup>{professionDeFoi.circonscription === "1" ? "er" : "e"}</sup>
+            )}{" "}
+            circ.
             {professionDeFoi["departement-nom"]} ({professionDeFoi.departement})
           </h4>
           <div className="metadata-group">

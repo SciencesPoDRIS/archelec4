@@ -1,7 +1,9 @@
 import { capitalize, uniq } from "lodash";
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
+
 import { ProfessionDeFoi } from "../types";
+import { isNumber } from "../utils";
 
 export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
   const { profession } = props;
@@ -42,7 +44,8 @@ export const ProfessionCard: FC<{ profession: ProfessionDeFoi }> = (props) => {
           <div>
             {capitalize(profession["contexte-election"])} {profession.annee}
             <br />
-            {profession.circonscription} circ.
+            {profession.circonscription}
+            {isNumber(profession.circonscription) && <sup>{profession.circonscription === "1" ? "er" : "e"}</sup>} circ.
             {profession["departement-nom"]}
             <br />
             {profession["contexte-tour"] === "1" ? "Premier tour" : "Second tour"}
