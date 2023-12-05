@@ -70,7 +70,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"]; total: number }
           <span>{total - nbLocalized} Professions de foi ne possèdent pas de donnée géographique</span>
         )}
       </div>
-      <div className="mt-4">
+      <div className="mt-4 d-flex justify-content-center">
         <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
           {FranceSVGParts.map((p) => {
             const depFilterKey = p["departement-insee"];
