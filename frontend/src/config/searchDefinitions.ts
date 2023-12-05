@@ -1,3 +1,4 @@
+import { toNumber } from "lodash";
 import {
   GenericFilterGroupPhraseFactory,
   ElectionGroupPhrase,
@@ -5,6 +6,7 @@ import {
   ContenuPhrase,
 } from "../components/filters/active-filters-phrase";
 import { SearchTypeDefinition } from "../types";
+import { isNumber } from "../utils";
 
 // Default configuration file
 export const professionSearch: SearchTypeDefinition = {
@@ -77,9 +79,17 @@ export const professionSearch: SearchTypeDefinition = {
           id: "circonscription",
           field: "circonscription",
           type: "terms",
-          label: "Numéro",
+          label: "Identifiant",
           isMulti: true,
-          order: "key_asc",
+          order: (v1, v2) => {
+            if (isNumber(v1.term) && isNumber(v2.term)) {
+              return toNumber(v1.term) < toNumber(v2.term) ? -1 : 1;
+            }
+            if (!isNumber(v1.term) && !isNumber(v2.term)) {
+              return v1.term < v2.term ? -1 : 1;
+            }
+            return isNumber(v1.term) ? -1 : 1;
+          },
           wildcardSearch: false,
         },
       ],

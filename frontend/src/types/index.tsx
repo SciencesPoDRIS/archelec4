@@ -80,7 +80,11 @@ export type TermsFilterType = {
   type: "terms";
   label: string;
   description?: string;
-  order: "count_desc" | "key_asc" | "departement-order";
+  order:
+    | "count_desc"
+    | "key_asc"
+    | "departement-order"
+    | ((value1: { term: string; count: number }, value2: { term: string; count: number }) => number);
   extraQueryField?: QueryDslQueryContainer;
   wildcardSearch?: boolean;
   isMulti?: boolean;

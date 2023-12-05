@@ -13,6 +13,7 @@ import { useStateUrl } from "../../hooks/state-url";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
 const SEPARATOR = "|";
+
 export const TermsFilter: FC<{
   filter: TermsFilterType;
   context: ESSearchQueryContext;
@@ -20,16 +21,14 @@ export const TermsFilter: FC<{
 }> = ({ filter, context, setTooltipMessage }) => {
   // const remainingCount = histogram ? histogram.total - histogram.values.length : 0;
   // const valuesDict: PlainObject<boolean> = mapValues(keyBy(getArrayValue(state.value)), constant(true));
-
   const [termsUrl, setTermsUrl] = useStateUrl<string>(filter.id, "");
-
   const [terms, setTerms] = useState<string[]>([]);
+  const showDescription: React.MouseEventHandler<SVGElement> = (e) =>
+    setTooltipMessage({ element: <span>{filter.description}</span>, x: e.nativeEvent.x, y: e.nativeEvent.y });
+
   useEffect(() => {
     setTerms(termsUrl && termsUrl !== "" ? termsUrl.split(SEPARATOR) : []);
   }, [termsUrl]);
-
-  const showDescription: React.MouseEventHandler<SVGElement> = (e) =>
-    setTooltipMessage({ element: <span>{filter.description}</span>, x: e.nativeEvent.x, y: e.nativeEvent.y });
 
   // TODO:
   // Find a better way to invalidate cache.

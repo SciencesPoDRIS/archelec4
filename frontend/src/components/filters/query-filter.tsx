@@ -42,7 +42,6 @@ export const QueryFilter: FC<{
           onClick={() => {
             setQuery("");
             setQueryUrl("");
-            //setState({ type: "query", value: "" });
           }}
         >
           <i className="fas fa-times" />

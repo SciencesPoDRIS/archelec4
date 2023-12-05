@@ -22,9 +22,9 @@ export const YearBar: FC<{
         className="w-100 d-flex value-bar"
         style={{ boxSizing: "border-box", height: `${(max([0.05, data.doc_count / maxValue]) || 0) * 75}%` }}
       >
-        {(data.dates_tours || []).map((d) => (
+        {(data.dates_tours || []).map((d, i) => (
           <div
-            key={d.tour}
+            key={`tour-${d.tour}-${i}`}
             className={`h-100 tour-${d.tour}`}
             style={{ width: `${(d.doc_count / data.doc_count) * 100}%` }}
             aria-label={`${d.doc_count} Professions de foi - ${d.election} ${d.date.toLocaleDateString(

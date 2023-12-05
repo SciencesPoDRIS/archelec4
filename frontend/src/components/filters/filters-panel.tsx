@@ -7,7 +7,7 @@ import { getTerms } from "../../elasticsearchClient";
 import { DatesFilter } from "./dates-filter";
 import { TermsFilter } from "./term-filter";
 import { QueryFilter } from "./query-filter";
-import { values } from "lodash";
+import { isFunction, values } from "lodash";
 import { wildcardSpecialLabel, wildcardSpecialValue } from "./utils";
 import { tooltipPosition } from "../../utils";
 
@@ -19,8 +19,12 @@ function asyncOptionsFactory(
   filter: TermsFilterType,
   count: number = 200,
 ): (inputValue: string, context: ESSearchQueryContext) => Promise<OptionType[]> {
-  return async (inputValue: string, context: ESSearchQueryContext) =>
-    getTerms(context, filter, inputValue, count + 1).then((terms) => [
+  return async (inputValue: string, context: ESSearchQueryContext) => {
+    const terms = await getTerms(context, filter, inputValue, count + 1);
+    if (filter.order && isFunction(filter.order)) {
+      terms.sort(filter.order);
+    }
+    return [
       // create a wildcardSpecialValue which allow wildCard search on terms
       ...(filter.wildcardSearch && inputValue !== "" && terms.length > 0
         ? [
@@ -40,7 +44,8 @@ function asyncOptionsFactory(
             },
           ]
         : []),
-    ]);
+    ];
+  };
 }
 
 export const FiltersPanel: FC<{

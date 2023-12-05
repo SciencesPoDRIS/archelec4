@@ -122,6 +122,7 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
     };
   }, [location.search, selectedMode]); // eslint-disable-line
   const FiltersToggleIcon = showFilters ? FaToggleOn : FaToggleOff;
+
   return (
     <div className="home container-fluid">
       <div className="row row-cols-1 row-sm-cols-2">
