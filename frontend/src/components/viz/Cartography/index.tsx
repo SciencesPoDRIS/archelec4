@@ -27,7 +27,7 @@ export const Cartography: FC<{ data: DashboardDataType["carto"]; total: number }
   const maxCount = max(docCounts) || 0;
   const minCount = min(docCounts) || 0;
   const colorScale = scaleLinear().domain([minCount, maxCount]).range([0.1, 1]);
-  const nbLocalized = useMemo(() => data.map((e) => e.doc_count).reduce((acc = 0, curr) => acc + curr), [data]);
+  const nbLocalized = useMemo(() => data.map((e) => e.doc_count).reduce((acc, curr) => acc + curr, 0), [data]);
 
   /**
    * Sync the map selected state with the corresponding url parameter.
@@ -52,77 +52,94 @@ export const Cartography: FC<{ data: DashboardDataType["carto"]; total: number }
   }
   const legendValues =
     minCount !== maxCount ? range(minCount, maxCount, (maxCount - minCount) / 100) : range(0, 100).map((_) => minCount);
-  return nbLocalized === 0 ? null : (
+  return (
     <div className="w-100">
-      <h2 className="h4">Par département</h2>
+      <h2 className="h4"> {nbLocalized ? "Par département" : "Dans l'espace"}</h2>
 
-      <div className="mb-3">
-        <div className=" d-flex align-items-center">
-          Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
-          <div className="mx-2 cartography-legend">
-            {legendValues.map((v) => (
-              <div key={v} style={{ width: "1px", opacity: colorScale(v) }} />
-            ))}
-          </div>
-          {numberFormat.format(maxCount)}
+      {nbLocalized === 0 ? (
+        <div className="mb-3">
+          <p className="text-muted">Aucune donnée géographique disponible</p>
         </div>
-        {nbLocalized !== total && (
-          <span>{total - nbLocalized} Professions de foi ne possèdent pas de donnée géographique</span>
-        )}
-      </div>
-      <div className="mt-4 d-flex justify-content-center">
-        <svg id="cartography" version="1.1" width={"100%"} viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
-          {FranceSVGParts.map((p) => {
-            const depFilterKey = p["departement-insee"];
-            const selected = selectedDepartements.includes(depFilterKey);
-            const newDepartementList = selected
-              ? selectedDepartements.filter((e) => e !== depFilterKey).join(SEPARATOR)
-              : selectedDepartements.concat(depFilterKey).join(SEPARATOR);
-            const newLocationOnClick = getDepartementLink(newDepartementList);
-            const path = (
-              <path
-                className={`${termsUrl === "" || selected ? "active" : "disabled"}`}
-                onMouseEnter={(e) => {
-                  setHovered({ label: p["departement-insee"], data: dataByINSEEDep[p.insee_dep], selected });
-                  displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
-                }}
-                onMouseLeave={() => {
-                  setHovered(null);
-                }}
-                onMouseMove={(e) => {
-                  displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
-                }}
-                d={p.d}
-                key={p.insee_dep}
-                id={p.insee_dep}
-                stroke="black"
-                strokeWidth={selected ? 3 : 1}
-                fillOpacity={
-                  dataByINSEEDep[p.insee_dep]?.doc_count && dataByINSEEDep[p.insee_dep]?.doc_count > 0
-                    ? colorScale(dataByINSEEDep[p.insee_dep].doc_count)
-                    : 0
-                }
-              />
-            );
-            return (
-              <Fragment key={p["departement-insee"]}>
-                {newLocationOnClick && (
-                  <Link
-                    key={`${p["departement-insee"]}-link`}
-                    to={newLocationOnClick}
-                    title={`${selected ? "désactiver" : "activer"} le filtre département de la circonscription est ${
-                      p["departement-insee"]
-                    }`}
-                  >
-                    {path}
-                  </Link>
-                )}
-                {!newLocationOnClick && path}
-              </Fragment>
-            );
-          })}
-        </svg>
-      </div>
+      ) : (
+        <>
+          <div className="mb-3">
+            <div className=" d-flex align-items-center">
+              Nombre de Profession de foi: {numberFormat.format(minCount)}{" "}
+              <div className="mx-2 cartography-legend">
+                {legendValues.map((v) => (
+                  <div key={v} style={{ width: "1px", opacity: colorScale(v) }} />
+                ))}
+              </div>
+              {numberFormat.format(maxCount)}
+            </div>
+            {nbLocalized !== total && (
+              <span>
+                <strong>{total - nbLocalized}</strong> Professions de foi ne possèdent pas de donnée géographique
+              </span>
+            )}
+          </div>
+
+          <div className="mt-4 d-flex justify-content-center">
+            <svg
+              id="cartography"
+              version="1.1"
+              width={"100%"}
+              viewBox="0 0 1000 1000"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {FranceSVGParts.map((p) => {
+                const depFilterKey = p["departement-insee"];
+                const selected = selectedDepartements.includes(depFilterKey);
+                const newDepartementList = selected
+                  ? selectedDepartements.filter((e) => e !== depFilterKey).join(SEPARATOR)
+                  : selectedDepartements.concat(depFilterKey).join(SEPARATOR);
+                const newLocationOnClick = getDepartementLink(newDepartementList);
+                const path = (
+                  <path
+                    className={`${termsUrl === "" || selected ? "active" : "disabled"}`}
+                    onMouseEnter={(e) => {
+                      setHovered({ label: p["departement-insee"], data: dataByINSEEDep[p.insee_dep], selected });
+                      displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
+                    }}
+                    onMouseLeave={() => {
+                      setHovered(null);
+                    }}
+                    onMouseMove={(e) => {
+                      displayToolTip(e.nativeEvent.x, e.nativeEvent.y);
+                    }}
+                    d={p.d}
+                    key={p.insee_dep}
+                    id={p.insee_dep}
+                    stroke="black"
+                    strokeWidth={selected ? 3 : 1}
+                    fillOpacity={
+                      dataByINSEEDep[p.insee_dep]?.doc_count && dataByINSEEDep[p.insee_dep]?.doc_count > 0
+                        ? colorScale(dataByINSEEDep[p.insee_dep].doc_count)
+                        : 0
+                    }
+                  />
+                );
+                return (
+                  <Fragment key={p["departement-insee"]}>
+                    {newLocationOnClick && (
+                      <Link
+                        key={`${p["departement-insee"]}-link`}
+                        to={newLocationOnClick}
+                        title={`${
+                          selected ? "désactiver" : "activer"
+                        } le filtre département de la circonscription est ${p["departement-insee"]}`}
+                      >
+                        {path}
+                      </Link>
+                    )}
+                    {!newLocationOnClick && path}
+                  </Fragment>
+                );
+              })}
+            </svg>
+          </div>
+        </>
+      )}
       {hovered && (
         <div className="tooltip" ref={tooltipRef}>
           {hovered.label}
