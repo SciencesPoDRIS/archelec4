@@ -7,6 +7,7 @@ import byLogo from "../assets/by.png";
 import ccLogo from "../assets/cc.png";
 import ncLogo from "../assets/nc.png";
 import ndLogo from "../assets/nd.png";
+import { isArray, isString } from "lodash";
 
 interface Props {
   professionDeFoi: ProfessionDeFoi;
@@ -84,7 +85,11 @@ export const MetadataPanel: React.FC<Props> = (props: Props) => {
       <>
         <div className="metadata-section">
           <div className="panel-header" role="heading" aria-level={3}>
-            Élections {professionDeFoi["contexte-election"]} de {professionDeFoi.annee}
+            Élections{" "}
+            {isArray(professionDeFoi["contexte-election"])
+              ? professionDeFoi["contexte-election"].join(" ")
+              : professionDeFoi["contexte-election"]}{" "}
+            de {professionDeFoi.annee}
           </div>
           <h4>
             {professionDeFoi.circonscription}

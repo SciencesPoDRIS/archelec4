@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { isArray } from "lodash";
+import { isArray, isString } from "lodash";
 import { getLogger } from "./services/logger";
 import { ArchiveElectoralProfessionDeFoi, ArchiveElectoralCandidat } from "./services/import";
 import { config } from "./config";
@@ -43,18 +43,15 @@ export async function makeHttpCall<T>(request: AxiosRequestConfig, retry = confi
  * @returns An array of result as a promise
  */
 export async function taskInSeries<T>(tasks: Array<() => Promise<T>>): Promise<Array<T>> {
-  return tasks.reduce(
-    (promiseChain, currentTask, index) => {
-      return promiseChain.then((chainResults) => {
-        LOG.info(`Task ${index + 1} / ${tasks.length} started`);
-        return currentTask().then((currentResult) => {
-          LOG.info(`Task ${index + 1} / ${tasks.length} completed`);
-          return [...chainResults, currentResult];
-        });
+  return tasks.reduce((promiseChain, currentTask, index) => {
+    return promiseChain.then((chainResults) => {
+      LOG.info(`Task ${index + 1} / ${tasks.length} started`);
+      return currentTask().then((currentResult) => {
+        LOG.info(`Task ${index + 1} / ${tasks.length} completed`);
+        return [...chainResults, currentResult];
       });
-    },
-    Promise.resolve([] as Array<T>),
-  );
+    });
+  }, Promise.resolve([] as Array<T>));
 }
 
 /**
@@ -212,7 +209,15 @@ export function archiveElectoralProfessionDeFoiToCsvLine(esItem: ArchiveElectora
   const columnsValue = electionValue
     .concat(archiveElectoralCandidatToArrayFields(titulaire))
     .concat(archiveElectoralCandidatToArrayFields(suppleant));
-  return columnsValue.map((e) => (e ? `"${e.replace(/"/, '""')}"` : "")).join(",");
+  return columnsValue
+    .map((e) => {
+      if (e) {
+        const values = isString(e) ? [e] : e;
+        return `"${values.map((v) => v.replace(/"/, '""')).join("|")}"`;
+      }
+      return "";
+    })
+    .join(",");
 }
 
 export const ArchiveElectoralProfessionDeFoiCsvHeader = [

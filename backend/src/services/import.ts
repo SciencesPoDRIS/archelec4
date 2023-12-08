@@ -95,7 +95,7 @@ export interface ArchiveElectoralProfessionDeFoi {
   subject: Array<string>;
   title: string;
   type: string;
-  "contexte-election": string;
+  "contexte-election": string | string[];
   "contexte-tour": string;
   cote: string;
   departement: string;
@@ -338,8 +338,8 @@ export class Import {
         const value: any = key.endsWith("date")
           ? new Date(item.metadata[key] as any)
           : item.metadata[key] === "NR" || item.metadata[key] === ""
-            ? config.missing_value_tag.default
-            : item.metadata[key];
+          ? config.missing_value_tag.default
+          : item.metadata[key];
         const newKey = key.replace(/^[a-z]{2}-/, "");
 
         if (key.endsWith("-titulaire")) {

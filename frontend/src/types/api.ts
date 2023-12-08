@@ -103,7 +103,7 @@ export interface components {
       subject: string[];
       title: string;
       type: string;
-      "contexte-election": string;
+      "contexte-election": Partial<string> & Partial<string[]>;
       "contexte-tour": string;
       cote: string;
       departement: string;
