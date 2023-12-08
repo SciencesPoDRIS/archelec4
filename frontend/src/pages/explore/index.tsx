@@ -143,29 +143,31 @@ export const Explore: React.FC<PageProps> = (props: PageProps) => {
         </div>
         {/*  Result panel */}
         <div ref={containerRef} className="col-xs-12 col-xl-9 col-sm-8  full-height result-column">
-          <ResultHeader
-            esContext={{
-              index: professionSearch.index,
-              filters: filtersState,
-              sort: getSortDefinition(professionSearch, sort),
-            }}
-            nbProfession={result?.total}
-            selectedMode={modeUrlParam}
-            onModeChange={(e) => setModeUrlParam(e)}
-          />
-
-          {loading && <Loader />}
-
-          {!loading && result && (
-            <selectedMode.component
-              containerRef={containerRef}
-              context={{
-                index: professionSearch.index,
-                filters: filtersState,
-                sort: getSortDefinition(professionSearch, sort),
-              }}
-              result={result}
-            />
+          {loading && <Loader className="mt-1" />}
+          {!loading && (
+            <>
+              <ResultHeader
+                esContext={{
+                  index: professionSearch.index,
+                  filters: filtersState,
+                  sort: getSortDefinition(professionSearch, sort),
+                }}
+                nbProfession={result?.total}
+                selectedMode={modeUrlParam}
+                onModeChange={(e) => setModeUrlParam(e)}
+              />
+              {result && (
+                <selectedMode.component
+                  containerRef={containerRef}
+                  context={{
+                    index: professionSearch.index,
+                    filters: filtersState,
+                    sort: getSortDefinition(professionSearch, sort),
+                  }}
+                  result={result}
+                />
+              )}
+            </>
           )}
         </div>
       </div>
