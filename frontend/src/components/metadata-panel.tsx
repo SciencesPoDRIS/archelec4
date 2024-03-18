@@ -3,11 +3,11 @@ import React from "react";
 import { Candidat, ProfessionDeFoi } from "../types";
 import { isNumber } from "../utils";
 
+import { isArray } from "lodash";
 import byLogo from "../assets/by.png";
 import ccLogo from "../assets/cc.png";
 import ncLogo from "../assets/nc.png";
 import ndLogo from "../assets/nd.png";
-import { isArray, isString } from "lodash";
 
 interface Props {
   professionDeFoi: ProfessionDeFoi;
